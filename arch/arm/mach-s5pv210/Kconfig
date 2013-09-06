@@ -300,12 +300,6 @@ config GPS_CHIPSET_STE_GNS7560
         help
          add  GPS config
 
-config ARIES_EUR
-	bool "select S1 Europe"
-	depends on MACH_ARIES
-	help
-	Select S1 Europe
-
 config S5PV210_SETUP_FB
 	bool
 	depends on FB_S3C
