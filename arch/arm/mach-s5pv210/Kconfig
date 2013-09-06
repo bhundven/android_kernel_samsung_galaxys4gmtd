@@ -306,12 +306,6 @@ config ARIES_EUR
 	help
 	Select S1 Europe
 
-config ARIES_NTT
-	bool "select S1 NTT"
-	depends on MACH_ARIES
-	help
-	Select S1 NTT
-
 config S5PV210_SETUP_FB
 	bool
 	depends on FB_S3C

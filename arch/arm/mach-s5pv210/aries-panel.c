@@ -1036,7 +1036,6 @@ static const u16 s6e63m0_22gamma_30cd[] = {
 }; 
 
 
-#if !defined(CONFIG_ARIES_NTT)
 static const u16 *p22Gamma_set[] = {
 	s6e63m0_22gamma_30cd,
 	s6e63m0_22gamma_40cd,                         
@@ -1064,35 +1063,6 @@ static const u16 *p22Gamma_set[] = {
 	s6e63m0_22gamma_290cd,                        
 	s6e63m0_22gamma_300cd,         
 };                                             
-#else                                
-static const u16 *p22Gamma_set[] = {        
-	s6e63m0_22gamma_30cd,
-	s6e63m0_22gamma_40cd,  
-	s6e63m0_22gamma_50cd,
-	s6e63m0_22gamma_60cd,
-	s6e63m0_22gamma_70cd,	
-	s6e63m0_22gamma_80cd,
-	s6e63m0_22gamma_90cd,
-	s6e63m0_22gamma_100cd,
-	s6e63m0_22gamma_110cd,	
-	s6e63m0_22gamma_120cd,	
-	s6e63m0_22gamma_130cd,
-	s6e63m0_22gamma_140cd,
-	s6e63m0_22gamma_150cd,
-	s6e63m0_22gamma_160cd,	
-	s6e63m0_22gamma_170cd,	
-	s6e63m0_22gamma_180cd,
-	s6e63m0_22gamma_190cd,
-	s6e63m0_22gamma_200cd,
-	s6e63m0_22gamma_210cd,	
-	s6e63m0_22gamma_220cd,	
-	s6e63m0_22gamma_230cd,
-	s6e63m0_22gamma_240cd,
-	s6e63m0_22gamma_260cd,
-	s6e63m0_22gamma_280cd,
-	s6e63m0_22gamma_300cd,     
-};        
-#endif
                                                 
 static const u16 s6e63m0_19gamma_300cd[] = {                                 
 	0x0FA,                                        	                                              
@@ -1906,7 +1876,6 @@ static const u16 s6e63m0_19gamma_30cd[] = {
 	ENDDEF, 0x0000                               
 }; 
 
-#if !defined(CONFIG_ARIES_NTT)  
 static const u16 *p19Gamma_set[] = {        
 	s6e63m0_19gamma_30cd,                                   
 	s6e63m0_19gamma_40cd,                         
@@ -1934,35 +1903,6 @@ static const u16 *p19Gamma_set[] = {
 	s6e63m0_19gamma_290cd,                        
 	s6e63m0_19gamma_300cd,                  
 }; 
-#else
-static const u16 *p19Gamma_set[] = {        
-	s6e63m0_19gamma_30cd,             
-	s6e63m0_19gamma_40cd,  
-	s6e63m0_19gamma_50cd,
-	s6e63m0_19gamma_60cd,
-	s6e63m0_19gamma_70cd,	
-	s6e63m0_19gamma_80cd,
-	s6e63m0_19gamma_90cd,
-	s6e63m0_19gamma_100cd,
-	s6e63m0_19gamma_110cd,	
-	s6e63m0_19gamma_120cd,	
-	s6e63m0_19gamma_130cd,
-	s6e63m0_19gamma_140cd,
-	s6e63m0_19gamma_150cd,
-	s6e63m0_19gamma_160cd,	
-	s6e63m0_19gamma_170cd,	
-	s6e63m0_19gamma_180cd,
-	s6e63m0_19gamma_190cd,
-	s6e63m0_19gamma_200cd,
-	s6e63m0_19gamma_210cd,	
-	s6e63m0_19gamma_220cd,	
-	s6e63m0_19gamma_230cd,
-	s6e63m0_19gamma_240cd,
-	s6e63m0_19gamma_260cd,
-	s6e63m0_19gamma_280cd,
-	s6e63m0_19gamma_300cd,
-}; 
-#endif
 
 static const u16 gamma_updates[] = { 
 	0x0FA,	

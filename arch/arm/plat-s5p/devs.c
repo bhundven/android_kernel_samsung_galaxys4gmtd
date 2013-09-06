@@ -52,11 +52,9 @@
 static char *usb_functions_ums[] = {
 	"usb_mass_storage",
 };
-#if !defined(CONFIG_ARIES_NTT) // disable tethering
 static char *usb_functions_rndis[] = {
 	"rndis",
 };
-#endif
 
 /*
 static char *usb_functions_rndis_adb[] = {
@@ -100,9 +98,7 @@ static char *usb_functions_all[] = {
 	"acm",
 	"usb_mass_storage",
 	"adb",
-#if !defined(CONFIG_ARIES_NTT) // disable tethering
 	"rndis",
-#endif	
 	"mtp",
 #else /* original */
 #  ifdef CONFIG_USB_ANDROID_RNDIS
@@ -150,9 +146,7 @@ static struct android_usb_product usb_products[] = {
 		.bDeviceProtocol= 0,
 		.s		= ANDROID_UMS_CONFIG_STRING,
 		.mode		= USBSTATUS_UMS,
-	},
-#if !defined(CONFIG_ARIES_NTT) // disable tethering
-	{
+	}, {
 		.product_id	= SAMSUNG_RNDIS_PRODUCT_ID,
 		.num_functions	= ARRAY_SIZE(usb_functions_rndis),
 		.functions	= usb_functions_rndis,
@@ -171,9 +165,7 @@ static struct android_usb_product usb_products[] = {
 #    endif
 		.s		= ANDROID_RNDIS_CONFIG_STRING,
 		.mode		= USBSTATUS_VTP,
-	},
-#endif	
-	{
+	}, {
 		.product_id	= SAMSUNG_MTP_PRODUCT_ID,
 		.num_functions	= ARRAY_SIZE(usb_functions_mtp),
 		.functions	= usb_functions_mtp,
@@ -215,9 +207,7 @@ static struct android_usb_product usb_products[] = {
 		.bDeviceProtocol= 0,
 		.s		= ANDROID_UMS_CONFIG_STRING,
 		.mode		= USBSTATUS_UMS,
-	},
-#if !defined(CONFIG_ARIES_NTT) // disable tethering
-	{
+	}, {
 		.product_id	= SAMSUNG_RNDIS_PRODUCT_ID,
 		.num_functions	= ARRAY_SIZE(usb_functions_rndis),
 		.functions	= usb_functions_rndis,
@@ -230,9 +220,7 @@ static struct android_usb_product usb_products[] = {
 		.bDeviceProtocol= 0,
 		.s		= ANDROID_RNDIS_CONFIG_STRING,
 		.mode		= USBSTATUS_VTP,
-	},
-#endif	
-	{
+	}, {
 		.product_id	= SAMSUNG_MTP_PRODUCT_ID,
 		.num_functions	= ARRAY_SIZE(usb_functions_mtp),
 		.functions	= usb_functions_mtp,

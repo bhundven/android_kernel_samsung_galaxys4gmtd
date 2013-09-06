@@ -20,15 +20,6 @@
 #define GPIO_BT_UART_RTS_AF		2
 
 
-#if defined(CONFIG_ARIES_NTT)
-#define GPIO_GPA04		S5PV210_GPA0(4)
-
-#define GPIO_GPA05 		S5PV210_GPA0(5)
-
-#define GPIO_GPA06  		S5PV210_GPA0(6)
-
-#define GPIO_GPA07   		S5PV210_GPA0(7)
-#else
 #define GPIO_GPS_UART_RXD		S5PV210_GPA0(4)
 #define GPIO_GPS_UART_RXD_AF		2
 
@@ -40,7 +31,6 @@
 
 #define GPIO_GPS_UART_RTS		S5PV210_GPA0(7)
 #define GPIO_GPS_UART_RTS_AF		2
-#endif
 
 #define GPIO_AP_RXD			S5PV210_GPA1(0)
 #define GPIO_AP_RXD_AF			2
@@ -74,19 +64,6 @@
 #define GPIO_GPB7			S5PV210_GPB(7)
 #endif
 
-#if defined(CONFIG_ARIES_NTT)
-#define GPIO_GPC00			S5PV210_GPC0(0)
-
-#define GPIO_GPC01			S5PV210_GPC0(1)
-
-#define GPIO_GPC02			S5PV210_GPC0(2)
-
-#define GPIO_GPC03			S5PV210_GPC0(3)
-
-#define GPIO_GPC04			S5PV210_GPC0(4)
-
-#define GPIO_GPC10			S5PV210_GPC1(0)
-#else
 #define GPIO_REC_PCM_CLK		S5PV210_GPC0(0)
 #define GPIO_REC_PCM_CLK_AF		3
 
@@ -102,7 +79,6 @@
 #define GPIO_REC_PCM_OUT_AF		3
 #if !defined(CONFIG_S5PC110_DEMPSEY_BOARD)
 #define BLOW_PCM_CLK			S5PV210_GPC1(0)
-#endif
 #endif
 
 #if !defined(CONFIG_S5PC110_DEMPSEY_BOARD)
@@ -124,11 +100,7 @@
 
 #define GPIO_VIBTONE_PWM		S5PV210_GPD0(1)
 
-#if defined(CONFIG_ARIES_NTT)
-#define GPIO_GPD02 			S5PV210_GPD0(2)
-#else
 #define GPIO_VIBTONE_PWM1		S5PV210_GPD0(2)
-#endif
 
 #define GPIO_GPD03			S5PV210_GPD0(3)
 
@@ -138,18 +110,12 @@
 #define GPIO_CAM_SCL_29V		S5PV210_GPD1(1)
 #define GPIO_CAM_SCL_29V_AF		2
 
-#if defined(CONFIG_ARIES_NTT)
-#define GPIO_GPD12			S5PV210_GPD1(2)
-
-#define GPIO_GPD13			S5PV210_GPD1(3)
-#else
 #if !defined(CONFIG_S5PC110_DEMPSEY_BOARD)
 #define GPIO_FM_SDA_28V			S5PV210_GPD1(2)
 #define GPIO_FM_SDA_28V_AF		2
 
 #define GPIO_FM_SCL_28V			S5PV210_GPD1(3)
 #define GPIO_FM_SCL_28V_AF		2
-#endif
 #endif 
 
 #define GPIO_TSP_SDA_28V		S5PV210_GPD1(4)
@@ -367,13 +333,6 @@
 #define GPIO_T_FLASH_D3_AF		2
 
 #if !defined(CONFIG_S5PC110_DEMPSEY_BOARD)
-#if defined(CONFIG_ARIES_NTT)
-#define GPIO_GPG30			S5PV210_GPG3(0)
-
-#define GPIO_GPG31			S5PV210_GPG3(1)
-
-#define GPIO_FLM_SEL			S5PV210_GPG3(2)
-#else
 #if !defined(CONFIG_S5PC110_DEMPSEY_BOARD)
 //+ CG2900_GB
 #define GPIO_GPS_nRST			S5PV210_GPG3(0)
@@ -386,7 +345,6 @@
 #define GPIO_GPS_CLK_INT		S5PV210_GPG3(2)
 #else
 #define GPIO_GPG32			S5PV210_GPG3(2)
-#endif
 #endif
 
 #define GPIO_TA_CURRENT_SEL_AP		S5PV210_GPG3(3)
@@ -418,11 +376,7 @@
 #define GPIO_AP_PMIC_IRQ_AF		0xFF
 
 #if !defined(CONFIG_S5PC110_DEMPSEY_BOARD)
-#if defined(CONFIG_ARIES_NTT)
-#define GPIO_FUEL_INT_N			S5PV210_GPH1(0)
-#else
 #define GPIO_GPH10			S5PV210_GPH1(0)
-#endif
 
 #define GPIO_GPH11			S5PV210_GPH1(1)
 
@@ -453,12 +407,8 @@
 #endif
 #endif
 
-#if defined(CONFIG_ARIES_NTT)
-#define GPIO_GPH17			S5PV210_GPH1(7)
-#else
 #define GPIO_PHONE_ACTIVE		S5PV210_GPH1(7)
 #define GPIO_PHONE_ACTIVE_AF		2
-#endif
 
 #define GPIO_KBC0			S5PV210_GPH2(0)
 #define GPIO_KBC0_AF			3
@@ -483,12 +433,7 @@
 #endif
 // ]] HDLNC_BP_pyoungkuenoh_20110223
 
-#if defined(CONFIG_ARIES_NTT)
-#define GPIO_PHONE_ACTIVE		S5PV210_GPH2(3)
-#define GPIO_PHONE_ACTIVE_AF		0xF
-#else
 #define GPIO_GPH23			S5PV210_GPH2(3)
-#endif
 
 #define GPIO_WLAN_HOST_WAKE		S5PV210_GPH2(4)
 #define GPIO_WLAN_HOST_WAKE_AF		0xF
@@ -526,11 +471,7 @@
 #if (defined CONFIG_S5PC110_HAWK_BOARD)
 
 #else
-#if defined(CONFIG_ARIES_NTT)
-#define GPIO_OK_KEY			S5PV210_GPH3(5)
-#else
 #define GPIO_MSENSE_IRQ			S5PV210_GPH3(5)
-#endif
 #endif
 // [[ HDLNC_BP_pyoungkuenoh_20110224
 #if defined(CONFIG_S5PC110_KEPLER_BOARD)|| defined(CONFIG_S5PC110_DEMPSEY_BOARD) 
@@ -596,20 +537,6 @@
 
 #define GPIO_CAM_MEGA_nRST		S5PV210_GPJ1(5)
 
-#if defined(CONFIG_ARIES_NTT)
-#define GPIO_GPJ20			S5PV210_GPJ2(0)
-
-#define GPIO_GPJ21			S5PV210_GPJ2(1)
-
-#define GPIO_OLED_DET			S5PV210_GPJ2(2)
-
-#define GPIO_GPJ23			S5PV210_GPJ2(3)
-
-#define GPIO_USIM_BOOT			S5PV210_GPJ2(4)
-
-#define GPIO_SUB_MICBIAS_EN		S5PV210_GPJ2(5)
-
-#else
 #define GPIO_FLASH_EN			S5PV210_GPJ2(0)
 
 #define GPIO_CAM_FLASH_EN_SET		S5PV210_GPJ2(1)
@@ -620,7 +547,6 @@
 
 #define GPIO_FM_INT			S5PV210_GPJ2(4)
 #define GPIO_FM_RST			S5PV210_GPJ2(5)	
-#endif
 
 #define GPIO_EARPATH_SEL		S5PV210_GPJ2(6)
 #endif
@@ -634,12 +560,8 @@
 #define _3_GPIO_TOUCH_EN		S5PV210_GPJ3(2)
 #define _3_GPIO_TOUCH_EN_AF		1
 
-#if defined(CONFIG_ARIES_NTT)
-#define GPIO_GPJ33			S5PV210_GPJ3(3)
-#else
 #define _3_GPIO_TOUCH_CE		S5PV210_GPJ3(3)
 #define _3_GPIO_TOUCH_ST_AF		1
-#endif
 #endif
 
 #define GPIO_USB_SDA_28V		S5PV210_GPJ3(4)

@@ -244,7 +244,6 @@ static ssize_t hwrev_show(struct device *dev, struct device_attribute *attr, cha
 
 static DEVICE_ATTR(hwrev, S_IRUGO, hwrev_show, NULL);
 
-#if !defined(CONFIG_ARIES_NTT)
 static void gps_gpio_init(void)
 {
 	struct device *gps_dev;
@@ -278,7 +277,6 @@ static void gps_gpio_init(void)
  err:
 	return;
 }
-#endif
 
 static void aries_switch_init(void)
 {
@@ -418,7 +416,6 @@ static struct s3cfb_lcd s6e63m0 = {
 #define  S5PV210_VIDEO_SAMSUNG_MEMSIZE_FIMC0 (12288 * SZ_1K)
 #define  S5PV210_VIDEO_SAMSUNG_MEMSIZE_FIMC1 (9900 * SZ_1K)
 #define  S5PV210_VIDEO_SAMSUNG_MEMSIZE_FIMC2 (12288 * SZ_1K)
-#if !defined(CONFIG_ARIES_NTT)   
 //#if  defined(CONFIG_S5PC110_DEMPSEY_BOARD)/* Dempsey - support playing 1080p */	
 //#define  S5PV210_VIDEO_SAMSUNG_MEMSIZE_MFC0 (36864 * SZ_1K)
 //#define  S5PV210_VIDEO_SAMSUNG_MEMSIZE_MFC1 (36864 * SZ_1K)
@@ -426,10 +423,6 @@ static struct s3cfb_lcd s6e63m0 = {
 #define  S5PV210_VIDEO_SAMSUNG_MEMSIZE_MFC0 (32768 * SZ_1K)
 #define  S5PV210_VIDEO_SAMSUNG_MEMSIZE_MFC1 (32768 * SZ_1K)
 //#endif
-#else    /* NTT - support playing 1080p */
-#define  S5PV210_VIDEO_SAMSUNG_MEMSIZE_MFC0 (36864 * SZ_1K)
-#define  S5PV210_VIDEO_SAMSUNG_MEMSIZE_MFC1 (36864 * SZ_1K)
-#endif
 #define  S5PV210_VIDEO_SAMSUNG_MEMSIZE_FIMD (3000 * SZ_1K)
 
 #if defined(CONFIG_S5PC110_DEMPSEY_BOARD)
@@ -1591,17 +1584,10 @@ static struct max8998_adc_table_data temper_table[] =  {
 	{  293,  620 },
 	{  299,  610 },
 	{  306,  600 },
-#if !defined(CONFIG_ARIES_NTT)
 	{  324,  590 },
 	{  341,  580 },
 	{  354,  570 },
 	{  368,  560 },
-#else
-	{  310,  590 },
-	{  315,  580 },
-	{  320,  570 },
-	{  324,  560 },
-#endif
 	{  381,  550 },
 	{  396,  540 },
 	{  411,  530 },
@@ -1656,17 +1642,10 @@ static struct max8998_adc_table_data temper_table[] =  {
 	{ 1468,   40 },
 	{ 1491,   30 },
 	{ 1513,   20 },
-#if !defined(CONFIG_ARIES_NTT)
 	{ 1536,   10 },
 	{ 1559,    0 },
 	{ 1577,  -10 },
 	{ 1596,  -20 },
-#else
-	{ 1518,   10 },
-	{ 1524,    0 },
-	{ 1544,  -10 },
-	{ 1570,  -20 },
-#endif
 	{ 1614,  -30 },
 	{ 1619,  -40 },
 	{ 1632,  -50 },
@@ -2243,7 +2222,6 @@ static struct platform_device s3c_device_i2c7 = {
 	.dev.platform_data	= &i2c7_platdata,
 };
 #if !(defined (CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_KEPLER_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)  || defined (CONFIG_S5PC110_DEMPSEY_BOARD)) 
-#if !defined(CONFIG_ARIES_NTT)
 static struct i2c_gpio_platform_data i2c8_platdata = {
 	.sda_pin		= GPIO_FM_SDA_28V,
 	.scl_pin		= GPIO_FM_SCL_28V,
@@ -2258,7 +2236,6 @@ static struct platform_device s3c_device_i2c8 = {
 	.id			= 8,
 	.dev.platform_data	= &i2c8_platdata,
 };
-#endif
 #endif // NAGSM_Android_HQ_KERNEL_MINJEONGKO_20100806 for hwak temp key --
 
 static struct i2c_gpio_platform_data i2c9_platdata = {
@@ -2622,12 +2599,7 @@ static void set_shared_mic_bias(void)
 	gpio_set_value(GPIO_EARPATH_SEL, wm8994_mic_bias || jack_mic_bias);
 #else
 // ]] HDLNC_BP_pyoungkuenoh_20110223	
-#if !defined(CONFIG_ARIES_NTT)
 	gpio_set_value(GPIO_MICBIAS_EN, wm8994_mic_bias || jack_mic_bias);
-#else
-	gpio_set_value(GPIO_MICBIAS_EN, wm8994_mic_bias);
-	gpio_set_value(GPIO_SUB_MICBIAS_EN, jack_mic_bias);
-#endif
 	/* high : earjack, low: TV_OUT */
 	gpio_set_value(GPIO_EARPATH_SEL, wm8994_mic_bias || jack_mic_bias);
 #endif
@@ -6681,7 +6653,6 @@ static struct platform_device sec_device_btsleep = {
 	.id	= -1,
 };
 
-#if !defined(CONFIG_ARIES_NTT)
 static struct sec_jack_zone sec_jack_zones[] = {
 	{
 		/* adc == 0, unstable zone, default to 3pole if it stays
@@ -6751,64 +6722,7 @@ static struct sec_jack_zone sec_jack_zones[] = {
 		.jack_type = SEC_HEADSET_3POLE,
 	},
 };
-#else
-static struct sec_jack_zone sec_jack_zones[] = {
-	{
-		/* adc == 0, unstable zone, default to 3pole if it stays
-		 * in this range for 300ms (15ms delays, 20 samples)
-		 */
-		.adc_high = 0,
-		.delay_ms = 15,
-		.check_count = 20,
-		.jack_type = SEC_HEADSET_3POLE,
-	},
-	{
-		/* 0 < adc <= 500, unstable zone, default to 3pole if it stays
-		 * in this range for 800ms (10ms delays, 80 samples)
-		 */
-		.adc_high = 500,
-		.delay_ms = 10,
-		.check_count = 80,
-		.jack_type = SEC_HEADSET_3POLE,
-	},
-	{
-		/* 500 < adc <= 3300, 4 pole zone, default to 4pole if it
-		 * stays in this range for 800ms (10ms delays, 80 samples)
-		 */
-		.adc_high = 3300,
-		.delay_ms = 10,
-		.check_count = 10,
-		.jack_type = SEC_HEADSET_4POLE,
-	},
-	{
-		/* 3300 < adc <= 3400, unstable zone, default to 3pole if it
-		 * stays in this range for 800ms (10ms delays, 80 samples)
-		 */
-		.adc_high = 3400,
-		.delay_ms = 10,
-		.check_count = 80,
-		.jack_type = SEC_HEADSET_3POLE,
-	},
-	{
-		/* 3400 < adc <= 3600, 4 pole zone, default to 4 pole if it
-		 * stays in this range for 200ms (10ms delays, 20 samples)
-		 */
-		.adc_high = 3600,
-		.delay_ms = 10,
-		.check_count = 20,
-		.jack_type = SEC_HEADSET_4POLE,
-	},	
-	{
-		/* adc > 3600, unstable zone, default to 3pole if it stays
-		 * in this range for two seconds (10ms delays, 200 samples)
-		 */
-		.adc_high = 0x7fffffff,
-		.delay_ms = 10,
-		.check_count = 200,
-		.jack_type = SEC_HEADSET_3POLE,
-	},
-};
-#endif
+
 /* Only support one button of earjack in S1_EUR HW.
  * If your HW supports 3-buttons earjack made by Samsung and HTC,
  * add some zones here.
@@ -7098,7 +7012,6 @@ void config_sleep_gpio(void)
 #endif
 	printk(KERN_DEBUG "SLPGPIO : BT(%d) WLAN(%d) BT+WIFI(%d)\n",
 		gpio_get_value(GPIO_BT_nRST), gpio_get_value(GPIO_WLAN_nRST), gpio_get_value(GPIO_WLAN_BT_EN));
-#if !defined(CONFIG_ARIES_NTT)
 	printk(KERN_DEBUG "SLPGPIO : CODEC_LDO_EN(%d) MICBIAS_EN(%d) EARPATH_SEL(%d)\n",
 		gpio_get_value(GPIO_CODEC_LDO_EN), gpio_get_value(GPIO_MICBIAS_EN), gpio_get_value(GPIO_EARPATH_SEL));
 #if !defined(CONFIG_S5PC110_DEMPSEY_BOARD)
@@ -7106,10 +7019,6 @@ void config_sleep_gpio(void)
 		gpio_get_value(GPIO_PS_ON), gpio_get_value(GPIO_FM_RST), gpio_get_value(GPIO_UART_SEL));
 #else
 	printk(KERN_DEBUG "SLPGPIO : UART_SEL(%d)\n", gpio_get_value(GPIO_UART_SEL));
-#endif
-#else
-	printk(KERN_DEBUG "SLPGPIO : CODEC_LDO_EN(%d) MICBIAS_EN(%d) SUB_MICBIAS_EN(%d) EARPATH_SEL(%d)\n",
-	gpio_get_value(GPIO_CODEC_LDO_EN), gpio_get_value(GPIO_MICBIAS_EN), gpio_get_value(GPIO_SUB_MICBIAS_EN), gpio_get_value(GPIO_EARPATH_SEL));
 #endif
 
 #if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD) 
@@ -7659,9 +7568,6 @@ static void __init sound_init(void)
 #elif defined(CONFIG_S5PC110_HAWK_BOARD)
   	gpio_request(GPIO_MICBIAS_EN,  "micbias_enable");		 // GPJ4(2)
 	gpio_request(GPIO_MICBIAS_EN2, "sub_micbias_enable"); // GPJ2(5)
-#elif defined(CONFIG_ARIES_NTT)
-	gpio_request(GPIO_MICBIAS_EN, "micbias_enable");
-	gpio_request(GPIO_SUB_MICBIAS_EN, "sub_micbias_enable");
 #else
 	gpio_request(GPIO_MICBIAS_EN, "micbias_enable");
 #endif
@@ -7696,13 +7602,8 @@ static void __init aries_machine_init(void)
 	HWREV = HWREV | (gpio_get_value(GPIO_HWREV_MODE2) << 2);
 	s3c_gpio_cfgpin(GPIO_HWREV_MODE3, S3C_GPIO_INPUT);
 	s3c_gpio_setpull(GPIO_HWREV_MODE3, S3C_GPIO_PULL_NONE);
-#if !defined(CONFIG_ARIES_NTT)
 	HWREV = HWREV | (gpio_get_value(GPIO_HWREV_MODE3) << 3);
 	printk(KERN_INFO "HWREV is 0x%x\n", HWREV);
-#else
-	HWREV = 0x0E;
-	printk("HWREV is 0x%x\n", HWREV);
-#endif
 #if defined(CONFIG_S5PC110_HAWK_BOARD)
 	HWREV_HAWK = HWREV;	
 	HWREV = 0xa; // The last version of T959 and  : HWREV = 0xa;	
@@ -7871,9 +7772,7 @@ static void __init aries_machine_init(void)
 
 	aries_switch_init();
 	
-#if !defined(CONFIG_ARIES_NTT)
 	gps_gpio_init();
-#endif
 
 	aries_init_wifi_mem();
 

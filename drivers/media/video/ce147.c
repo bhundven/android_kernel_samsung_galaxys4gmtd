@@ -348,9 +348,6 @@ struct ce147_state {
 	int effect;
 	int wb;
 	struct tm *exifTimeInfo;
-#if defined(CONFIG_ARIES_NTT) /* Modify	NTTS1 */
-	int disable_aeawb_lock;
-#endif
 	int exif_ctrl;
 	int thumb_null;
 };
@@ -3421,14 +3418,6 @@ static int ce147_set_touch_auto_focus(struct v4l2_subdev *sd,
 	unsigned char ce147_buf_set_touch_af[11] = { 0x00, };
 	unsigned int ce147_len_set_touch_af = 11;
 
-#if defined(CONFIG_ARIES_NTT) /* Modify	NTTS1 */
-	err = ce147_set_awb_lock(sd, 0);
-	if (err < 0) {
-		dev_err(&client->dev, "%s: failed: ce147_set_awb_lock, "
-				"err %d\n", __func__, err);
-		return -EIO;
-	}
-#endif
 	/* get x,y touch position */
 	x = state->position.x;
 	y = state->position.y;
@@ -3494,15 +3483,6 @@ static int ce147_set_focus_mode(struct v4l2_subdev *sd,
 		|| (ctrl->value == FOCUS_MODE_MACRO_DEFAULT)
 		|| (ctrl->value == FOCUS_MODE_AUTO_DEFAULT)) {
 		/* || (ctrl->value == FOCUS_MODE_FD_DEFAULT)) */
-#if defined(CONFIG_ARIES_NTT) /* Modify	NTTS1 */
-		ce147_msg(&client->dev, "%s: unlock\n", __func__);
-		err = ce147_set_awb_lock(sd, 0);
-		if (err < 0) {
-			dev_err(&client->dev, "%s: failed: ce147_set_awb_"
-					"unlock, err %d\n", __func__, err);
-			return -EIO;
-		}
-#endif
 		/* pr_debug("[5B] ce147_set_focus_mode: %d\n",
 				ce147_buf_set_focus_mode[0]); */
 		err = ce147_get_focus_mode(client, CMD_SET_AUTO_FOCUS_MODE,
@@ -4104,18 +4084,6 @@ static int ce147_get_auto_focus_status(struct v4l2_subdev *sd,
 				|| ce147_buf_get_af_status[0] == 0x02
 				|| ce147_buf_get_af_status[0] == 0x04)
 			break;
-
-#if defined(CONFIG_ARIES_NTT) /* Modify	NTTS1 */
-		if ((ctrl->value == 2) && !state->disable_aeawb_lock) {
-			err = ce147_set_awb_lock(sd, 1);
-			if (err < 0) {
-				dev_err(&client->dev, "%s: failed: "
-						"ce147_set_awb_lock, err %d\n",
-						__func__, err);
-				return -EIO;
-			}
-		}
-#endif
 	}
 
 	ctrl->value = FOCUS_MODE_AUTO_DEFAULT;
@@ -5107,13 +5075,6 @@ static int ce147_s_ctrl(struct v4l2_subdev *sd, struct v4l2_control *ctrl)
 		state->fw_info.size = ctrl->value;
 		err = 0;
 		break;
-
-#if defined(CONFIG_ARIES_NTT) /* Modify	NTTS1 */
-	case V4L2_CID_CAMERA_AE_AWB_DISABLE_LOCK:
-		state->disable_aeawb_lock = ctrl->value;
-		err = 0;
-		break;
-#endif
 
 	case V4L2_CID_CAM_FW_VER:
 		err = ce147_get_fw_data(sd);
