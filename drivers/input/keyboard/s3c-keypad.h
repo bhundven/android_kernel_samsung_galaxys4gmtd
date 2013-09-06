@@ -27,8 +27,6 @@ static void __iomem *key_base;
 int keypad_keycode[] = {
 #if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 	50,0,0,0,42,58,
-#elif defined (CONFIG_FLEMING_VER_B0)
-	158,107,42,58,28,139,34,8,
 #else
 	50,0,0,0,58,42,
 #endif

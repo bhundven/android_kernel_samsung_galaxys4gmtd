@@ -87,24 +87,18 @@ static struct resource mdmctl_res[] = {
 		.flags = IORESOURCE_IRQ,
 		},
 #if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)	|| defined(CONFIG_S5PC110_SIDEKICK_BOARD)
-	#if defined (CONFIG_CP_CHIPSET_STE)
-		[1] = {
-			.start = IRQ_EINT12,
-			.end = IRQ_EINT12,
-			.flags = IORESOURCE_IRQ,
-			},
-		[2] = {
-			.start = IRQ_EINT9,
-			.end = IRQ_EINT9,
-			.flags = IORESOURCE_IRQ,
-			},
-	#endif
-#elif !(defined(CONFIG_S5PC110_FLEMING_BOARD)) // irq_eint(27) is used for fuel_int 
+#if defined (CONFIG_CP_CHIPSET_STE)
 	[1] = {
-		.start = IRQ_EINT(27),
-		.end = IRQ_EINT(27),
+		.start = IRQ_EINT12,
+		.end = IRQ_EINT12,
 		.flags = IORESOURCE_IRQ,
 		},
+	[2] = {
+		.start = IRQ_EINT9,
+		.end = IRQ_EINT9,
+		.flags = IORESOURCE_IRQ,
+		},
+#endif
 #endif
 	};
 

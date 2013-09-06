@@ -1126,7 +1126,7 @@ static int __devinit modemctl_probe(struct platform_device *pdev)
 	}
 	irq_phone_active = res->start;
 
-#if !(defined(CONFIG_S5PC110_CELOX_BOARD) || defined(CONFIG_S5PC110_FLEMING_BOARD)|| defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD))
+#if !(defined(CONFIG_S5PC110_CELOX_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD))
 
 	res = platform_get_resource(pdev, IORESOURCE_IRQ, 1);
 	if(!res)  {
@@ -1270,7 +1270,7 @@ static int __devinit modemctl_probe(struct platform_device *pdev)
 	mc->irq_phone_active = irq_phone_active;
 #endif
 
-#if !(defined(CONFIG_S5PC110_FLEMING_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD))
+#if !(defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD))
 
 	setup_timer(&mc->sim_irq_debounce_timer, (void*)sim_irq_debounce_timer_func,(unsigned long)mc);
 

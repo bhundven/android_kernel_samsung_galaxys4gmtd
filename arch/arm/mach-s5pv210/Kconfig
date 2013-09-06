@@ -165,14 +165,6 @@ config S5PC110_VIBRANTPLUS_BOARD
         select S3C_DEV_HSMMC2
 	help
 		select NA USA Board		
-		
-config S5PC110_FLEMING_BOARD
-	bool "S5PC110_fleming"
-	select S3C_DEV_HSMMC
-	select S3C_DEV_HSMMC1 if !S5PV210_SD_CH0_8BIT
-        select S3C_DEV_HSMMC2
-	help
-		select NA USA Board 
 
 endchoice 
 
@@ -184,17 +176,6 @@ config VIBRANTPLUS_VER_B0
          depends on S5PC110_VIBRANTPLUS_BOARD
         help
          add VIBRANTPLUS ver B0 option 
-endchoice 
-
-choice 
-	prompt "Select FLEMING BOARD VERSION"
-	
-config FLEMING_VER_B0
-        bool "add fleming VERSION"
-         depends on S5PC110_FLEMING_BOARD
-        help
-         add fleming ver B0 option 
-         
 endchoice 
 
 config GPS_CHIPSET_STE_GNS7560
