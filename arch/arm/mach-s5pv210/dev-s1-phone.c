@@ -121,7 +121,7 @@ static struct resource mdmctl_res[] = {
 			.flags = IORESOURCE_IRQ,
 			},
 	#endif
-#elif !(defined(CONFIG_S5PC110_T959_BOARD) || defined(CONFIG_S5PC110_FLEMING_BOARD)   ) // irq_eint(27) is used for fuel_int 
+#elif !(defined(CONFIG_S5PC110_FLEMING_BOARD)) // irq_eint(27) is used for fuel_int 
 	[1] = {
 		.start = IRQ_EINT(27),
 		.end = IRQ_EINT(27),

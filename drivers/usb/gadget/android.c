@@ -97,9 +97,7 @@ void get_usb_serial(char *usb_serial_number)
 	
 	serial_number = (system_serial_high << 16) + (system_serial_low >> 16);
 //[HDLNC_Kepler++]
-#if defined(CONFIG_S5PC110_T959_BOARD)
-	sprintf(temp_serial_number,"T959%08x",serial_number);
-#elif defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 	sprintf(temp_serial_number,"T959%08x",serial_number);
 #elif defined(CONFIG_S5PC110_FLEMING_BOARD)
 	sprintf(temp_serial_number,"I887%08x",serial_number);

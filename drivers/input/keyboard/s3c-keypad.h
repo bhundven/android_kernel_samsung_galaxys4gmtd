@@ -25,7 +25,7 @@ static void __iomem *key_base;
 
 #ifdef CONFIG_ANDROID
 int keypad_keycode[] = {
-#if defined (CONFIG_T959_VER_B5) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 	50,0,0,0,42,58,
 #elif defined (CONFIG_S5PC110_HAWK_BOARD) /* nat */
 	50,158,28,107,42,58,
