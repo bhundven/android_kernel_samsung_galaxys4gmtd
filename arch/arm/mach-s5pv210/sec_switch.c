@@ -28,7 +28,7 @@
 #include <mach/param.h>
 #include <mach/gpio.h>
 #if !defined(CONFIG_S5PC110_HAWK_BOARD)
-#include <mach/gpio-p1.h>
+#include <mach/gpio-aries.h>
 #endif
 #include <mach/sec_switch.h>
 #include <mach/regs-clock.h>
