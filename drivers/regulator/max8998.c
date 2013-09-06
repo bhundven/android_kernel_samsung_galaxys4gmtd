@@ -684,7 +684,7 @@ static struct regulator_desc regulators[] = {
 	}
 };
 
-#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 struct i2c_client * max8998_I2CPTR;
 EXPORT_SYMBOL(max8998_I2CPTR);
 #endif
@@ -720,7 +720,7 @@ static __devinit int max8998_pmic_probe(struct platform_device *pdev)
 	max8998->num_regulators = pdata->num_regulators;
 	platform_set_drvdata(pdev, max8998);
 	i2c = max8998->iodev->i2c;
-#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
        max8998_I2CPTR = i2c;
 #endif	   
 	/* NOTE: */

@@ -456,17 +456,13 @@ static struct clk init_clocks_disable[] = {
 		.parent		= &clk_pclk_psys.clk,
 		.enable		= s5pv210_clk_ip3_ctrl,
 		.ctrlbit	= (1<<14),
-	}, 
-#if ! defined(CONFIG_S5PC110_HAWK_BOARD)
-	{
+	}, {
 		.name		= "timers",
 		.id		= -1,
 		.parent		= &clk_pclk_psys.clk,
 		.enable		= s5pv210_clk_ip3_ctrl,
 		.ctrlbit	= (1<<23),
-	}, 
-#endif
-	{
+	}, {
 		.name		= "adc",
 		.id		= -1,
 		.parent		= &clk_pclk_psys.clk,
@@ -664,15 +660,6 @@ static struct clk init_clocks[] = {
 		.id		= -1,
 		.ops		= &s5pc11x_clkout_ops,
 	},
-#if  defined(CONFIG_S5PC110_HAWK_BOARD)
-	{
-		.name		= "timers",
-		.id		= -1,
-		.parent		= &clk_pclk_psys.clk,
-		.enable		= s5pv210_clk_ip3_ctrl,
-		.ctrlbit	= (1<<23),
-	}, 
-#endif
 #ifdef CONFIG_VIDEO_FIMC_MIPI
 	{
 	       .name           = "csis",

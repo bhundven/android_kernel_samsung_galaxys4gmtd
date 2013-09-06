@@ -179,21 +179,6 @@ enum v4l2_flash_mode {
 	FLASH_MODE_MAX,
 };
 
-#if defined (CONFIG_S5PC110_HAWK_BOARD)
-#define V4L2_CID_CAMERA_BRIGHTNESS		(V4L2_CID_PRIVATE_BASE + 72)
-enum v4l2_ev_mode {
-	EV_MINUS_4 = -4,
-	EV_MINUS_3 = -3,
-	EV_MINUS_2 = -2,
-	EV_MINUS_1 = -1,
-	EV_DEFAULT  = 0,
-	EV_PLUS_1    = 1,
-	EV_PLUS_2    = 2,
-	EV_PLUS_3    = 3,
-	EV_PLUS_4    = 4,
-	EV_MAX,
-};
-#else
 #define V4L2_CID_CAMERA_BRIGHTNESS		(V4L2_CID_PRIVATE_BASE + 72)
 enum v4l2_ev_mode {
 	EV_MINUS_4 = 0,
@@ -207,7 +192,6 @@ enum v4l2_ev_mode {
 	EV_PLUS_4,
 	EV_MAX,
 };
-#endif
 
 #define V4L2_CID_CAMERA_WHITE_BALANCE		(V4L2_CID_PRIVATE_BASE + 73)
 enum v4l2_wb_mode {

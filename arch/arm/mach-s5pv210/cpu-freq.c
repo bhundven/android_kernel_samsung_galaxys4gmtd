@@ -97,27 +97,6 @@ static struct s5pv210_dvs_conf dvs_conf[] = {
 		.arm_volt   = 1000000,
 		.int_volt   = 1000000,
 	},
-#elif defined(CONFIG_S5PC110_HAWK_BOARD)
-	[L0] = {
-		.arm_volt   = 1300000,
-		.int_volt   = 1125000,
-	},
-	[L1] = {
-		.arm_volt   = 1225000,
-		.int_volt   = 1125000,
-	},
-	[L2] = {
-		.arm_volt   = 1075000,
-		.int_volt   = 1125000,
-	},
-	[L3] = {
-		.arm_volt   = 975000,
-		.int_volt   = 1125000,
-	},
-	[L4] = {
-		.arm_volt   = 975000,
-		.int_volt   = 1025000,
-	},
 #else
 	[L0] = {
 		.arm_volt   = 1275000,

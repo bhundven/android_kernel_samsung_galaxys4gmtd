@@ -29,7 +29,7 @@
 #define BATT_MINIMUM		(-28)	/* 3.554V */
 #define BATT_OFF		(-128)	/* 3.4029V */
 
-#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 #define ATT_TMO_COMMON
 #endif
 
@@ -149,29 +149,7 @@ enum {
 };
 #endif
 
-
-#if defined (CONFIG_S5PC110_HAWK_BOARD)
-
-#define EVENT_TEMP_HIGH_BLOCK	       650  //  temper_table[85][0]		// 65 ¢ÆE°ÀcE
-#define EVENT_TEMP_HIGH_RECOVER	470  //  temper_table[75][0]		// 55 ¢ÆE°ÀcE
-
-#define TEMP_HIGH_BLOCK	              490  // temper_table[67][0]		// 46 ¢ÆE°ÀcE
-#define TEMP_HIGH_RECOVER	              410  // temper_table[60][0]		// 40 ¢ÆE°ÀcE
-#define TEMP_LOW_BLOCK		               -30  //  temper_table[19][0]		// 0 temp
-#define TEMP_LOW_RECOVER	               0   //  temper_table[24][0]		// 3 temp
-
-#define FULL_CHARGE_COND_VOLTAGE	 4100
-#define RECHARGE_COND_VOLTAGE        4140
-#define RECHARGE_COND_TIME		 (30*1000)
-
-#define CURRENT_OF_FULL_CHG		 240		//140mA
-#define CURRENT_OF_TOPOFF_CHG		 130		//78mA
-
-#define BATT_VF_MAX	800 // 0.55
-#define BATT_VF_MIN	       400 // 0.45
-
-#elif defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
-
+#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 #define EVENT_TEMP_HIGH_BLOCK	        680		// 68 °À¢ÁE   
 #define EVENT_TEMP_HIGH_RECOVER	 550		// 64 °À¢ÁE  // 55C
 

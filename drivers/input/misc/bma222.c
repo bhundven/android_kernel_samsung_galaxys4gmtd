@@ -38,12 +38,7 @@
  */
 #define BMA222_DEFAULT_DELAY            100
 #define BMA222_MAX_DELAY                2000
-#if defined (CONFIG_S5PC110_HAWK_BOARD) 
-#define BMA222_FILTER_LEN        			8 /* nat */
-#define BMA222_DEFAULT_THRESHOLD        5
-#else
 #define BMA222_DEFAULT_THRESHOLD        0
-#endif
 
 /*
  * Registers
@@ -290,26 +285,15 @@ struct bma222_odr {
 };
 
 static const struct bma222_odr bma222_odr_table[] = {
-#if ! defined (CONFIG_S5PC110_HAWK_BOARD) /* nathan */
     {1,   BMA222_BANDWIDTH_1000HZ},
     {2,   BMA222_BANDWIDTH_500HZ},
     {4,   BMA222_BANDWIDTH_250HZ}, 
     {8,   BMA222_BANDWIDTH_125HZ},
-#endif
     {16,  BMA222_BANDWIDTH_63HZ},
     {32,  BMA222_BANDWIDTH_32HZ},
     {64,  BMA222_BANDWIDTH_16HZ},
     {128, BMA222_BANDWIDTH_8HZ},
 };
-
-#if defined (CONFIG_S5PC110_HAWK_BOARD) 
-struct bma222_fir_filter {
-	int num;
-	int filter_len;
-	int index;
-	int32_t sequence[BMA222_FILTER_LEN];
-};
-#endif
 
 /*
  * Transformation matrix for chip mounting position
@@ -340,9 +324,6 @@ struct bma222_data {
     struct input_dev *input;
     struct delayed_work work;
     struct miscdevice bma222_device;
-#if defined (CONFIG_S5PC110_HAWK_BOARD) 
-    struct bma222_fir_filter filter[3];
-#endif
 #if DEBUG
     int suspend;
 #endif
@@ -358,76 +339,6 @@ struct bma222_data {
 #define bma222_update_bits(p,r,v) \
     i2c_smbus_write_byte_data((p)->client, r##_REG, \
                               ((i2c_smbus_read_byte_data((p)->client,r##_REG) & ~r##_MASK) | (((v) << r##_SHIFT) & r##_MASK)))
-
-#if defined (CONFIG_S5PC110_HAWK_BOARD) 
-static void fir_filter_init(struct bma222_fir_filter *filter, int len)
-{
-	int i;
-
-	filter->num = 0;
-	filter->index = 0;
-	filter->filter_len = len;
-
-	for (i = 0; i < filter->filter_len; ++i)
-		filter->sequence[i] = 0;
-}
-
-static int fir_filter_filter(struct bma222_fir_filter *filter, int in)
-{
-	int out = 0;
-	int i;
-
-	if (filter->filter_len == 0)
-		return in;
-	if (filter->num < filter->filter_len) {
-		filter->sequence[filter->index++] = in;
-		filter->num++;
-		return in;
-	} else {
-		if (filter->filter_len <= filter->index)
-			filter->index = 0;
-		filter->sequence[filter->index++] = in;
-
-		for (i = 0; i < filter->filter_len; i++)
-			out += filter->sequence[i];
-		return out / filter->filter_len;
-	}
-}
-
-static void filter_init(struct bma222_data *bma222)
-{
-	int i;
-
-	for (i = 0; i < 3; i++)
-		fir_filter_init(&bma222->filter[i], BMA222_FILTER_LEN);
-}
-
-static void filter_filter(struct bma222_data *bma222, int *orig, int *filtered)
-{
-	int i;
-
-	for (i = 0; i < 3; i++)
-		filtered[i] = fir_filter_filter(&bma222->filter[i], orig[i]);
-}
-
-/* 
-static void filter_stabilizer(struct bma222_data *bma222, int *orig, int *stabled)
-{
-	int i;
-	static int buffer[3] = { 0, };
-
-	for (i = 0; i < 3; i++) {
-		if ((buffer[i] - orig[i] >= BMA023_STABLE_TH)
-			|| (buffer[i] - orig[i] <= -BMA023_STABLE_TH)) {
-			stabled[i] = orig[i];
-			buffer[i] = stabled[i];
-		} else
-			stabled[i] = buffer[i];
-	}
-}
-*/
-
-#endif
 
 /*
  * Device dependant operations
@@ -646,9 +557,6 @@ static int bma222_measure(struct bma222_data *bma222, struct acceleration *accel
 #if DEBUG_DELAY
     struct timespec t;
 #endif
-#if defined (CONFIG_S5PC110_HAWK_BOARD) 
-    int filtered_data[3];
-#endif
 
 #if DEBUG_DELAY
     getnstimeofday(&t);
@@ -688,12 +596,7 @@ static int bma222_measure(struct bma222_data *bma222, struct acceleration *accel
              raw[0], raw[1], raw[2], data[0], data[1], data[2]);
 #endif
 
-#if defined (CONFIG_S5PC110_HAWK_BOARD) 
-    filter_filter(bma222, data, filtered_data); /* filter out sizzling values */
-    bma222_data_filter(bma222, accel, filtered_data);
-#else
     bma222_data_filter(bma222, accel, data);
-#endif  
 
     return 0;
 }
@@ -1124,10 +1027,6 @@ static int bma222_probe(struct i2c_client *client, const struct i2c_device_id *i
     bma222_set_delay(&client->dev, BMA222_DEFAULT_DELAY);
     bma222_set_position(&client->dev, CONFIG_INPUT_BMA222_POSITION);
     bma222_set_threshold(&client->dev, BMA222_DEFAULT_THRESHOLD);
-    
-#if defined (CONFIG_S5PC110_HAWK_BOARD) 
-    filter_init(bma222);
-#endif
 
     /* setup driver interfaces */
     INIT_DELAYED_WORK(&bma222->work, bma222_work_func);

@@ -1375,11 +1375,7 @@ static void sdhci_tasklet_card(unsigned long param)
 	}
 
 	spin_unlock_irqrestore(&host->lock, flags);
-#if defined (CONFIG_S5PC110_HAWK_BOARD)
-		mmc_detect_change(host->mmc, msecs_to_jiffies(300));
-#else
 	mmc_detect_change(host->mmc, msecs_to_jiffies(200));
-#endif
 }
 
 static void sdhci_tasklet_finish(unsigned long param)
@@ -1771,12 +1767,10 @@ int sdhci_resume_host(struct sdhci_host *host)
 	int ret = 0;
 	struct mmc_host *mmc = host->mmc;
 
-#if ! defined (CONFIG_S5PC110_HAWK_BOARD) 
 	/* 20110125 - power on moviNAND in case of 27nm moviNAND */
 	if(mmc->card && (mmc->card->type==MMC_TYPE_MMC)) {
 		gpio_set_value(GPIO_MASSMEMORY_EN, 1);	
 	}
-#endif
 
 	if (host->vmmc) {
 		int ret = regulator_enable(host->vmmc);

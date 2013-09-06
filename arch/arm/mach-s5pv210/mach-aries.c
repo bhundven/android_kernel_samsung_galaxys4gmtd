@@ -52,9 +52,7 @@
 #include <mach/regs-clock.h>
 #include <mach/gpio.h>
 #include <mach/gpio-aries.h>
-#if  defined (CONFIG_S5PC110_HAWK_BOARD)
-#include <mach/gpio-settings-hawk.h>
-#elif  defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 #include <mach/gpio-settings-vibrantplus.h>
 #else
 #include <mach/gpio-settings.h>
@@ -92,7 +90,7 @@
 #include <media/s5ka3dfx_platform.h>
 #include <media/s5k4ecgx.h>
 
-#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD)
+#if defined (CONFIG_S5PC110_SIDEKICK_BOARD)
 #include <media/s5k5ccgx_platform.h>
 #include <media/sr030pc30_platform.h>
 #endif
@@ -171,11 +169,6 @@ EXPORT_SYMBOL(sec_get_param_value);
 #define WLAN_SECTION_SIZE_3	(PREALLOC_WLAN_BUF_NUM * 1024)
 
 #define WLAN_SKB_BUF_NUM	17
-
-#if defined(CONFIG_S5PC110_HAWK_BOARD)
-unsigned int HWREV_HAWK=0;
-EXPORT_SYMBOL(HWREV_HAWK);
-#endif
 
 #if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 unsigned int VPLUSVER=0;
@@ -306,7 +299,7 @@ static struct s3c2410_uartcfg aries_uartcfgs[] __initdata = {
 		.flags		= 0,
 		.ucon		= S5PV210_UCON_DEFAULT,
 		.ulcon		= S5PV210_ULCON_DEFAULT,
-#if defined(CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 		.ufcon		 = S3C2410_UFCON_FIFOMODE | S5PV210_UFCON_TXTRIG64 | S5PV210_UFCON_RXTRIG1, // -> RX trigger leve : 8byte.
 #else
 		.ufcon		= S5PV210_UFCON_DEFAULT,
@@ -330,34 +323,6 @@ static struct s3c2410_uartcfg aries_uartcfgs[] __initdata = {
 	},
 };
 
-#if defined (CONFIG_S5PC110_HAWK_BOARD) /* nat */
-static struct s3cfb_lcd s6e63m0 = {
-	.width = 480,
-	.height = 800,
-	.p_width = 52,
-	.p_height = 86,
-	.bpp = 24,
-	.freq = 60,
-	
-  .timing = {
-    .h_fp = 82, 
-    .h_bp = 2, 
-    .h_sw = 4,  
-    .v_fp = 5,  
-    .v_fpe = 1,
-    .v_bp = 1,
-    .v_bpe = 1,
-    .v_sw = 2,
-    },
-
-	.polarity = {
-		.rise_vclk = 1,
-		.inv_hsync = 1,
-		.inv_vsync = 1,
-		.inv_vden = 0, 
-	},
-};
-#else
 static struct s3cfb_lcd s6e63m0 = {
 	.width = 480,
 	.height = 800,
@@ -383,7 +348,6 @@ static struct s3cfb_lcd s6e63m0 = {
 		.inv_vden = 1,
 	},
 };
-#endif
 
 #if 0
 #define  S5PV210_VIDEO_SAMSUNG_MEMSIZE_FIMC0 (14745 * SZ_1K)
@@ -507,7 +471,7 @@ static struct regulator_consumer_supply ldo3_consumer[] = {
 	REGULATOR_SUPPLY("usb_io", NULL),
 };
 
-#if defined(CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 static struct regulator_consumer_supply ldo4_consumer[] = {
 	REGULATOR_SUPPLY("vadcldo4", NULL),
 };
@@ -516,7 +480,7 @@ static struct regulator_consumer_supply ldo5_consumer[] = {
 	REGULATOR_SUPPLY("vtf", NULL),
 };
 
-#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined(CONFIG_S5PC110_HAWK_BOARD)
+#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 static struct regulator_consumer_supply ldo6_consumer[] = {
 	REGULATOR_SUPPLY("cp_rtc", NULL),
 };
@@ -534,7 +498,7 @@ static struct regulator_consumer_supply ldo8_consumer[] = {
 };
 
 //#if defined(CONFIG_VIDEO_S5K5CCGX) || defined(CONFIG_VIDEO_SR030PC30)
-#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD)
+#if defined (CONFIG_S5PC110_SIDEKICK_BOARD)
 static struct regulator_consumer_supply ldo11_consumer[] = {
 	REGULATOR_SUPPLY("cam_vga_af", NULL),
 };
@@ -545,7 +509,7 @@ static struct regulator_consumer_supply ldo11_consumer[] = {
 #endif
 
 //#if defined(CONFIG_VIDEO_S5K5CCGX) || defined(CONFIG_VIDEO_SR030PC30)
-#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD)
+#if defined (CONFIG_S5PC110_SIDEKICK_BOARD)
 static struct regulator_consumer_supply ldo12_consumer[] = {
 	REGULATOR_SUPPLY("cam_vga_avdd", NULL),
 };
@@ -567,19 +531,12 @@ static struct regulator_consumer_supply ldo13_consumer[] = {
 #endif
 
 
-#if defined (CONFIG_S5PC110_HAWK_BOARD) 
-static struct regulator_consumer_supply ldo14_consumer[] = {
-	REGULATOR_SUPPLY("key_led", NULL),
-};
-#else
 static struct regulator_consumer_supply ldo14_consumer[] = {
 	REGULATOR_SUPPLY("vga_dvdd", NULL),
 };
-#endif
-
 
 //#if defined(CONFIG_VIDEO_S5K5CCGX) || defined(CONFIG_VIDEO_SR030PC30)
-#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD)
+#if defined (CONFIG_S5PC110_SIDEKICK_BOARD)
 static struct regulator_consumer_supply ldo15_consumer[] = {
 	REGULATOR_SUPPLY("vga_core", NULL),
 };
@@ -590,7 +547,7 @@ static struct regulator_consumer_supply ldo15_consumer[] = {
 #endif
 
 //#if defined(CONFIG_VIDEO_S5K5CCGX) || defined(CONFIG_VIDEO_SR030PC30)
-#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD)
+#if defined (CONFIG_S5PC110_SIDEKICK_BOARD)
 static struct regulator_consumer_supply ldo16_consumer[] = {
 	REGULATOR_SUPPLY("cam_vga_vddio", NULL),
 };
@@ -612,7 +569,7 @@ static struct regulator_consumer_supply buck2_consumer[] = {
 	REGULATOR_SUPPLY("vddint", NULL),
 };
 //#if defined(CONFIG_VIDEO_S5K5CCGX) || defined(CONFIG_VIDEO_SR030PC30)
-#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD)
+#if defined (CONFIG_S5PC110_SIDEKICK_BOARD)
 static struct regulator_consumer_supply buck4_consumer[] = {
 	REGULATOR_SUPPLY("cam_core", NULL),
 };
@@ -650,7 +607,7 @@ static struct regulator_init_data aries_ldo3_data = {
 	.consumer_supplies	= ldo3_consumer,
 };
 
-#if defined(CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 static struct regulator_init_data aries_ldo4_data = {
 	.constraints	= {
 		.name		= "VADC_3.3V",
@@ -697,7 +654,7 @@ static struct regulator_init_data aries_ldo5_data = {
 	.consumer_supplies	= ldo5_consumer,
 };
 
-#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined(CONFIG_S5PC110_HAWK_BOARD)
+#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 static struct regulator_init_data aries_ldo6_data = {
 	.constraints	= {
 		.name		= "CP_RTC_1.8V",
@@ -759,7 +716,7 @@ static struct regulator_init_data aries_ldo9_data = {
 };
 
 //#if defined(CONFIG_VIDEO_S5K5CCGX) || defined(CONFIG_VIDEO_SR030PC30)
-#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD)
+#if defined (CONFIG_S5PC110_SIDEKICK_BOARD)
 static struct regulator_init_data aries_ldo11_data = {
 	.constraints	= {
 		.name		= "CAM_VGA_AF_2.8V",
@@ -792,7 +749,7 @@ static struct regulator_init_data aries_ldo11_data = {
 #endif
 
 //#if defined(CONFIG_VIDEO_S5K5CCGX) || defined(CONFIG_VIDEO_SR030PC30)
-#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD)
+#if defined (CONFIG_S5PC110_SIDEKICK_BOARD)
 static struct regulator_init_data aries_ldo12_data = {
 	.constraints	= {
 		.name		= "CAM_VGA_AVDD_2.8V",
@@ -857,22 +814,6 @@ static struct regulator_init_data aries_ldo13_data = {
 #endif
 
 
-#if defined (CONFIG_S5PC110_HAWK_BOARD)/* nat */
-static struct regulator_init_data aries_ldo14_data = {
-	.constraints	= {
-		.name		= "KEY_LED_1.8V",
-		.min_uV		= 1200000,
-		.max_uV		= 3300000,
-		.apply_uV	= 1,
-		.valid_ops_mask = REGULATOR_CHANGE_STATUS | REGULATOR_CHANGE_VOLTAGE,
-		.state_mem	= {
-			.disabled = 1,
-		},
-	},
-	.num_consumer_supplies	= ARRAY_SIZE(ldo14_consumer),
-	.consumer_supplies	= ldo14_consumer,
-};
-#else
 static struct regulator_init_data aries_ldo14_data = {
 	.constraints	= {
 		.name		= "VGA_DVDD_1.8V",
@@ -887,11 +828,9 @@ static struct regulator_init_data aries_ldo14_data = {
 	.num_consumer_supplies	= ARRAY_SIZE(ldo14_consumer),
 	.consumer_supplies	= ldo14_consumer,
 };
-#endif
-
 
 //#if defined(CONFIG_VIDEO_S5K5CCGX) || defined(CONFIG_VIDEO_SR030PC30)
-#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD)
+#if defined (CONFIG_S5PC110_SIDEKICK_BOARD)
 static struct regulator_init_data aries_ldo15_data = {
 	.constraints	= {
 		.name		= "VGA_CORE_1.8V",
@@ -924,7 +863,7 @@ static struct regulator_init_data aries_ldo15_data = {
 #endif
 
 //#if defined(CONFIG_VIDEO_S5K5CCGX) || defined(CONFIG_VIDEO_SR030PC30)
-#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD)
+#if defined (CONFIG_S5PC110_SIDEKICK_BOARD)
 static struct regulator_init_data aries_ldo16_data = {
 	.constraints	= {
 		.name		= "CAM_VGA_VDDIO_2.8V",
@@ -1021,7 +960,7 @@ static struct regulator_init_data aries_buck3_data = {
 };
 
 //#if defined(CONFIG_VIDEO_S5K5CCGX) || defined(CONFIG_VIDEO_SR030PC30)
-#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD)
+#if defined (CONFIG_S5PC110_SIDEKICK_BOARD)
 static struct regulator_init_data aries_buck4_data = {
 	.constraints	= {
 		.name		= "CAM_CORE_1.2V",
@@ -1058,7 +997,7 @@ static struct max8998_regulator_data aries_regulators[] = {
 	{ MAX8998_LDO3,  &aries_ldo3_data },
 	{ MAX8998_LDO4,  &aries_ldo4_data },
 	{ MAX8998_LDO5,  &aries_ldo5_data },
-#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined(CONFIG_S5PC110_HAWK_BOARD)
+#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 	{ MAX8998_LDO6,  &aries_ldo6_data },
 #endif	
 	{ MAX8998_LDO7,  &aries_ldo7_data },
@@ -1078,104 +1017,7 @@ static struct max8998_regulator_data aries_regulators[] = {
 };
 
 
-#if defined (CONFIG_S5PC110_HAWK_BOARD)
-static struct max8998_adc_table_data temper_table[] =  {
-	
-	/* ADC, Temperature (C) */
-	{ 206,		700	},
-	{ 220,		690	},
-	{ 230,		680	},
-	{ 264,		670	},
-	{ 274,		660	},
-	{ 284,		650	},
-	{ 294 ,		640	},
-	{ 304,		630	},
-	{ 315,		620	},
-	{ 328,		610	},
-	{ 338,		600	},  	//10
-	{ 348,		590	},
-	{ 360,		580	},
-	{ 370,		570	},
-	{ 382,		560	},
-	{ 395,		550	},
-	{ 407,		540	},
-	{ 420,		530	},
-	{ 433,		520	},
-	{ 448,		510	},
-	{ 463,		500	},	//20	
-	{ 478,		490	},
-	{ 495,		480	},
-	{ 510,		470	},
-	{ 530,		460	},
-	{ 546,		450	},
-	{ 562,		440	},
-	{ 582,		430	},
-	{ 600,		420	},
-	{ 618,		410	},
-	{ 635,		400	},	//30
-	{ 655,		390	},
-	{ 675,		380	},
-	{ 690,		370	},
-	{ 708,		360	},
-	{ 728,		350	},
-	{ 750,		340	},
-	{ 772,		330	},
-	{ 794,		320	},
-	{ 816,		310	},
-	{ 841,		300	},	//40
-	{ 865,		290	},
-	{ 889,		280	},
-	{ 913,		270	},
-	{ 937,		260	},
-	{ 963,		250	},
-	{ 987,		240	},
-	{ 1011,		230	},
-	{ 1035,		220	},
-	{ 1059,		210	},
-	{ 1086,		200	},	//50
-	{ 1110,		190	},
-	{ 1134,		180	},
-	{ 1158,		170	},
-	{ 1182,		160	},
-	{ 1206,		150	},
-	{ 1230,		140	},
-	{ 1254,		130	},
-	{ 1278,		120	},
-	{ 1302,		110	},
-	{ 1326,		100	},	//60
-	{ 1346,		90	},
-	{ 1366,		80	},
-	{ 1386,		70	},
-	{ 1406,		60	},
-	{ 1420,		50	},
-	{ 1450,		40	},
-	{ 1470,		30	},
-	{ 1495,		20	},
-	{ 1510,		10	},
-	{ 1530,		0	},	//70
-	{ 1547,		-10	},
-	{ 1565,		-20	},
-	{ 1583,		-30	},
-	{ 1610,		-40	},
-	{ 1635,		-50	},
-	{ 1649,		-60	},
-	{ 1663,		-70	},
-	{ 1677,		-80 },
-	{ 1691,		-90 },
-	{ 1705,		-100},	//80
-	{ 1722,		-110},
-	{ 1739,		-120},
-	{ 1756,		-130},
-	{ 1773,		-140},
-	{ 1790,		-150},
-	{ 1804,		-160},
-	{ 1818,		-170},
-	{ 1832,		-180},
-	{ 1846,		-190},
-	{ 1859,		-200},	//90	
-};
-
-#elif defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 static struct max8998_adc_table_data temper_table[] =  {
 	/* ADC, Temperature (C)  // froyo */
 	{ 206,		700	},
@@ -1376,9 +1218,6 @@ static struct max8998_platform_data max8998_pdata = {
 #if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 	.buck1_voltage_set	= { 1325000, 1250000, 1100000, 1000000 },
 	.buck2_voltage_set	= { 1100000, 1000000 },	
-#elif defined (CONFIG_S5PC110_HAWK_BOARD)
-	.buck1_voltage_set	= { 1300000, 1225000, 1075000, 975000 },
-	.buck2_voltage_set	= { 1125000, 1025000 },
 #else
 	.buck1_voltage_set	= { 1275000, 1200000, 1050000, 950000 },
 	.buck2_voltage_set	= { 1100000, 1000000 },
@@ -1417,15 +1256,6 @@ static void tl2796_cfg_gpio(struct platform_device *pdev)
 	s3c_gpio_setpull(GPIO_OLED_DET, S3C_GPIO_PULL_NONE);
 	s3c_gpio_setpull(GPIO_OLED_ID, S3C_GPIO_PULL_NONE);
 	s3c_gpio_setpull(GPIO_DIC_ID, S3C_GPIO_PULL_NONE);
-
-#if defined (CONFIG_S5PC110_HAWK_BOARD)/* nat */
-	/* DISPLAY_SDO*/
-	s3c_gpio_cfgpin(GPIO_DISPLAY_SDO, S3C_GPIO_INPUT);
-	s3c_gpio_setpull(GPIO_DISPLAY_SDO, S3C_GPIO_PULL_UP);	
-#endif
-#if defined (CONFIG_S5PC110_HAWK_BOARD)
-	gpio_set_value(GPIO_DISPLAY_CS, 1);
-#endif
 }
 
 void lcd_cfg_gpio_early_suspend(void)
@@ -1510,11 +1340,7 @@ static struct s3c_platform_fb tl2796_data __initdata = {
 	.lcd = &s6e63m0,
 	.cfg_gpio	= tl2796_cfg_gpio,
 	.backlight_on	= tl2796_backlight_on,
-#if defined (CONFIG_S5PC110_HAWK_BOARD) /* nat */
-	.reset_lcd = NULL,
-#else
 	.reset_lcd	= tl2796_reset_lcd,
-#endif
 };
 
 #define LCD_BUS_NUM	3
@@ -1522,11 +1348,6 @@ static struct s3c_platform_fb tl2796_data __initdata = {
 #define SUB_DISPLAY_CS	S5PV210_MP01(2)
 #define DISPLAY_CLK	S5PV210_MP04(1)
 #define DISPLAY_SI	S5PV210_MP04(3)
-#if defined (CONFIG_S5PC110_HAWK_BOARD) /* nat */
-#define DISPLAY_SDO      S5PV210_MP04(2)
-#endif
-
-
 
 static struct spi_board_info spi_board_info[] __initdata = {
 	{
@@ -1543,11 +1364,7 @@ static struct spi_board_info spi_board_info[] __initdata = {
 static struct spi_gpio_platform_data tl2796_spi_gpio_data = {
 	.sck	= DISPLAY_CLK,
 	.mosi	= DISPLAY_SI,
-#if defined (CONFIG_S5PC110_HAWK_BOARD) /* nat */
-        .miso   = DISPLAY_SDO,
-#else
 	.miso	= -1,
-#endif
 	.num_chipselect = 2,
 };
 
@@ -1619,7 +1436,8 @@ static struct platform_device s3c_device_i2c7 = {
 	.id			= 7,
 	.dev.platform_data	= &i2c7_platdata,
 };
-#if !(defined (CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)) 
+
+#if !defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 static struct i2c_gpio_platform_data i2c8_platdata = {
 	.sda_pin		= GPIO_FM_SDA_28V,
 	.scl_pin		= GPIO_FM_SCL_28V,
@@ -1634,7 +1452,7 @@ static struct platform_device s3c_device_i2c8 = {
 	.id			= 8,
 	.dev.platform_data	= &i2c8_platdata,
 };
-#endif // NAGSM_Android_HQ_KERNEL_MINJEONGKO_20100806 for hwak temp key --
+#endif
 
 static struct i2c_gpio_platform_data i2c9_platdata = {
 	.sda_pin		= FUEL_SDA_18V,
@@ -1808,24 +1626,7 @@ static struct touchkey_platform_data touchkey_data = {
 };
 
 static struct gpio_event_direct_entry aries_keypad_key_map[] = {
-#if defined (CONFIG_S5PC110_HAWK_BOARD) /* 20110207 nat */
-{
-	.gpio	= S5PV210_GPH3(7),
-	.code	= KEY_POWER,
-},
-{
-	.gpio	= S5PV210_GPH3(2),
-	.code	= KEY_VOLUMEDOWN,
-},
-{
-	.gpio	= S5PV210_GPH3(1),
-	.code	= KEY_VOLUMEUP,
-},
-{
-	.gpio	= S5PV210_GPH3(0),
-	.code	= KEY_HOME,
-}
-#elif defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 // NAGSM_Android_SEL_Kernel_20110422
 	{
 		.gpio	= S5PV210_GPH2(6),
@@ -1864,9 +1665,6 @@ static struct gpio_event_input_info aries_keypad_key_info = {
 	.info.no_suspend = true,
 	.debounce_time.tv.nsec = 5 * NSEC_PER_MSEC,
 	.type = EV_KEY,
-#if 0 // defined(CONFIG_S5PC110_HAWK_BOARD)
-	.flags = GPIOEDF_PRINT_KEYS,
-#endif
 	.keymap = aries_keypad_key_map,
 	.keymap_size = ARRAY_SIZE(aries_keypad_key_map)
 };
@@ -1911,7 +1709,7 @@ EXPORT_SYMBOL(jack_mic_bias);
 static void set_shared_mic_bias(void)
 {
 // [[ HDLNC_BP_pyoungkuenoh_20110223
-#if defined(CONFIG_S5PC110_HAWK_BOARD)|| defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
   	gpio_set_value(GPIO_MICBIAS_EN, wm8994_mic_bias);// GPJ4(2)
 	gpio_set_value(GPIO_MICBIAS_EN2, jack_mic_bias||wm8994_submic_bias); // GPJ2(5)
 	gpio_set_value(GPIO_EARPATH_SEL, wm8994_mic_bias || jack_mic_bias);
@@ -2813,7 +2611,7 @@ static struct s3c_platform_camera s5ka3dfx = {
 };
 #endif
 
-#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD)
+#if defined (CONFIG_S5PC110_SIDEKICK_BOARD)
 #ifdef CONFIG_VIDEO_S5K5CCGX
 /*
  * Guide for Camera Configuration for Jupiter board
@@ -4053,7 +3851,7 @@ static void fsa9480_usb_cb(bool attached)
 	}
 
 	mtp_off_status = false;
-#if !defined (CONFIG_S5PC110_HAWK_BOARD) && !defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#if !defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
        if( max8998_check_vdcin())
 	set_cable_status = attached ? CABLE_TYPE_USB : CABLE_TYPE_NONE;
 	else
@@ -4068,7 +3866,7 @@ static void fsa9480_usb_cb(bool attached)
 static void fsa9480_charger_cb(bool attached)
 {
 
-#if !defined (CONFIG_S5PC110_HAWK_BOARD) && !defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#if !defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
        if( max8998_check_vdcin())
 	set_cable_status = attached ? CABLE_TYPE_AC : CABLE_TYPE_NONE;
 	else
@@ -4094,7 +3892,7 @@ struct usb_gadget *gadget = platform_get_drvdata(&s3c_device_usbgadget);	//Build
 	else
 		switch_set_state(&switch_dock, 0);
 		
-#if !defined (CONFIG_S5PC110_HAWK_BOARD) && !defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#if !defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 	if (gadget) 
 	{
 		if (attached)
@@ -4126,7 +3924,7 @@ struct usb_gadget *gadget = platform_get_drvdata(&s3c_device_usbgadget);
 	else
 		switch_set_state(&switch_dock, 0);
 		
-#if !defined (CONFIG_S5PC110_HAWK_BOARD) && !defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#if !defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 //#if 0 /* doodlejump */
 // HDLNC_OPK_20110324 : For USB Charging in Cardock mode		
 	if (gadget) 
@@ -4195,7 +3993,7 @@ static struct i2c_board_info i2c_devs6[] __initdata = {
 #endif
 };
 
-#if !(defined (CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD))
+#if !defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 static struct pn544_i2c_platform_data pn544_pdata = {
 	.irq_gpio = NFC_IRQ,
 	.ven_gpio = NFC_EN,
@@ -4226,10 +4024,7 @@ static void max17040_power_supply_unregister(struct power_supply *psy)
 static struct max17040_platform_data max17040_pdata = {
 	.power_supply_register = max17040_power_supply_register,
 	.power_supply_unregister = max17040_power_supply_unregister,
-	
-#if defined(CONFIG_S5PC110_HAWK_BOARD)		
-	.rcomp_value = 0xB000,
-#elif defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)	
+#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)	
 	.rcomp_value = 0xD000,
 #endif		
 
@@ -4239,7 +4034,7 @@ static struct i2c_board_info i2c_devs9[] __initdata = {
 	{
 		I2C_BOARD_INFO("max17040", (0x6D >> 1)),
 		.platform_data = &max17040_pdata,
-#if defined(CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 		.irq = IRQ_EINT(27),
 #endif		
 	},
@@ -4587,7 +4382,7 @@ static struct sec_jack_zone sec_jack_zones[] = {
 		/* 0 < adc <= 900, unstable zone, default to 3pole if it stays
 		 * in this range for 800ms (10ms delays, 80 samples)
 		 */
-#if defined(CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 		.adc_high = 300,
 #else
 		.adc_high = 900,
@@ -4600,9 +4395,7 @@ static struct sec_jack_zone sec_jack_zones[] = {
 		/* 900 < adc <= 2000, unstable zone, default to 4pole if it
 		 * stays in this range for 800ms (10ms delays, 80 samples)
 		 */
-#if defined(CONFIG_S5PC110_HAWK_BOARD)
-		.adc_high = 350,
-#elif defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)	
+#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)	
 		.adc_high = 300,	
 #else
 		.adc_high = 2000,
@@ -4615,9 +4408,7 @@ static struct sec_jack_zone sec_jack_zones[] = {
 		/* 2000 < adc <= 3400, 4 pole zone, default to 4pole if it
 		 * stays in this range for 100ms (10ms delays, 10 samples)
 		 */
-#if defined(CONFIG_S5PC110_HAWK_BOARD)
-		.adc_high = 3300,
-#elif defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 		.adc_high = 3700,
 #else
 		.adc_high = 3400,
@@ -4677,10 +4468,6 @@ static struct platform_device sec_device_jack = {
 #define S5PV210_PS_HOLD_CONTROL_REG (S3C_VA_SYS+0xE81C)
 #if defined (CONFIG_CP_CHIPSET_STE)
 extern int  EN32KhzCP_CTRL(int on);
-#endif
-
-#if defined(CONFIG_S5PC110_HAWK_BOARD)
-extern void touch_led_on(bool bOn);
 #endif
 
 static void aries_power_off(void)
@@ -4835,9 +4622,6 @@ static void aries_power_off(void)
 
 		kernel_sec_clear_upload_magic_number();
 
-#if defined(CONFIG_S5PC110_HAWK_BOARD)
-		touch_led_on(false); // Turn off KEY LED.
-#endif
 		/* wait for power button release */
 		if (gpio_get_value(GPIO_nPOWER)) {
 			pr_info("%s: set PS_HOLD low\n", __func__);
@@ -5174,7 +4958,7 @@ static struct platform_device *aries_devices[] __initdata = {
 	&s3c_device_i2c5,  /* accel sensor */
 	&s3c_device_i2c6,
 	&s3c_device_i2c7,
-#if !(defined (CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD))
+#if !(defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD))
 	&s3c_device_i2c8,  /* FM radio */
 #else
 //&s3c_device_i2c8, 
@@ -5183,7 +4967,7 @@ static struct platform_device *aries_devices[] __initdata = {
 	&s3c_device_i2c11, /* optical sensor */
 	&s3c_device_i2c12, /* magnetic sensor */
 	&s3c_device_i2c13,  // hdlnc_bp_ytkwon : 20100301
-#if !(defined (CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD))
+#if !defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 	&s3c_device_i2c14, /* nfc sensor */
 #endif	
 
@@ -5203,7 +4987,7 @@ static struct platform_device *aries_devices[] __initdata = {
 #endif
 #endif
 
-#if !defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) && !defined (CONFIG_S5PC110_HAWK_BOARD) && !defined (CONFIG_S5PC110_SIDEKICK_BOARD)
+#if !defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) && !defined (CONFIG_S5PC110_SIDEKICK_BOARD)
 #ifdef CONFIG_S3C_DEV_HSMMC
 	&s3c_device_hsmmc0,
 #endif
@@ -5214,7 +4998,7 @@ static struct platform_device *aries_devices[] __initdata = {
 #ifdef CONFIG_S3C_DEV_HSMMC2
 	&s3c_device_hsmmc2,
 #endif
-#if !defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) && !defined (CONFIG_S5PC110_HAWK_BOARD) && !defined (CONFIG_S5PC110_SIDEKICK_BOARD)
+#if !defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) && !defined (CONFIG_S5PC110_SIDEKICK_BOARD)
 #ifdef CONFIG_S3C_DEV_HSMMC3
 	&s3c_device_hsmmc3,
 #endif
@@ -5357,7 +5141,7 @@ static void __init fsa9480_gpio_init(void)
 	s3c_gpio_setpull(GPIO_JACK_nINT, S3C_GPIO_PULL_NONE);
 }
 
-#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 static void __init fuelgauge_gpio_init(void)
 {
 //       s3c_gpio_cfgpin(GPIO_KBR3, S3C_GPIO_SFN(GPIO_KBR3_WAKE_AF));
@@ -5392,12 +5176,7 @@ static void __init sound_init(void)
 	reg |= 0x1;
 	__raw_writel(reg, S5P_CLK_OUT);
 
-#if defined(CONFIG_S5PC110_HAWK_BOARD)
-  	gpio_request(GPIO_MICBIAS_EN,  "micbias_enable");		 // GPJ4(2)
-	gpio_request(GPIO_MICBIAS_EN2, "sub_micbias_enable"); // GPJ2(5)
-#else
 	gpio_request(GPIO_MICBIAS_EN, "micbias_enable");
-#endif
 }
 
 static void __init onenand_init()
@@ -5431,11 +5210,6 @@ static void __init aries_machine_init(void)
 	s3c_gpio_setpull(GPIO_HWREV_MODE3, S3C_GPIO_PULL_NONE);
 	HWREV = HWREV | (gpio_get_value(GPIO_HWREV_MODE3) << 3);
 	printk(KERN_INFO "HWREV is 0x%x\n", HWREV);
-#if defined(CONFIG_S5PC110_HAWK_BOARD)
-	HWREV_HAWK = HWREV;	
-	HWREV = 0xa; // The last version of T959 and  : HWREV = 0xa;	
-	printk("HWREV_HAWK is 0x%x\n", HWREV_HAWK);
-#endif
 
 #if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 	s3c_gpio_cfgpin(S5PV210_GPH3(5), S3C_GPIO_INPUT);
@@ -5488,7 +5262,7 @@ static void __init aries_machine_init(void)
 	/* FM Radio */
 	i2c_register_board_info(8, i2c_devs8, ARRAY_SIZE(i2c_devs8));
 
-#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 	fuelgauge_gpio_init();
 #endif
 	i2c_register_board_info(9, i2c_devs9, ARRAY_SIZE(i2c_devs9));
@@ -5506,7 +5280,7 @@ static void __init aries_machine_init(void)
 	i2c_register_board_info(13, i2c_devs13, ARRAY_SIZE(i2c_devs13)); /* audience A1026 */
 //hdlnc_ldj_20100823 	
 
-#if !(defined (CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD))
+#if !defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 	/* nfc sensor */
 	i2c_register_board_info(14, i2c_devs14, ARRAY_SIZE(i2c_devs14));
 #endif
@@ -5545,7 +5319,7 @@ static void __init aries_machine_init(void)
 	/* mfc */
 	s3c_mfc_set_platdata(NULL);
 #endif
-#if !defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) && !defined (CONFIG_S5PC110_HAWK_BOARD) && !defined (CONFIG_S5PC110_SIDEKICK_BOARD)
+#if !defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) && !defined (CONFIG_S5PC110_SIDEKICK_BOARD)
 #ifdef CONFIG_S3C_DEV_HSMMC
 	s5pv210_default_sdhci0();
 #endif
@@ -5556,7 +5330,7 @@ static void __init aries_machine_init(void)
 #ifdef CONFIG_S3C_DEV_HSMMC2
 	s5pv210_default_sdhci2();
 #endif
-#if !defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) && !defined (CONFIG_S5PC110_HAWK_BOARD) && !defined (CONFIG_S5PC110_SIDEKICK_BOARD)
+#if !defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) && !defined (CONFIG_S5PC110_SIDEKICK_BOARD)
 #ifdef CONFIG_S3C_DEV_HSMMC3
 	s5pv210_default_sdhci3();
 #endif

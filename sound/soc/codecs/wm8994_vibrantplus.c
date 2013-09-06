@@ -1146,42 +1146,6 @@ void wm8994_disable_path(struct snd_soc_codec *codec)
 		val |= (WM8994_AIF1DAC1_MUTE);
 		wm8994_write(codec, WM8994_AIF1_DAC1_FILTERS_1, val);
 		break;
-#if defined(CONFIG_S5PC110_HAWK_BOARD)
-	case SPK_HP:
-		val &= ~(WM8994_HPOUT1L_ENA_MASK | WM8994_HPOUT1R_ENA_MASK |
-				WM8994_SPKOUTL_ENA_MASK);
-		wm8994_write(codec, WM8994_POWER_MANAGEMENT_1, val);
-
-		/* Disable DAC1L to HPOUT1L path */
-		val = wm8994_read(codec, WM8994_OUTPUT_MIXER_1);
-		val &= ~(WM8994_DAC1L_TO_HPOUT1L_MASK |
-				WM8994_DAC1L_TO_MIXOUTL_MASK);
-		wm8994_write(codec, WM8994_OUTPUT_MIXER_1, val);
-
-		/* Disable DAC1R to HPOUT1R path */
-		val = wm8994_read(codec, WM8994_OUTPUT_MIXER_2);
-		val &= ~(WM8994_DAC1R_TO_HPOUT1R_MASK |
-				WM8994_DAC1R_TO_MIXOUTR_MASK);
-		wm8994_write(codec, WM8994_OUTPUT_MIXER_2, val);
-
-		/* Disable SPKLVOL */
-		val = wm8994_read(codec, WM8994_POWER_MANAGEMENT_3);
-		val &= ~(WM8994_SPKLVOL_ENA_MASK);
-		wm8994_write(codec, WM8994_POWER_MANAGEMENT_3, val);
-
-		/* Disable SPKOUT mixer */
-		val = wm8994_read(codec, WM8994_SPKOUT_MIXERS);
-		val &= ~(WM8994_SPKMIXL_TO_SPKOUTL_MASK |
-			 WM8994_SPKMIXR_TO_SPKOUTL_MASK |
-			 WM8994_SPKMIXR_TO_SPKOUTR_MASK);
-		wm8994_write(codec, WM8994_SPKOUT_MIXERS, val);
-
-		/* Mute Speaker mixer */
-		val = wm8994_read(codec, WM8994_SPEAKER_MIXER);
-		val &= ~(WM8994_DAC1L_TO_SPKMIXL_MASK);
-		wm8994_write(codec, WM8994_SPEAKER_MIXER, val);
-		break;
-#endif
 	default:
 		DEBUG_LOG_ERR("Path[%d] is not invaild!\n", path);
 		return;

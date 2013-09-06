@@ -101,8 +101,6 @@ void get_usb_serial(char *usb_serial_number)
 	sprintf(temp_serial_number,"T959%08x",serial_number);
 #elif defined(CONFIG_S5PC110_FLEMING_BOARD)
 	sprintf(temp_serial_number,"I887%08x",serial_number);
-#elif defined(CONFIG_S5PC110_HAWK_BOARD)
-	sprintf(temp_serial_number,"T759%08x",serial_number);
 #elif defined(CONFIG_S5PC110_SIDEKICK_BOARD)
 	sprintf(temp_serial_number,"T839%08x",serial_number);
 #else

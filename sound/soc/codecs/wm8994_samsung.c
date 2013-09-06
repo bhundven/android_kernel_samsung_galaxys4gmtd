@@ -148,9 +148,6 @@ select_mic_route universal_wm8994_mic_paths[] = {
 	wm8994_record_main_mic,
 	wm8994_record_headset_mic,
 	wm8994_record_bluetooth,
-#if defined(CONFIG_S5PC110_HAWK_BOARD)
-	wm8994_record_spk_mic,		// for voip speaker mode - HDLNC_OPK_20110323
-#endif
 };
 
 select_clock_control universal_clock_controls = wm8994_configure_clock;
@@ -308,9 +305,7 @@ static const char *voicecall_path[] = {
 	"OFF", "RCV", "SPK", "HP", "HP_NO_MIC", "BT"
 };
 static const char *mic_path[] = {
-#if defined(CONFIG_S5PC110_HAWK_BOARD)
-	"Main Mic", "Hands Free Mic", "BT Sco Mic", "SPK Mic" ,"MIC OFF"
-#elif defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 	"Main Mic", "Hands Free Mic", "BT Sco Mic", "MIC OFF"
 #endif
 };
@@ -392,17 +387,6 @@ static int wm8994_set_mic_path(struct snd_kcontrol *kcontrol,
 	case 2:
 		wm8994->rec_path = BT_REC;
 		break;
-#if defined(CONFIG_S5PC110_HAWK_BOARD)
-	case 3:	
-		// voip speaker mode [sidekick_Froyo] : HDLNC_OPK_20110323
-		
-	    	wm8994->rec_path = SPK_MIC;
-		wm8994_record_spk_mic(codec);
-		break;
-	case 4:	// Old : case 3
-		wm8994_disable_rec_path(codec);
-		return 0;
-#endif
 	default:
 		return -EINVAL;
 	}
@@ -874,7 +858,7 @@ static int wm8994_set_voice_path(struct snd_kcontrol *kcontrol,
 		wm8994->cur_path = path_num;
 		wm8994->cur_audience = wm8994->AUDIENCE_state;
 //[mook_GB : add in audience
-#if (defined CONFIG_S5PC110_HAWK_BOARD)||(defined CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 	if(wm8994_get_HAC_Status() && (path_num==RCV)) wm8994_set_voicecall_hac(codec);
 	else if(wm8994_get_TTY_Status() && (path_num==HP)) wm8994_set_voicecall_tty(codec);
 	else
@@ -1096,24 +1080,6 @@ static int configure_clock(struct snd_soc_codec *codec)
 
 		reg = wm8994_read(codec, WM8994_AIF1_CLOCKING_1);
 		reg &= 0x07;
-#if defined CONFIG_S5PC110_HAWK_BOARD
-		/* Enable clocks to the Audio core and sysclk of wm8994 */
-		reg = wm8994_read(codec, WM8994_CLOCKING_1);
-		reg &= ~(WM8994_SYSCLK_SRC_MASK | WM8994_DSP_FSINTCLK_ENA_MASK
-				| WM8994_DSP_FS1CLK_ENA_MASK);
-		reg |= (WM8994_DSP_FS1CLK_ENA | WM8994_DSP_FSINTCLK_ENA);
-		wm8994_write(codec, WM8994_CLOCKING_1, reg);
-		
-		if (wm8994->mclk_rate > 13500000) {
-			reg |= WM8994_AIF1CLK_DIV;
-			wm8994->sysclk_rate = wm8994->mclk_rate / 2;
-		} else {
-			reg &= ~WM8994_AIF1CLK_DIV;
-			wm8994->sysclk_rate = wm8994->mclk_rate;
-		}
-		reg |= WM8994_AIF1CLK_ENA;
-		wm8994_write(codec, WM8994_AIF1_CLOCKING_1, reg);
-#else
 	
 		if (wm8994->mclk_rate > 13500000) {
 			reg |= WM8994_AIF1CLK_DIV;
@@ -1131,7 +1097,6 @@ static int configure_clock(struct snd_soc_codec *codec)
 				| WM8994_DSP_FS1CLK_ENA_MASK);
 		reg |= (WM8994_DSP_FS1CLK_ENA | WM8994_DSP_FSINTCLK_ENA);
 		wm8994_write(codec, WM8994_CLOCKING_1, reg);		
-#endif
 
 		break;
 
@@ -1222,21 +1187,6 @@ static int configure_clock(struct snd_soc_codec *codec)
 			DEBUG_LOG_ERR("Unsupported Frequency\n");
 			break;
 		}
-#if defined CONFIG_S5PC110_HAWK_BOARD
-		wm8994_write(codec, WM8994_AIF1_CLOCKING_1, 0x10);
-
-		/* Enable clocks to the Audio core and sysclk of wm8994*/
-		reg = wm8994_read(codec, WM8994_CLOCKING_1);
-		reg &= ~(WM8994_SYSCLK_SRC_MASK | WM8994_DSP_FSINTCLK_ENA_MASK |
-				WM8994_DSP_FS1CLK_ENA_MASK);
-		reg |= (WM8994_DSP_FS1CLK_ENA | WM8994_DSP_FSINTCLK_ENA);
-		wm8994_write(codec, WM8994_CLOCKING_1, reg);
-		
-		reg = wm8994_read(codec, WM8994_AIF1_CLOCKING_1);
-		reg |= WM8994_AIF1CLK_ENA;
-		reg |= WM8994_AIF1CLK_SRC_FLL1;
-		wm8994_write(codec, WM8994_AIF1_CLOCKING_1, reg);
-#else
 		reg = wm8994_read(codec, WM8994_AIF1_CLOCKING_1);
 		reg |= WM8994_AIF1CLK_ENA;
 		reg |= WM8994_AIF1CLK_SRC_FLL1;
@@ -1248,8 +1198,6 @@ static int configure_clock(struct snd_soc_codec *codec)
 				WM8994_DSP_FS1CLK_ENA_MASK);
 		reg |= (WM8994_DSP_FS1CLK_ENA | WM8994_DSP_FSINTCLK_ENA);
 		wm8994_write(codec, WM8994_CLOCKING_1, reg);		
-#endif		
-				
 		break;
 
 	default:
@@ -1640,9 +1588,6 @@ void wm8994_shutdown(struct snd_pcm_substream *substream,
 		DEBUG_LOG("Turn off Codec!!");
 
 		wm8994->pdata->set_mic_bias(false);
-#if defined CONFIG_S5PC110_HAWK_BOARD
-		wm8994->pdata->set_submic_bias(false);
-#endif
 //]GB - deleted in froyo
 		wm8994->power_state = CODEC_OFF;
 		wm8994->fmradio_path = FMR_OFF;

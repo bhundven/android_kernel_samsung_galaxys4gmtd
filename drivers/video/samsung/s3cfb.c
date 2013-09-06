@@ -41,9 +41,7 @@
 #endif
 #include "s3cfb.h"
 
-#if defined(CONFIG_S5PC110_HAWK_BOARD)
-#include "logo_rgb24_wvga_portrait_T759.h"
-#elif defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 #if defined(CONFIG_VIBRANTPLUSTELUS_BOOT_LOGO)
 #include "logo_rgb24_wvga_portrait_VibrantPlusTelus.h"
 #else

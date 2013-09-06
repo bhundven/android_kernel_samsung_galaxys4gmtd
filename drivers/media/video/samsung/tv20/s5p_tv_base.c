@@ -552,9 +552,6 @@ int s5p_tv_v_mmap(struct file *filp, struct vm_area_struct *vma)
 int s5p_tv_v_release(struct file *filp)
 {
 	printk(KERN_INFO "%s", __func__);
-#if defined (CONFIG_S5PC110_HAWK_BOARD)
-	mutex_lock(mutex_for_fo);
-#endif
 
 #if defined(CONFIG_CPU_S5PV210) && defined(CONFIG_PM)
 	if ((s5ptv_status.hpd_status) && !(s5ptv_status.suspend_status)) {
@@ -607,9 +604,6 @@ int s5p_tv_v_release(struct file *filp)
 
 	s5p_tv_clk_gate(false);
 	tv_phy_power(false);
-#if defined (CONFIG_S5PC110_HAWK_BOARD)
-	mutex_unlock(mutex_for_fo);
-#endif
 	return 0;
 }
 

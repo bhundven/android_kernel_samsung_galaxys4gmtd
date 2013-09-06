@@ -1729,7 +1729,7 @@ void change_console(struct vc_data *new_vc)
 }
 
 /* Perform a kernel triggered VT switch for suspend/resume */
-#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 static int disable_vt_switch = 1;
 #else
 static int disable_vt_switch;

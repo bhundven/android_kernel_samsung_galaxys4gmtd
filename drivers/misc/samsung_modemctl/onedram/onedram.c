@@ -900,9 +900,7 @@ static int onedram_ioctl(struct inode *inode, struct file *filp,
 		}
 		printk("[ITP Mode] 1) Key pressing or 2) JIG \n");
 		printk("KeyValueWhenPowerUp = [0x%x], func=[0x%x]\n", KeyValueWhenPowerUp, sec_get_param_value);
-#if (defined CONFIG_S5PC110_HAWK_BOARD) || (defined CONFIG_S5PC110_SIDEKICK_BOARD)
-	if ( KeyValueWhenPowerUp == 0x16d) /* Device powered up by volume down + Home key + Power key*/
-#elif defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 	if ( KeyValueWhenPowerUp == 0x164) /* Device powered up by volume down + Power key*/
 #else
 	if ( KeyValueWhenPowerUp == 0x4) /* Device powered up by volume down + Power key*/

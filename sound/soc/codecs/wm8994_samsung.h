@@ -75,11 +75,6 @@ Codec Output Path BIT
 #define PLAYBACK_VOIP_BT	(0x01 << 14)
 #define PLAYBACK_QIK_SPK	(0x01 << 15)
 #define PLAYBACK_QIK_HP		(0x01 << 16)
-#if defined(CONFIG_S5PC110_HAWK_BOARD)
-#define PLAYBACK_GANLITE_RCV	(0x01 << 17)
-#define PLAYBACK_GANLITE_SPK	(0x01 << 18)
-#define PLAYBACK_GANLITE_HP	(0x01 << 19)
-#endif
 
 #define VOICECALL_RCV		(0x01 << 1)
 #define VOICECALL_SPK		(0x01 << 2)
@@ -106,16 +101,7 @@ Codec Output Path BIT
 #define RECORDING_VOIP_MAIN	(0x01 << 10)
 #define RECORDING_VOIP_HP	(0x01 << 11)
 #define RECORDING_VOIP_BT	(0x01 << 12)
-#if defined(CONFIG_S5PC110_HAWK_BOARD)
-#define RECORDING_QIK_MAIN  (0x01 << 13)
-#define RECORDING_QIK_SPK	(0x01 << 14)
-#define RECORDING_QIK_HP	(0x01 << 15)
-#define RECORDING_GANLITE_MAIN	(0x01 << 16)
-#define RECORDING_GANLITE_SPK	(0x01 << 17)
-#define RECORDING_GANLITE_HP	(0x01 << 18)
-#else
 #define RECORDING_QIK		(0x01 << 13)
-#endif
 
 #define FMRADIO_HP		(0x01 << 1)
 #define FMRADIO_SPK		(0x01 << 2)
@@ -174,9 +160,7 @@ enum audio_path	{
 	EXTRA_DOCK_SPEAKER
 };
 
-#if defined(CONFIG_S5PC110_HAWK_BOARD)
-enum mic_path			{MAIN, SUB, BT_REC, SPK_MIC, MIC_OFF};
-#elif defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 enum mic_path			{MAIN, SUB, BT_REC, MIC_OFF};
 enum call_recording_channel {CH_OFF, CH_UPLINK, CH_DOWNLINK, CH_UDLINK};
 enum voice_record_path     { CALL_RECORDING_OFF, CALL_RECORDING_MAIN, CALL_RECORDING_SUB};
@@ -282,9 +266,6 @@ void wm8994_disable_rec_path(struct snd_soc_codec *codec);
 void wm8994_record_main_mic(struct snd_soc_codec *codec);
 void wm8994_record_headset_mic(struct snd_soc_codec *codec);
 void wm8994_record_bluetooth(struct snd_soc_codec *codec);
-#if defined(CONFIG_S5PC110_HAWK_BOARD)
-void wm8994_record_spk_mic(struct snd_soc_codec *codec);	// HDLNC_OPK_20110324
-#endif
 void wm8994_set_playback_receiver(struct snd_soc_codec *codec);
 void wm8994_set_playback_headset(struct snd_soc_codec *codec);
 void wm8994_set_playback_speaker(struct snd_soc_codec *codec);
@@ -295,11 +276,7 @@ void wm8994_set_voicecall_common(struct snd_soc_codec *codec);
 void wm8994_set_voicecall_receiver(struct snd_soc_codec *codec);
 void wm8994_set_voicecall_headset(struct snd_soc_codec *codec);
 
-#if (defined CONFIG_S5PC110_HAWK_BOARD)
-void wm8994_set_voicecall_tty(struct snd_soc_codec *codec);
-void wm8994_set_voicecall_hac(struct snd_soc_codec *codec);
-
-#elif (defined CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#if (defined CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 void wm8994_set_voicecall_tty(struct snd_soc_codec *codec);
 void wm8994_set_voicecall_hac(struct snd_soc_codec *codec);
 void wm8994_set_voicecall_record(struct snd_soc_codec *codec, int path_num);
@@ -320,9 +297,5 @@ void wm8994_set_fmradio_common(struct snd_soc_codec *codec);
 void wm8994_set_fmradio_headset(struct snd_soc_codec *codec);
 void wm8994_set_fmradio_speaker(struct snd_soc_codec *codec);
 void wm8994_set_fmradio_speaker_headset_mix(struct snd_soc_codec *codec);
-#if  defined (CONFIG_S5PC110_HAWK_BOARD)
-int wm8994_set_codec_gain(struct snd_soc_codec *codec, u16 mode, u32 device);
-#else
 int wm8994_set_codec_gain(struct snd_soc_codec *codec, u16 mode, u16 device);
-#endif
 #endif

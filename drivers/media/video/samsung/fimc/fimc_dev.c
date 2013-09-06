@@ -747,17 +747,7 @@ ssize_t fimc_read(struct file *filp, char *buf, size_t count, loff_t *pos)
 {
 	int err = 0;
 
-#if defined(CONFIG_S5PC110_HAWK_BOARD)
-	printk("%s, for factory test\n", __func__);
-
-	gpio_direction_output(S5PV210_GPJ2(0), 0);
-	gpio_direction_output(S5PV210_GPJ2(1), 0);
-
-	gpio_free(S5PV210_GPJ2(0));
-	gpio_free(S5PV210_GPJ2(1));
-#else
 	printk("%s is not define until now\n", __func__);
-#endif
 	return err;
 }
 
@@ -767,37 +757,7 @@ ssize_t fimc_write(struct file *filp, const char *b, size_t c, loff_t *offset)
 	int i = 0;
 	int err = 0;
 
-#if defined(CONFIG_S5PC110_HAWK_BOARD)
-	printk("%s, for factory test\n", __func__);
-
-	err = gpio_request(S5PV210_GPJ2(0), "GPJ20");
-	if (err) 
-	{
-		printk(KERN_ERR "failed to request GPJ20 for camera control\n");
-		return err;
-	}
-	err = gpio_request(S5PV210_GPJ2(1), "GPJ21");
-	if (err) 
-	{
-		printk(KERN_ERR "failed to request GPJ21 for camera control\n");
-		return err;
-	}
-	//movie mode
-	gpio_direction_output(S5PV210_GPJ2(0), 0);
-	for (i = 8; i > 1; i--)
-	{
-		//gpio on
-		gpio_direction_output(S5PV210_GPJ2(1), 1);
-		udelay(1);
-		//gpio off
-		gpio_direction_output(S5PV210_GPJ2(1), 0);
-		udelay(1);
-	}
-	gpio_direction_output(S5PV210_GPJ2(1), 1);
-	mdelay(2);
-#else
 	printk("%s is not define until now\n", __func__);
-#endif
 
 	return 0;
 }

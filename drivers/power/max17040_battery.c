@@ -23,7 +23,7 @@
 #include <linux/time.h>
 #include <linux/fs.h>
 
-#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 #define ATT_TMO_COMMON
 #endif
 

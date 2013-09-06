@@ -26,10 +26,6 @@
 #include <linux/jiffies.h>
 #include "qt602240.h"
 
-#if defined (CONFIG_S5PC110_HAWK_BOARD) /* nat */
-#define KEY_LED_CONTROL
-#endif
-
 #if defined (KEY_LED_CONTROL)
 
 
@@ -45,11 +41,7 @@ struct qt602240_data *qt602240 = NULL;
 
 #if ENABLE_NOISE_TEST_MODE
                                        //botton_right    botton_left            center              top_right          top_left 
-#if defined (CONFIG_S5PC110_HAWK_BOARD) /* nat */
-unsigned char test_node[TEST_POINT_NUM] = {14,       		   23, 		   110,    		        196,     			   205};
-#else
 unsigned char test_node[TEST_POINT_NUM] = {12,                  20,            104,                    188,                    196};        
-#endif
 
 unsigned int return_refer_0, return_refer_1, return_refer_2, return_refer_3, return_refer_4;
 unsigned int return_delta_0, return_delta_1, return_delta_2, return_delta_3, return_delta_4;
@@ -59,10 +51,6 @@ uint16_t diagnostic_addr;
 #ifdef _SUPPORT_MULTITOUCH_
 static report_finger_info_t fingerInfo[MAX_USING_FINGER_NUM]={ 0};
 static int qt_initial_ok=0;
-#endif
-
-#if defined (CONFIG_S5PC110_HAWK_BOARD)
-static int qt_probe_initial_fail = 0;
 #endif
 
 #ifdef QT_STYLUS_ENABLE
@@ -111,9 +99,7 @@ static uint8_t tsp_version;
 
 //20100217 julia
 static uint8_t cal_check_flag = 0u;
-#if defined (CONFIG_S5PC110_HAWK_BOARD) 
-static uint8_t palm_flag= 0u, not_yet_count = 0u ;
-#endif
+
 //static int CAL_THR = 10;
 #if defined (KEY_LED_CONTROL)
 
@@ -319,11 +305,7 @@ spt_comcconfig_t18_config_t   comc_config = {0};            //Communication conf
 void qt_Power_Config_Init(void)
 {
     /* Set Idle Acquisition Interval to 32 ms. */
-#if defined (CONFIG_S5PC110_HAWK_BOARD) /* nat */
-	power_config.idleacqint = 48;
-#else
     power_config.idleacqint = 64;
-#endif
 
     /* Set Active Acquisition Interval to 16 ms. */
     dprintk("\n[TSP]%s real board \n",__func__);
@@ -355,27 +337,14 @@ void qt_Power_Config_Init(void)
 
 void qt_Acquisition_Config_Init(void)
 {
-#if defined (CONFIG_S5PC110_HAWK_BOARD) /* nat */
-    acquisition_config.chrgtime = 8;//7; // 2us
-#else
     acquisition_config.chrgtime 	= 7; // 2us
-#endif
     acquisition_config.driftst 	= 0; // 4s
     acquisition_config.reserved = 0;
-#if defined (CONFIG_S5PC110_HAWK_BOARD) /* nat */
-	acquisition_config.tchdrift = 14; // 4s
-#else
     acquisition_config.tchdrift = 5; // 4s
-#endif
     acquisition_config.tchautocal = 0; // infinite
     acquisition_config.sync = 0; // disabled
-#if defined (CONFIG_S5PC110_HAWK_BOARD) /* nat */
-    acquisition_config.atchcalst = 10;
-    acquisition_config.atchcalsthr = 7;
-#else
     acquisition_config.atchcalst = 9;
     acquisition_config.atchcalsthr = 35;
-#endif
 
     if (write_acquisition_config(acquisition_config) != CFG_WRITE_OK)
     {
@@ -403,13 +372,8 @@ void qt_Multitouchscreen_Init(void)
     touchscreen_config.xorigin = 0;
     touchscreen_config.yorigin = 0;
 
-#if defined (CONFIG_S5PC110_HAWK_BOARD) /* nat */
-    touchscreen_config.xsize = 17;
-    touchscreen_config.ysize = 12;
-#else
     touchscreen_config.xsize = 19;
     touchscreen_config.ysize = 11;
-#endif
 
     touchscreen_config.akscfg = 0;
 #if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)		//NAGSM_Android_SEL_Kernel_20110421
@@ -448,11 +412,7 @@ void qt_Multitouchscreen_Init(void)
     touchscreen_config.xedgectrl = 143;
     touchscreen_config.xedgedist = 40;
     touchscreen_config.yedgectrl = 143;
-#if defined (CONFIG_S5PC110_HAWK_BOARD) /* nat */
-    touchscreen_config.yedgedist = 130;
-#else
     touchscreen_config.yedgedist = 80;
-#endif
 
 	touchscreen_config.jumplimit = 18;
     
@@ -509,19 +469,6 @@ void qt_Multitouchscreen_normal_Init(void)
 
 void qt_KeyArray_Init(void)
 {
-#if defined (CONFIG_S5PC110_HAWK_BOARD) /* nat */
-    keyarray_config.ctrl = 131;//3;
-    keyarray_config.xorigin = 14;
-    keyarray_config.yorigin = 12;
-    keyarray_config.xsize = 3;
-    keyarray_config.ysize = 1;
-    keyarray_config.akscfg = 0; //1; //0;
-    keyarray_config.blen = 0; //0x10;
-    keyarray_config.tchthr = 40;
-    keyarray_config.tchdi = 3;//0;
-    keyarray_config.reserved[0] = 0;
-    keyarray_config.reserved[1] = 0;
-#else
     keyarray_config.ctrl = 0;
     keyarray_config.xorigin = 0;
     keyarray_config.yorigin = 0;
@@ -533,7 +480,6 @@ void qt_KeyArray_Init(void)
     keyarray_config.tchdi = 0;
     keyarray_config.reserved[0] = 0;
     keyarray_config.reserved[1] = 0;
-#endif
 
     if (write_keyarray_config(0, keyarray_config) != CFG_WRITE_OK)
     {
@@ -554,11 +500,7 @@ void qt_KeyArray_Init(void)
 void qt_ComcConfig_Init(void)
 {
     comc_config.ctrl = 0x00;
-#if defined (CONFIG_S5PC110_HAWK_BOARD) /* nat */
-    comc_config.cmd = 0;//COMM_MODE1;
-#else
     comc_config.cmd = COMM_MODE1;
-#endif
 
     if (get_object_address(SPT_COMCONFIG_T18, 0) != OBJECT_NOT_FOUND)
     {
@@ -621,17 +563,11 @@ void qt_Grip_Face_Suppression_Config_Init(void)
     gripfacesuppression_config.maxtchs = 0;
     gripfacesuppression_config.reserved = 0;
 
-#if defined (CONFIG_S5PC110_HAWK_BOARD) 
-    gripfacesuppression_config.szthr1 = 30;
-    gripfacesuppression_config.szthr2 = 20;
-    gripfacesuppression_config.shpthr1 = 0;
-    gripfacesuppression_config.shpthr2 = 15;
-#else
     gripfacesuppression_config.szthr1 = 80;
     gripfacesuppression_config.szthr2 = 40;
     gripfacesuppression_config.shpthr1 = 4;
     gripfacesuppression_config.shpthr2 = 35;
-#endif
+
     gripfacesuppression_config.supextto = 10;//5;
 
 
@@ -673,19 +609,12 @@ void qt_Noise_Suppression_Config_Init(void)
 
     noise_suppression_config.freqhopscale = 0;///1;
 
-#if defined (CONFIG_S5PC110_HAWK_BOARD) /* nat */
-    noise_suppression_config.freq[0] = 22;	
-    noise_suppression_config.freq[1] = 30;	
-    noise_suppression_config.freq[2] = 40;	
-    noise_suppression_config.freq[3] = 45;	
-    noise_suppression_config.freq[4] = 50;	
-#else  
     noise_suppression_config.freq[0] = 29; 	//5;	// 6;//10;
     noise_suppression_config.freq[1] = 34;	//15;	// 11;//15;
     noise_suppression_config.freq[2] = 39;	//25;	//16;//20;
     noise_suppression_config.freq[3] = 49;	//35;	// 19;//25;
     noise_suppression_config.freq[4] = 58;	//45;	// 21;//30;
-#endif    
+
     noise_suppression_config.idlegcafvalid = 3;
 
 
@@ -846,24 +775,14 @@ void qt_Two_touch_Gesture_Config_Init(void)
 void qt_CTE_Config_Init(void)
 {
     /* Set CTE config */
-#if defined (CONFIG_S5PC110_HAWK_BOARD) /* nat */
-    cte_config.ctrl = 0;//1;
-    cte_config.cmd = 0;	
-    cte_config.mode = 1;//3;
-#else
     cte_config.ctrl = 1;
     cte_config.cmd = 0;    
     cte_config.mode = 3;
-#endif
     
     cte_config.idlegcafdepth = 16;///4;
     cte_config.actvgcafdepth = 63;    //8;
 
-#if defined (CONFIG_S5PC110_HAWK_BOARD) /* nat */
-		cte_config.voltage = 10;
-#else
-        cte_config.voltage = 0x3c;
-#endif
+    cte_config.voltage = 0x3c;
 
     /* Write CTE config to chip. */
     if (get_object_address(SPT_CTECONFIG_T28, 0) != OBJECT_NOT_FOUND)
@@ -1976,9 +1895,6 @@ void quantum_touch_probe(void)
     else {
         /* "\nTouch device NOT found\n" */
         dprintk("\n[TSP][ERROR] Touch device NOT found\n");
-#if defined (CONFIG_S5PC110_HAWK_BOARD)
-	qt_probe_initial_fail = 1;
-#endif
         return ;
     }
 #else
@@ -1989,9 +1905,6 @@ void quantum_touch_probe(void)
     else {
         /* "\nTouch device NOT found\n" */
         dprintk("\n[TSP][ERROR] Touch device NOT found\n");
-#if defined (CONFIG_S5PC110_HAWK_BOARD)
-	qt_probe_initial_fail = 1;
-#endif
         return ;
     }
 #endif
@@ -2091,10 +2004,6 @@ void quantum_touch_probe(void)
         return;
     }
     else {
-#if defined (CONFIG_S5PC110_HAWK_BOARD) 
-	 palm_flag = 0;
-	 not_yet_count = 0;
-#endif
         msleep(60);
         dprintk("Chip reset OK!\n\r");
 
@@ -2608,21 +2517,13 @@ void check_chip_calibration(unsigned char one_touch_input_flag)
                 }
             }
 
-
-#if defined (CONFIG_S5PC110_HAWK_BOARD) 
-			printk(KERN_DEBUG "[TSP] t:%d a:%d \n", tch_ch, atch_ch);
-#endif
             /* send page up command so we can detect when data updates next time,
              * page byte will sit at 1 until we next send F3 command */
             data_byte = 0x01;
             write_mem(command_processor_address + DIAGNOSTIC_OFFSET, 1, &data_byte);
 
             /* process counters and decide if we must re-calibrate or if cal was good */      
-#if defined (CONFIG_S5PC110_HAWK_BOARD) 
-			if((tch_ch>0) && (atch_ch == 0)&& (palm_flag == 0)) {  //jwlee change.
-#else
             if((tch_ch>0) && (atch_ch == 0)) {  //jwlee change.
-#endif
                 /* cal was good - don't need to check any more */
                 //hugh 0312
                 if(!check_abs_time())
@@ -2632,9 +2533,6 @@ void check_chip_calibration(unsigned char one_touch_input_flag)
                     if(qt_time_diff > 500) {
                         dprintk("[TSP] calibration was good\n");
                         cal_check_flag = 0;
-#if defined (CONFIG_S5PC110_HAWK_BOARD) 
-						not_yet_count = 0;
-#endif
                         good_check_flag = 0;
                         qt_timer_state =0;
                         qt_time_point = jiffies_to_msecs(jiffies);
@@ -2668,11 +2566,7 @@ void check_chip_calibration(unsigned char one_touch_input_flag)
             else {
                 /* we cannot confirm if good or bad - we must wait for next touch  message to confirm */
                 cal_check_flag = 1u;
-#if defined (CONFIG_S5PC110_HAWK_BOARD) 
-                not_yet_count++;
-                if((tch_ch==0)&&(atch_ch==0))
-                	not_yet_count = 0;
-#endif
+
                 /* Reset the 100ms timer */
                 qt_timer_state=0;//0430 hugh 1 --> 0
                 qt_time_point = jiffies_to_msecs(jiffies);
@@ -2684,12 +2578,6 @@ void check_chip_calibration(unsigned char one_touch_input_flag)
 
 unsigned int touch_state_val=0;
 EXPORT_SYMBOL(touch_state_val);
-
-#if defined(CONFIG_S5PC110_HAWK_BOARD)
-#define USE_TS_TVOUT_35PI_DETECT_CHANGE_REG 1
-
-static unsigned int last_status_of_tsp_for_ta_detect=0; /* 0 : VAC (TA/USB) detached. 1 : VAC attached	*/
-#endif
 
 #if USE_TS_TA_DETECT_CHANGE_REG 
 static int qt602240_alive = 0; /* 1: active, 0: sleep */
@@ -2857,10 +2745,6 @@ int set_tsp_for_ta_detect_exec(int state)
 
     printk(KERN_INFO "[TSP] (%s) state = [%d]\n", __func__, state);
 
-    #if defined(CONFIG_S5PC110_HAWK_BOARD)
-    last_status_of_tsp_for_ta_detect = state;
-    #endif
-
     if(state) {
 		touchscreen_config.tchthr = 75;
 		noise_suppression_config.noisethr = 20;		   
@@ -3004,13 +2888,6 @@ void TSP_forced_release_forOKkey(void)
 
 EXPORT_SYMBOL(TSP_forced_release_forOKkey);
 
-#if defined (CONFIG_S5PC110_HAWK_BOARD) /* nat */
-static int touch_key_menu_pressed = 0;
-static int touch_key_back_pressed = 0;
-static int touch_key_search_pressed = 0;
-static int touch_key_back_pressed_block = 0;
-#endif
-
 void  get_message(void)
 {
     unsigned long x, y;
@@ -3038,7 +2915,7 @@ void  get_message(void)
     #endif
         {
             /* Call the main application to handle the message. */
-#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 		if(quantum_msg[0] == 0x1e) 
 		{
 			printk(KERN_DEBUG "[TSP] msg id =  %x %x %x %x %x %x %x %x %x\n", quantum_msg[0], quantum_msg[1], quantum_msg[2],\
@@ -3049,37 +2926,6 @@ void  get_message(void)
 #endif
             //20102017 julia
             if( quantum_msg[0] == 14 ) {
-#if defined (CONFIG_S5PC110_HAWK_BOARD) 
-			if((quantum_msg[1]&0x01) == 0x00) { 
-					palm_flag = 0;
-                } else {
-                    touch_message_flag = 1;
-			cal_check_flag = 1;
-			palm_flag = 1;
-                    one_touch_input_flag = 1; //hugh 0312
-
-			for ( i= 0; i<MAX_USING_FINGER_NUM; ++i ) {
-                        if ( fingerInfo[i].pressure == -1 ) continue;
-
-                        if(i == 0) {
-                            touch_state_val=0;
-                        }
-                        fingerInfo[i].pressure= 0;
-                        input_report_abs(qt602240->input_dev, ABS_MT_POSITION_X, fingerInfo[i].x);
-                        input_report_abs(qt602240->input_dev, ABS_MT_POSITION_Y, fingerInfo[i].y);
-                        input_report_abs(qt602240->input_dev, ABS_MT_TOUCH_MAJOR, fingerInfo[i].pressure);    // 0이면 Release, 아니면 Press 상태(Down or Move)
-                        input_report_abs(qt602240->input_dev, ABS_MT_WIDTH_MAJOR, fingerInfo[i].size);
-				input_report_abs(qt602240->input_dev, ABS_MT_TRACKING_ID, i); // i = Finger ID 
-                        input_mt_sync(qt602240->input_dev);
-            
-                        if ( fingerInfo[i].pressure == 0 ) fingerInfo[i].pressure= -1;
-                        else if( fingerInfo[i].pressure > 0 ) one_touch_input_flag++;//hugh 0312
-                    }
-                    input_sync(qt602240->input_dev);
-        
-                }
-            }  
-#else /* defined (CONFIG_S5PC110_HAWK_BOARD)  */
                 if((quantum_msg[1]&0x01) == 0x00) { 
                     for ( i= 0; i<MAX_USING_FINGER_NUM; ++i ) {
                         if ( fingerInfo[i].pressure == -1 ) continue;
@@ -3104,7 +2950,7 @@ void  get_message(void)
                     one_touch_input_flag = 1; //hugh 0312
                 }
             }    
- #endif /* #if defined (CONFIG_S5PC110_HAWK_BOARD) */ 
+
             if(quantum_msg[0] < 2  || quantum_msg[0] >= 12) {
 
 	          if ( quantum_msg[0] != 0xc ) { /* Do not print out tsp key log, of which key message is start with 0xc */
@@ -3132,151 +2978,7 @@ void  get_message(void)
                         check_chip_calibration(one_touch_input_flag);
                     }
                 }
-				#if defined (CONFIG_S5PC110_HAWK_BOARD) /* nat */
-				if(quantum_msg[0] == 0xc )
-				{	
-/*
-					int isTouchPressed = 0;
-					for ( i= 0; i<MAX_USING_FINGER_NUM; ++i ) {
-						if(fingerInfo[i].pressure > 0) {
-							isTouchPressed = 1;
-							break;
-						}
-					}
-					
-					if ( isTouchPressed )
-*/		
-					if(touch_state_val == 1)
-					{
-						if (quantum_msg[1] == 0x80)
-						{
-							printk("[TSP Key] Key Press (0x%x), but blocked due to TSP active. \n", quantum_msg[2]);
-#if 0//defined (CONFIG_S5PC110_HAWK_BOARD) 
-							if ( quantum_msg[2] == 0x1) {
-								touch_key_back_pressed_block = 1;
-							}
-#endif							
-						}
-						else
-						{
-							printk("[TSP Key] Key Release (0x%x), TSP active.\n", quantum_msg[2]);
-							if ( touch_key_back_pressed )	// Back
-							{	
-								input_report_key(qt602240->input_dev,KEY_BACK, 0);
-								touch_key_back_pressed = 0;								
-							}
-							if ( touch_key_menu_pressed )	//Menu
-							{
-								input_report_key(qt602240->input_dev,KEY_MENU, 0);
-								touch_key_menu_pressed = 0;								
-							}
-							if ( touch_key_search_pressed )	// Search
-							{
-								input_report_key(qt602240->input_dev,KEY_SEARCH, 0);								
-								touch_key_search_pressed = 0;
-							}
-#if 0//defined (CONFIG_S5PC110_HAWK_BOARD) 
-							if(touch_key_back_pressed_block)
-							{
-								calibrate_chip();
-								touch_key_back_pressed_block = 0;
-							}
-#endif
-						}
-					}
-					else
-					{
-						if(quantum_msg[1] == 0x80)
-						{
-							/* TouchKey pressed */						
-							if ( quantum_msg[2] == 0x1)	// Back
-							{
-								//printk("[TSP Key] Back pressed\n");
-								touch_key_back_pressed = 1;
-								input_report_key(qt602240->input_dev,KEY_BACK, 1);
-								
-							}
-							else if ( quantum_msg[2] == 0x2) //Menu
-							{
-								//printk("[TSP Key] Menu pressed\n");
-								touch_key_menu_pressed = 1;
-								input_report_key(qt602240->input_dev,KEY_MENU, 1);
-								
-							}
-							else if ( quantum_msg[2] == 0x4) // Search
-							{
-								//printk("[TSP Key] Search pressed\n");
-								touch_key_search_pressed = 1;
-								input_report_key(qt602240->input_dev,KEY_SEARCH, 1);							
-							}
-							else
-							{
-								printk("[TSP Key] Key pressed Error.\n");
-							}
-							
-						}					
-						else
-						{
-							/* TouchKey Released */
-							if ( touch_key_back_pressed || touch_key_menu_pressed || touch_key_search_pressed )
-							{
-								if ( touch_key_back_pressed )	// Back
-								{
-									//printk("[TSP] Back released\n");								
-									input_report_key(qt602240->input_dev,KEY_BACK, 0);
-									touch_key_back_pressed = 0;								
-#if defined (CONFIG_S5PC110_HAWK_BOARD) 
-									for ( i= 0; i<MAX_USING_FINGER_NUM; ++i ) {
-										if(fingerInfo[i].pressure > 0) {
-										      calibrate_chip();
-											break;
-										}
-									}
-#endif
-								}
-								if ( touch_key_menu_pressed )	//Menu
-								{
-									//printk("[TSP] Menu released\n");
-									input_report_key(qt602240->input_dev,KEY_MENU, 0);
-									touch_key_menu_pressed = 0;								
-								}
-								if ( touch_key_search_pressed )	// Search
-								{
-									//printk("[TSP] Search released\n");
-									input_report_key(qt602240->input_dev,KEY_SEARCH, 0);								
-									touch_key_search_pressed = 0;
-								}
-#if defined (CONFIG_S5PC110_HAWK_BOARD) 
-								if(palm_flag == 1)
-									calibrate_chip();
-#endif
-							}
-							else						
-							{
-								printk("[TSP Key] Key released Error.\n");
-							} 
-						}	
-						
-						input_sync(qt602240->input_dev);
-					}
-				}
-				#endif			
 				
-#if defined (CONFIG_S5PC110_HAWK_BOARD) /* nat */
-			if(not_yet_count >=10) { 
-				for ( i= 0; i<MAX_USING_FINGER_NUM; ++i ) {
-					if(fingerInfo[i].pressure > 0) break;
-				}
-				
-				if ( i >= MAX_USING_FINGER_NUM) {
-					if ( !( touch_key_back_pressed && touch_key_menu_pressed && touch_key_search_pressed&&palm_flag ) ) {
-						printk("T759 calibrate_chip #1 \n");
-						calibrate_chip();
-						not_yet_count = 0;
-					}		
-				}
-			}
-#endif
                 return ;
             } 
             
@@ -3368,11 +3070,6 @@ void  get_message(void)
         for ( i= 0; i<MAX_USING_FINGER_NUM; ++i ) {
             if ( fingerInfo[i].pressure == -1 ) continue;
 
-#if defined (CONFIG_S5PC110_HAWK_BOARD)
-		/* As per request of team framwork, input 1 instead of 0 for a quick fix. */
-		if ( fingerInfo[i].x == 0 ) 
-			fingerInfo[i].x = 1; 
-#endif
             input_report_abs(qt602240->input_dev, ABS_MT_POSITION_X, fingerInfo[i].x);
             input_report_abs(qt602240->input_dev, ABS_MT_POSITION_Y, fingerInfo[i].y);
             input_report_abs(qt602240->input_dev, ABS_MT_TOUCH_MAJOR, fingerInfo[i].pressure);    // 0이면 Release, 아니면 Press 상태(Down or Move)
@@ -3405,21 +3102,6 @@ void  get_message(void)
     }
 #endif
 
-#if defined (CONFIG_S5PC110_HAWK_BOARD) /* nat */
-    if(not_yet_count >=10) { 
-	for ( i= 0; i<MAX_USING_FINGER_NUM; ++i ) {
-		if(fingerInfo[i].pressure > 0) break;
-	}
-
-	if ( i >= MAX_USING_FINGER_NUM) {
-		if ( !( touch_key_back_pressed && touch_key_menu_pressed && touch_key_search_pressed &&palm_flag) ) {
-			printk("T759 calibrate_chip #2 \n");
-			calibrate_chip();
-			not_yet_count = 0;
-		}		
-	}
-    }
-#endif    
     // 20100217 julia
     if(touch_message_flag && (cal_check_flag)) {
         check_chip_calibration(one_touch_input_flag);
@@ -3656,10 +3338,6 @@ irqreturn_t qt602240_irq_handler(int irq, void *dev_id)
     return IRQ_HANDLED;
 }
 
-#if defined (CONFIG_S5PC110_HAWK_BOARD) /* nat */
-int qt602240_keycode[] = {KEY_MENU,KEY_BACK, KEY_SEARCH, KEY_RESERVED};
-#endif
-
 int qt602240_probe(struct i2c_client *client,
                const struct i2c_device_id *id)
 {
@@ -3714,14 +3392,6 @@ int qt602240_probe(struct i2c_client *client,
 
 #endif    
 
-    #if defined (CONFIG_S5PC110_HAWK_BOARD) /* nat */
-    set_bit(KEY_BACK,  qt602240->input_dev->keybit);
-    set_bit(KEY_MENU, qt602240->input_dev->keybit);
-    set_bit(KEY_SEARCH, qt602240->input_dev->keybit);
-
-    qt602240->input_dev->keycode = qt602240_keycode;
-    #endif
-
     ret = input_register_device(qt602240->input_dev);
     if (ret) {
         printk(KERN_DEBUG "qt602240_probe: Unable to register %s input device\n", qt602240->input_dev->name);
@@ -3747,11 +3417,6 @@ int qt602240_probe(struct i2c_client *client,
 }
 #else
     quantum_touch_probe();
-#endif
-
-#if defined (CONFIG_S5PC110_HAWK_BOARD)
-	  if ( qt_probe_initial_fail )
-		  return 0;
 #endif
 
   set_irq_type(IRQ_TOUCH_INT, IRQ_TYPE_LEVEL_LOW); // IRQ_TYPE_EDGE_FALLING);
@@ -3920,13 +3585,8 @@ static void qt602240_early_suspend(struct early_suspend *h)
 #endif   
 
     qt_timer_state=0;
-#if defined (CONFIG_S5PC110_HAWK_BOARD) 
-    cal_check_flag = 0;
-    palm_flag = 0;
-    not_yet_count = 0;
-#endif
 //NAGSM_Android_SEL_Kernel_20110421
-#if !(defined (CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD))
+#if !defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
     /*reset the gpio's for the sleep configuration*/
     s3c_gpio_cfgpin(GPIO_TOUCH_INT, S3C_GPIO_INPUT);
     s3c_gpio_setpull(GPIO_TOUCH_INT, S3C_GPIO_PULL_DOWN);
@@ -4397,11 +4057,6 @@ void QT_reprogram(void)
     }
 
     quantum_touch_probe();  /* find and initialise QT device */
-
-#if defined (CONFIG_S5PC110_HAWK_BOARD)
-	if ( qt_probe_initial_fail )
-		return;
-#endif
 
     get_version(&version);
     get_build_number(&build);

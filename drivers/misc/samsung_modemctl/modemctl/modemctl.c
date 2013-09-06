@@ -41,7 +41,7 @@
 #define MODEM_CTL_DEFAULT_WAKLOCK_HZ	(2*HZ)
 #endif
 
-#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined(CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_SIDEKICK_BOARD)
+#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined(CONFIG_S5PC110_SIDEKICK_BOARD)
 
 #include <linux/regulator/consumer.h>
 static struct regulator *CP_RTC_regulator; /*LDO 6*/
@@ -86,9 +86,7 @@ struct modemctl {
 	unsigned gpio_phone_active;
 	unsigned gpio_pda_active;
 	unsigned gpio_cp_reset;
-#if !defined(CONFIG_S5PC110_HAWK_BOARD)	
 	unsigned gpio_reset_req_n;
-#endif	
 	unsigned gpio_usim_boot;
 	unsigned gpio_flm_sel;
 #if defined (CONFIG_CP_CHIPSET_STE) 
@@ -160,10 +158,7 @@ static inline long _wake_lock_gettime(struct modemctl *mc)
 #  define _wake_lock_gettime(mc) (0)
 #endif
 
-#if defined (CONFIG_CP_CHIPSET_STE) && defined (CONFIG_S5PC110_HAWK_BOARD)
-#else
 static int sim_check_status(struct modemctl *);
-#endif
 static int sim_get_reference_status(struct modemctl *);
 static void sim_irq_debounce_timer_func(unsigned);
 
@@ -231,35 +226,22 @@ static ssize_t show_status(struct device *d,
 		struct device_attribute *attr, char *buf);
 static ssize_t show_debug(struct device *d,
 		struct device_attribute *attr, char *buf);
-#if defined(CONFIG_S5PC110_HAWK_BOARD)
-static ssize_t show_phoneactive(struct device *d,
-		struct device_attribute *attr, char *buf);
-#else		
 static ssize_t show_sim(struct device *d,
 		struct device_attribute *attr, char *buf);
 static ssize_t show_phoneactive(struct device *d,
 		struct device_attribute *attr, char *buf);
-#endif
 static DEVICE_ATTR(control, 0664, show_control, store_control);
 static DEVICE_ATTR(status, 0664, show_status, NULL);
 static DEVICE_ATTR(debug, 0664, show_debug, NULL);
-#if defined(CONFIG_S5PC110_HAWK_BOARD)
-static DEVICE_ATTR(phoneactive, 0664, show_phoneactive, NULL);
-#else
 static DEVICE_ATTR(sim, 0664, show_sim, NULL);
 static DEVICE_ATTR(phoneactive, 0664, show_phoneactive, NULL);
-#endif
 
 static struct attribute *modemctl_attributes[] = {
 	&dev_attr_control.attr,
 	&dev_attr_status.attr,
 	&dev_attr_debug.attr,
-#if defined(CONFIG_S5PC110_HAWK_BOARD)
-	&dev_attr_phoneactive.attr,	
-#else	
 	&dev_attr_sim.attr,	
 	&dev_attr_phoneactive.attr,	
-#endif	
 	NULL
 };
 
@@ -287,7 +269,7 @@ static void m5720_on(struct modemctl *mc)
 	if(mc->gpio_phone_on)
 	  gpio_set_value(mc->gpio_phone_on, 1);
 
-#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined(CONFIG_S5PC110_HAWK_BOARD)
+#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 	msleep(18);
 
  	if (IS_ERR_OR_NULL(CP_RTC_regulator) )
@@ -803,22 +785,7 @@ static ssize_t show_status(struct device *d,
 
 	return p - buf;
 }
-#if defined(CONFIG_S5PC110_HAWK_BOARD)
-static ssize_t show_phoneactive(struct device *d,
-		struct device_attribute *attr, char *buf)
-{
-	char *p = buf;
-	int level = 3;
-	struct modemctl *mc = dev_get_drvdata(d);
 
-	if (mc->gpio_phone_active) {
-		level = gpio_get_value(mc->gpio_phone_active);
-	}
-
-	p += sprintf(p, "%d\n", level);
-	return p - buf;
-}
-#else
 static ssize_t show_sim(struct device *d,
 		struct device_attribute *attr, char *buf)
 {
@@ -848,7 +815,6 @@ static ssize_t show_phoneactive(struct device *d,
 	p += sprintf(p, "%d\n", level);
 	return p - buf;
 }
-#endif
 
 static ssize_t show_debug(struct device *d,
 		struct device_attribute *attr, char *buf)
@@ -912,11 +878,6 @@ static void mc_work(struct work_struct *work)
 	struct modemctl *mc = container_of(work, struct modemctl, work);
 	int r;
 
-
-#if defined (CONFIG_CP_CHIPSET_STE) && defined (CONFIG_S5PC110_HAWK_BOARD)
-	r = 1;
-	printk("(mc_work) mc->sim_change_reset =[%d], mc->sim_reference_level=[%d] \n", mc->sim_change_reset, mc->sim_reference_level);
-#else
 	r = modem_get_active(mc);
 	if (r < 0) {
 		dev_err(mc->dev, "Not initialized\n");
@@ -924,7 +885,6 @@ static void mc_work(struct work_struct *work)
 	}
 
 	dev_info(mc->dev, "PHONE ACTIVE: %d\n", r);
-#endif
 
 	if (r) {
 		if (mc->sim_change_reset == SIM_LEVEL_CHANGED) {
@@ -1035,35 +995,6 @@ static int sim_get_reference_status(struct modemctl* mc)
 	return 0;
 }
 
-#if defined (CONFIG_CP_CHIPSET_STE) && defined (CONFIG_S5PC110_HAWK_BOARD)
-
-static unsigned current_sim_status = 0;
-
-static int sim_check_status_first(struct modemctl* mc)
-{
-	dev_dbg(mc->dev, "%s\n", __func__);
-	
-	mc->sim_change_reset = SIM_LEVEL_CHANGED; /* GPIO SIM_nDETECT value has been already recorded in current_sim_status. */
-	
-	return 0;
-}
-static int sim_check_status_second(struct modemctl* mc)
-{
-	dev_dbg(mc->dev, "%s\n", __func__);
-	if(!mc->gpio_sim_ndetect)
-			return -ENXIO;
-
-	/* Compare gpio_sim_ndetect value with the one recorded in probe func. */
-	if (current_sim_status != gpio_get_value(mc->gpio_sim_ndetect)) 	{
-		mc->sim_change_reset = SIM_LEVEL_CHANGED;
-	} else {
-		mc->sim_change_reset = SIM_LEVEL_STABLE;
-	}
-
-	return 0;
-}
-
-#else
 static int sim_check_status(struct modemctl* mc)
 {
 	dev_dbg(mc->dev, "%s\n", __func__);
@@ -1081,18 +1012,13 @@ static int sim_check_status(struct modemctl* mc)
 
 	return 0;
 }
-#endif
 
 static void sim_irq_debounce_timer_func(unsigned aulong)
 {
 	struct modemctl *mc = (struct modemctl *)aulong;
 	int r;
 
-#if defined (CONFIG_CP_CHIPSET_STE) && defined (CONFIG_S5PC110_HAWK_BOARD)
-	r = sim_check_status_second(mc);
-#else
 	r = sim_check_status(mc);
-#endif
 	
 	if (r < 0) {
 		dev_err(mc->dev, "Not initialized\n");
@@ -1112,16 +1038,11 @@ static irqreturn_t simctl_irq_handler(int irq, void *dev_id)
 	struct modemctl *mc = (struct modemctl *)dev_id;
 	int r;
 
-#if defined (CONFIG_CP_CHIPSET_STE) && defined (CONFIG_S5PC110_HAWK_BOARD)
-	printk("[simctl_irq_handler #1] mc->sim_reference_level =[%d], mc->gpio_int_resout=[%d] \n", mc->sim_reference_level, mc->gpio_int_resout); 
-	r = sim_check_status_first(mc);
-#else
 	if ( mc->sim_reference_level == SIM_LEVEL_NONE) {
 		return IRQ_HANDLED;
 	}
 	
 	r = sim_check_status(mc);
-#endif
 
 	if (r < 0) {
 		dev_err(mc->dev, "Not initialized\n");
@@ -1217,22 +1138,7 @@ static int __devinit modemctl_probe(struct platform_device *pdev)
 #endif
 	
 #if defined (CONFIG_CP_CHIPSET_STE) 
-	#if defined (CONFIG_S5PC110_HAWK_BOARD)
-	res = platform_get_resource(pdev, IORESOURCE_IRQ, 2);
-	if(!res)  {
-		dev_err(&pdev->dev, "failed to get irq number #2 \n");
-		r = -EINVAL;
-		goto err;
-	}
-	irq_int_resout = res->start;
-	res = platform_get_resource(pdev, IORESOURCE_IRQ, 3);
-	if(!res)  {
-		dev_err(&pdev->dev, "failed to get irq number #3 \n");
-		r = -EINVAL;
-		goto err;
-	}
-	irq_int_cp_pwr_rst = res->start;	
-	#elif defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined(CONFIG_S5PC110_SIDEKICK_BOARD)
+#if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined(CONFIG_S5PC110_SIDEKICK_BOARD)
 	res = platform_get_resource(pdev, IORESOURCE_IRQ, 1);
 	if(!res)  {
 		dev_err(&pdev->dev, "failed to get irq number\n");
@@ -1247,7 +1153,7 @@ static int __devinit modemctl_probe(struct platform_device *pdev)
 		goto err;
 	}
 	irq_int_cp_pwr_rst = res->start;	
-	#endif
+#endif
 #endif
 	
 	mc = kzalloc(sizeof(struct modemctl), GFP_KERNEL);
@@ -1263,9 +1169,7 @@ static int __devinit modemctl_probe(struct platform_device *pdev)
 	mc->gpio_phone_active = pdata->gpio_phone_active;
 	mc->gpio_pda_active = pdata->gpio_pda_active;
 	mc->gpio_cp_reset = pdata->gpio_cp_reset;
-#if !defined(CONFIG_S5PC110_HAWK_BOARD)	
 	mc->gpio_reset_req_n = pdata->gpio_reset_req_n;
-#endif	
 	mc->gpio_usim_boot = pdata->gpio_usim_boot;
 	mc->gpio_flm_sel = pdata->gpio_flm_sel;
 	mc->gpio_sim_ndetect = pdata->gpio_sim_ndetect;
@@ -1345,13 +1249,6 @@ static int __devinit modemctl_probe(struct platform_device *pdev)
 
 	mc->irq_int_cp_pwr_rst = irq_int_cp_pwr_rst;
 	
-	#if defined (CONFIG_S5PC110_HAWK_BOARD)
-	INIT_WORK(&mc->work, mc_work);	
-	if (mc->sim_reference_level == SIM_LEVEL_NONE) 
-	{
-		sim_get_reference_status(mc);
-	}
-	#endif
 #else
 	INIT_WORK(&mc->work, mc_work);
 
@@ -1371,10 +1268,6 @@ static int __devinit modemctl_probe(struct platform_device *pdev)
 	}
 	
 	mc->irq_phone_active = irq_phone_active;
-#endif
-
-#if defined (CONFIG_CP_CHIPSET_STE) && defined (CONFIG_S5PC110_HAWK_BOARD)
-	_wake_lock_init(mc);
 #endif
 
 #if !(defined(CONFIG_S5PC110_FLEMING_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD))
@@ -1400,20 +1293,11 @@ static int __devinit modemctl_probe(struct platform_device *pdev)
 	mc->irq_sim_ndetect= irq_sim_ndetect;	
 #endif 	
 
-#if defined (CONFIG_CP_CHIPSET_STE) && defined (CONFIG_S5PC110_HAWK_BOARD)
-	current_sim_status = gpio_get_value(mc->gpio_sim_ndetect); /* Get the SIM_nDETECT GPIO status */
-	dev_dbg(mc->dev, "%s current_sim_status = [%d] \n", __func__, current_sim_status);
-#endif
-
-#if defined (CONFIG_CP_CHIPSET_STE) && defined (CONFIG_S5PC110_HAWK_BOARD)
-
-#else
 	_wake_lock_init(mc);
-#endif
 
 	platform_set_drvdata(pdev, mc);
 
-#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined(CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_SIDEKICK_BOARD)
+#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined(CONFIG_S5PC110_SIDEKICK_BOARD)
 	if (IS_ERR_OR_NULL(CP_RTC_regulator)) 
 	{
 		CP_RTC_regulator = regulator_get(NULL, "cp_rtc");

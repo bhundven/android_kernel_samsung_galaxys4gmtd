@@ -42,9 +42,7 @@ static struct mfd_cell max8998_devs[] = {
 	},
 };
 
-//#if defined (CONFIG_S5PC110_HAWK_BOARD)
 struct i2c_client * max8998_i2cptr;
-//#endif
 
 int max8998_read_reg(struct i2c_client *i2c, u8 reg, u8 *dest)
 {
@@ -123,7 +121,6 @@ int max8998_update_reg(struct i2c_client *i2c, u8 reg, u8 val, u8 mask)
 EXPORT_SYMBOL(max8998_update_reg);
 
 
-//#if defined (CONFIG_S5PC110_HAWK_BOARD)
 #define E32KhzCP_bit  1 << 6
 int  EN32KhzCP_CTRL(int on)
 {
@@ -143,8 +140,6 @@ int  EN32KhzCP_CTRL(int on)
 	 return ret;
 }
 EXPORT_SYMBOL(EN32KhzCP_CTRL);
-//#endif
-
 
 static int max8998_i2c_probe(struct i2c_client *i2c,
 			    const struct i2c_device_id *id)
@@ -160,9 +155,7 @@ static int max8998_i2c_probe(struct i2c_client *i2c,
 	i2c_set_clientdata(i2c, max8998);
 	max8998->dev = &i2c->dev;
 	max8998->i2c = i2c;
-//#if defined (CONFIG_S5PC110_HAWK_BOARD)
 	max8998_i2cptr = i2c;
-//#endif
 	max8998->irq = i2c->irq;
 	max8998->type = id->driver_data;
 //	if (pdata) {

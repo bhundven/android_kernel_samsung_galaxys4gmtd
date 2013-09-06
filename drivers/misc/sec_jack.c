@@ -41,10 +41,6 @@
 static struct class *jack_class;
 static struct device *jack_dev;
 
-#if defined(CONFIG_S5PC110_HAWK_BOARD)
-extern int set_tsp_for_tvout_35pi_detect(int state);
-#endif	
-
 struct sec_jack_info {
 	struct sec_jack_platform_data *pdata;
 	struct delayed_work jack_detect_work;
@@ -63,7 +59,7 @@ struct sec_jack_info {
 	struct platform_device *send_key_dev;
 	unsigned int cur_jack_type;
 };
-#if defined(CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 //HDLNC_OPK_20110307
 static struct sec_jack_info *local_hi;
 #endif
@@ -91,7 +87,7 @@ static struct gpio_event_direct_entry sec_jack_key_map[] = {
 	{
 		.code	= KEY_UNKNOWN,
 	},
-#if defined(CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 	{
 		.code   = KEY_UNKNOWN,
 	},
@@ -205,25 +201,13 @@ static void sec_jack_set_type(struct sec_jack_info *hi, int jack_type)
 	if (jack_type == hi->cur_jack_type) {
 		if (jack_type != SEC_HEADSET_4POLE){
 			pdata->set_micbias_state(false);
-			#ifdef CONFIG_S5PC110_HAWK_BOARD
-				if(jack_type == SEC_HEADSET_3POLE)
-					set_tsp_for_tvout_35pi_detect(1);
-				else if(jack_type == SEC_JACK_NO_DEVICE)
-					set_tsp_for_tvout_35pi_detect(0);
-			#endif
 		}
 		else{//4pole
-			#ifdef CONFIG_S5PC110_HAWK_BOARD 
-				set_tsp_for_tvout_35pi_detect(1);
-			#endif
 		}
 		return;
 	}
 
 	if (jack_type == SEC_HEADSET_4POLE) {
-		#ifdef CONFIG_S5PC110_HAWK_BOARD
-			set_tsp_for_tvout_35pi_detect(1);//4pole
-		#endif
 		/* for a 4 pole headset, enable detection of send/end key */
 		if (hi->send_key_dev == NULL)
 			/* enable to get events again */
@@ -233,12 +217,6 @@ static void sec_jack_set_type(struct sec_jack_info *hi, int jack_type)
 					&sec_jack_input_data,
 					sizeof(sec_jack_input_data));
 	} else {//3pole & no device
-		#ifdef CONFIG_S5PC110_HAWK_BOARD
-			if(jack_type == SEC_HEADSET_3POLE) //3pole
-				set_tsp_for_tvout_35pi_detect(1);
-			else if(jack_type == SEC_JACK_NO_DEVICE) // no device
-				set_tsp_for_tvout_35pi_detect(0);
-		#endif
 		/* for all other jacks, disable send/end key detection */
 		if (hi->send_key_dev != NULL) {
 			/* disable to prevent false events on next insert */
@@ -259,10 +237,6 @@ static void sec_jack_set_type(struct sec_jack_info *hi, int jack_type)
 
 static void handle_jack_not_inserted(struct sec_jack_info *hi)
 {
-	#ifdef CONFIG_S5PC110_HAWK_BOARD
-		set_tsp_for_tvout_35pi_detect(0);
-	#endif
-
 	sec_jack_set_type(hi, SEC_JACK_NO_DEVICE);
 	hi->pdata->set_micbias_state(false);
 }
@@ -379,7 +353,7 @@ void sec_jack_buttons_work(struct work_struct *work)
 
 	pr_warn("%s: key is skipped. ADC value is %d\n", __func__, adc);
 }
-#if defined(CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 // HDLNC_OPK_20110307
 static int jack_detect_change(struct work_struct *ignored)
 {
@@ -460,7 +434,7 @@ static int sec_jack_probe(struct platform_device *pdev)
 	}
 
 	sec_jack_key_map[0].gpio = pdata->send_end_gpio;
-#if defined(CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 	sec_jack_key_map[1].gpio = pdata->send_end_gpio_35;
 #endif	
 	hi = kzalloc(sizeof(struct sec_jack_info), GFP_KERNEL);
@@ -553,7 +527,7 @@ static int sec_jack_probe(struct platform_device *pdev)
 	}
 
 	dev_set_drvdata(&pdev->dev, hi);
-#if defined(CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 // HDLNC_OPK_20110307
 // Fix when boot on earjack plugged state does not recognize the problem
 	local_hi = hi;	

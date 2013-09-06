@@ -316,25 +316,14 @@ struct platform_device s3c_device_android_usb = {
 
 static struct usb_mass_storage_platform_data ums_pdata = {
 	.vendor			= "Android",
-// [[ HDLNC_BP_pyoungkuenoh_20110223
-#if	defined(CONFIG_S5PC110_HAWK_BOARD)
-	.product		= "SGH-T759",
-#else
 	.product		= "UMS Composite",
-#endif
 	.release		= 1,
-
-#ifdef CONFIG_S5PC110_HAWK_BOARD
-	.nluns			= 1,
+#ifdef CONFIG_USB_ANDROID_SAMSUNG_COMPOSITE
+	.nluns			= 2,
 #else
-	#ifdef CONFIG_USB_ANDROID_SAMSUNG_COMPOSITE
-		.nluns			= 2,
-	#else
 
-		.nluns			= 1,
-	#endif
+	.nluns			= 1,
 #endif
-// ]] HDLNC_BP_pyoungkuenoh_20110223
 };
 
 struct platform_device s3c_device_usb_mass_storage = {

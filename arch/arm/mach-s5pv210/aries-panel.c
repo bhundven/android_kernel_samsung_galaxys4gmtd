@@ -25,7 +25,7 @@
 #define SLEEPMSEC		0x1000
 #define ENDDEF			0x2000
 
-#if defined (CONFIG_FB_S3C_uPD161224) /* 20110207 nat */
+#if defined(CONFIG_FB_S3C_uPD161224) /* 20110207 nat */
 
 /* TMD 3.5 inch WVGA REV 0.4 10.11.11 Excel version */
 static const u16 SEQ_PANEL_LCD_SET_MANUFACTURE_COMMAND_CODE[] = { 
@@ -79,7 +79,7 @@ struct s5p_panel_data aries_panel_data = {
 	.standby_on = SEQ_PANEL_LCD_SET_MANUFACTURE_COMMAND_CODE,
 };
 
-#else  /* defined (CONFIG_S5PC110_HAWK_BOARD) */
+#else
 
 static const u16 s6e63m0_SEQ_DISPLAY_ON[] = {
 	0x029,
@@ -2458,5 +2458,4 @@ struct s5p_tft_panel_data aries_tft_panel_data = {
 	.brightness_set = brightness_setting_table,
 };
 
-#endif  /* defined (CONFIG_S5PC110_HAWK_BOARD) */
-
+#endif
