@@ -3038,7 +3038,7 @@ void  get_message(void)
     #endif
         {
             /* Call the main application to handle the message. */
-#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 		if(quantum_msg[0] == 0x1e) 
 		{
 			printk(KERN_DEBUG "[TSP] msg id =  %x %x %x %x %x %x %x %x %x\n", quantum_msg[0], quantum_msg[1], quantum_msg[2],\
@@ -3926,7 +3926,7 @@ static void qt602240_early_suspend(struct early_suspend *h)
     not_yet_count = 0;
 #endif
 //NAGSM_Android_SEL_Kernel_20110421
-#if !(defined (CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_KEPLER_BOARD)) || !defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD) 
+#if !(defined (CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD))
     /*reset the gpio's for the sleep configuration*/
     s3c_gpio_cfgpin(GPIO_TOUCH_INT, S3C_GPIO_INPUT);
     s3c_gpio_setpull(GPIO_TOUCH_INT, S3C_GPIO_PULL_DOWN);

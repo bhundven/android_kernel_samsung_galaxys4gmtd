@@ -52,9 +52,7 @@
 #include <mach/regs-clock.h>
 #include <mach/gpio.h>
 #include <mach/gpio-aries.h>
-#if defined (CONFIG_S5PC110_KEPLER_BOARD)
-#include <mach/gpio-settings-kepler.h>
-#elif  defined (CONFIG_S5PC110_HAWK_BOARD)
+#if  defined (CONFIG_S5PC110_HAWK_BOARD)
 #include <mach/gpio-settings-hawk.h>
 #elif  defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 #include <mach/gpio-settings-vibrantplus.h>
@@ -509,7 +507,7 @@ static struct regulator_consumer_supply ldo3_consumer[] = {
 	REGULATOR_SUPPLY("usb_io", NULL),
 };
 
-#if  defined(CONFIG_S5PC110_KEPLER_BOARD) || defined(CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#if defined(CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 static struct regulator_consumer_supply ldo4_consumer[] = {
 	REGULATOR_SUPPLY("vadcldo4", NULL),
 };
@@ -652,7 +650,7 @@ static struct regulator_init_data aries_ldo3_data = {
 	.consumer_supplies	= ldo3_consumer,
 };
 
-#if  defined(CONFIG_S5PC110_KEPLER_BOARD) || defined(CONFIG_S5PC110_HAWK_BOARD)	|| defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#if defined(CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 static struct regulator_init_data aries_ldo4_data = {
 	.constraints	= {
 		.name		= "VADC_3.3V",
@@ -767,21 +765,6 @@ static struct regulator_init_data aries_ldo11_data = {
 		.name		= "CAM_VGA_AF_2.8V",
 		.min_uV 	= 2800000,
 		.max_uV 	= 2800000,
-		.apply_uV	= 1,
-		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
-		.state_mem	= {
-			.disabled = 1,
-		},
-	},
-	.num_consumer_supplies	= ARRAY_SIZE(ldo11_consumer),
-	.consumer_supplies	= ldo11_consumer,
-};
-#elif defined (CONFIG_S5PC110_KEPLER_BOARD)
-static struct regulator_init_data aries_ldo11_data = {
-	.constraints	= {
-		.name		= "CAM_AF_3.0V",
-		.min_uV		= 2800000,
-		.max_uV		= 2800000,
 		.apply_uV	= 1,
 		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
 		.state_mem	= {
@@ -956,21 +939,6 @@ static struct regulator_init_data aries_ldo16_data = {
 	.num_consumer_supplies	= ARRAY_SIZE(ldo16_consumer),
 	.consumer_supplies	= ldo16_consumer,
 };
-#elif defined (CONFIG_S5PC110_KEPLER_BOARD)
-static struct regulator_init_data aries_ldo16_data = {
-	.constraints	= {
-		.name		= "VGA_AVDD_1.8V",
-		.min_uV		= 1800000,
-		.max_uV		= 1800000,
-		.apply_uV	= 1,
-		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
-		.state_mem	= {
-			.disabled = 1,
-		},
-	},
-	.num_consumer_supplies	= ARRAY_SIZE(ldo16_consumer),
-	.consumer_supplies	= ldo16_consumer,
-};
 #else
 static struct regulator_init_data aries_ldo16_data = {
 	.constraints	= {
@@ -1110,93 +1078,7 @@ static struct max8998_regulator_data aries_regulators[] = {
 };
 
 
-#if defined (CONFIG_S5PC110_KEPLER_BOARD)
-static struct max8998_adc_table_data temper_table[] =  {
-	/* ADC, Temperature (C) */
-	{ 206,		700	},		
-	{ 220,		690	},	
-	{ 234,		680	},		
-	{ 248,		670	},	
-	{ 262,		660	},	
-	{ 276,		650	},	
-	{ 290,		640	},	
-	{ 304,		630	},
-	{ 314,		620	},	
-	{ 323,		610	},
-	{ 337,		600	},
-	{ 351,		590	},
-	{ 364,		580	},
-	{ 379,		570	},
-	{ 395,		560	},
-	{ 408,		550	},
-	{ 423,		540	},	
-	{ 438,		530	},
-	{ 453,		520	},
-	{ 465,		510	},
-	{ 478,		500	},
-	{ 495,		490	},
-	{ 513,		480	},
-	{ 528,		470	},
-	{ 544,		460	},
-	{ 564,		450	},
-	{ 584,		440	},
-	{ 602,		430	},
-	{ 621,		420	},
-	{ 643,		410	},
-	{ 665,		400	},
-	{ 682,		390	},
-	{ 702,		380	},
-	{ 729,		370	},
-	{ 752,		360	},
-	{ 775,		350	},
-	{ 798,		340	},
-	{ 821,		330	},	
-	{ 844,		320	},
-	{ 867,		310	},
-	{ 890,		300	},
-	{ 913,		290	},
-	{ 936,		280	},
-	{ 959,		270	},
-	{ 982,		260	},
-	{ 1005,		250	},
-	{ 1028,		240	},
-	{ 1051,		230	},
-	{ 1074,		220	},
-	{ 1097,		210	},
-	{ 1120,		200	},
-	{ 1143,		190	},
-	{ 1166,		180	},
-	{ 1189,		170	},
-	{ 1212,		160	},
-	{ 1235,		150	},
-	{ 1258,		140	},
-	{ 1281,		130	},
-	{ 1304,		120	},
-	{ 1327,		110	},
-	{ 1350,		100	},	
-	{ 1373,		90	},
-	{ 1396,		80	},
-	{ 1419,		70	},
-	{ 1442,		60	},
-	{ 1465,		50	},	
-	{ 1484,		40	}, 
-	{ 1504,		30	}, 
-	{ 1526,		20	}, 
-	{ 1543,		10	}, // +10
-	{ 1567,		0	}, // 10
-	{ 1569,		-10	}, 
-	{ 1592,		-20	}, 
-	{ 1613,		-30	}, 
-	{ 1633,		-40	}, 
-	{ 1653,		-50	}, 
-	{ 1654,		-60	}, 	
-	{ 1671,		-70	}, 
-	{ 1691,		-80	}, 
-	{ 1711,		-90	}, 
-	{ 1731,		-100}, // 0
-};
-
-#elif defined (CONFIG_S5PC110_HAWK_BOARD)
+#if defined (CONFIG_S5PC110_HAWK_BOARD)
 static struct max8998_adc_table_data temper_table[] =  {
 	
 	/* ADC, Temperature (C) */
@@ -1737,7 +1619,7 @@ static struct platform_device s3c_device_i2c7 = {
 	.id			= 7,
 	.dev.platform_data	= &i2c7_platdata,
 };
-#if !(defined (CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_KEPLER_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)) 
+#if !(defined (CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)) 
 static struct i2c_gpio_platform_data i2c8_platdata = {
 	.sda_pin		= GPIO_FM_SDA_28V,
 	.scl_pin		= GPIO_FM_SCL_28V,
@@ -1836,13 +1718,8 @@ static struct platform_device s3c_device_i2c12 = {
 
 //[ hdlnc_bp_ytkwon : 20100301
 static	struct	i2c_gpio_platform_data	i2c13_platdata = {
-#if defined(CONFIG_S5PC110_KEPLER_BOARD)
-	.sda_pin		= GPIO_A1026_SDA,
-	.scl_pin		= GPIO_A1026_SCL,
-#else
 	.sda_pin		= -1,
 	.scl_pin		= -1,
-#endif
 	.udelay			= 1,	/* 250KHz */		
 	.sda_is_open_drain	= 0,
 	.scl_is_open_drain	= 0,
@@ -1887,14 +1764,7 @@ static void touch_keypad_onoff(int onoff)
 		msleep(25);
 }
 
-#if defined (CONFIG_S5PC110_KEPLER_BOARD)
-static const int touch_keypad_code[] = {
-	KEY_MENU,
-	KEY_HOME,
-	KEY_BACK,
-	KEY_SEARCH,
-};
-#elif defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 static const int touch_keypad_code[] = {
         KEY_MENU,
         KEY_BACK,
@@ -1955,20 +1825,6 @@ static struct gpio_event_direct_entry aries_keypad_key_map[] = {
 	.gpio	= S5PV210_GPH3(0),
 	.code	= KEY_HOME,
 }
-#elif defined(CONFIG_S5PC110_KEPLER_BOARD) 
-	{
-		.gpio	= S5PV210_GPH2(6),
-		.code	= KEY_POWER,
-	},
-	{
-		.gpio	= S5PV210_GPH3(1),
-		.code	= KEY_VOLUMEDOWN,
-	},
-	{
-		.gpio	= S5PV210_GPH3(2),
-		.code	= KEY_VOLUMEUP,
-	}
-
 #elif defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 // NAGSM_Android_SEL_Kernel_20110422
 	{
@@ -2055,19 +1911,7 @@ EXPORT_SYMBOL(jack_mic_bias);
 static void set_shared_mic_bias(void)
 {
 // [[ HDLNC_BP_pyoungkuenoh_20110223
-#if defined(CONFIG_S5PC110_KEPLER_BOARD)
-	if( ( HWREV == 0x04 ) || ( HWREV == 0x08 ) || ( HWREV == 0x0C ) || ( HWREV == 0x02 ) || ( HWREV == 0x0A ) )
-	{
-		gpio_set_value(GPIO_MICBIAS_EN ,jack_mic_bias || wm8994_mic_bias);
-		gpio_set_value(GPIO_EARPATH_SEL, wm8994_mic_bias || jack_mic_bias);
-	}
-	else
-	{
-		gpio_set_value(GPIO_MICBIAS_EN, wm8994_mic_bias);   // GPJ4(2)
-		gpio_set_value(GPIO_EARMICBIAS_EN, jack_mic_bias);	// GPJ4(4) : Use earMicbias since hwrev-0.5
-		gpio_set_value(GPIO_EARPATH_SEL, wm8994_mic_bias || jack_mic_bias);
-	}
-#elif defined(CONFIG_S5PC110_HAWK_BOARD)|| defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#if defined(CONFIG_S5PC110_HAWK_BOARD)|| defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
   	gpio_set_value(GPIO_MICBIAS_EN, wm8994_mic_bias);// GPJ4(2)
 	gpio_set_value(GPIO_MICBIAS_EN2, jack_mic_bias||wm8994_submic_bias); // GPJ2(5)
 	gpio_set_value(GPIO_EARPATH_SEL, wm8994_mic_bias || jack_mic_bias);
@@ -4209,7 +4053,7 @@ static void fsa9480_usb_cb(bool attached)
 	}
 
 	mtp_off_status = false;
-#if !defined (CONFIG_S5PC110_HAWK_BOARD) && !defined (CONFIG_S5PC110_KEPLER_BOARD) && !defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)		// mr work
+#if !defined (CONFIG_S5PC110_HAWK_BOARD) && !defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
        if( max8998_check_vdcin())
 	set_cable_status = attached ? CABLE_TYPE_USB : CABLE_TYPE_NONE;
 	else
@@ -4224,7 +4068,7 @@ static void fsa9480_usb_cb(bool attached)
 static void fsa9480_charger_cb(bool attached)
 {
 
-#if !defined (CONFIG_S5PC110_HAWK_BOARD) && !defined (CONFIG_S5PC110_KEPLER_BOARD) && !defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) // mr work
+#if !defined (CONFIG_S5PC110_HAWK_BOARD) && !defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
        if( max8998_check_vdcin())
 	set_cable_status = attached ? CABLE_TYPE_AC : CABLE_TYPE_NONE;
 	else
@@ -4250,7 +4094,7 @@ struct usb_gadget *gadget = platform_get_drvdata(&s3c_device_usbgadget);	//Build
 	else
 		switch_set_state(&switch_dock, 0);
 		
-#if !defined (CONFIG_S5PC110_HAWK_BOARD) && !defined (CONFIG_S5PC110_KEPLER_BOARD) && !defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) // mr work
+#if !defined (CONFIG_S5PC110_HAWK_BOARD) && !defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 	if (gadget) 
 	{
 		if (attached)
@@ -4282,7 +4126,7 @@ struct usb_gadget *gadget = platform_get_drvdata(&s3c_device_usbgadget);
 	else
 		switch_set_state(&switch_dock, 0);
 		
-#if !defined (CONFIG_S5PC110_HAWK_BOARD) && !defined (CONFIG_S5PC110_KEPLER_BOARD) && !defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) // mr work
+#if !defined (CONFIG_S5PC110_HAWK_BOARD) && !defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 //#if 0 /* doodlejump */
 // HDLNC_OPK_20110324 : For USB Charging in Cardock mode		
 	if (gadget) 
@@ -4351,7 +4195,7 @@ static struct i2c_board_info i2c_devs6[] __initdata = {
 #endif
 };
 
-#if !(defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD))
+#if !(defined (CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD))
 static struct pn544_i2c_platform_data pn544_pdata = {
 	.irq_gpio = NFC_IRQ,
 	.ven_gpio = NFC_EN,
@@ -4383,9 +4227,7 @@ static struct max17040_platform_data max17040_pdata = {
 	.power_supply_register = max17040_power_supply_register,
 	.power_supply_unregister = max17040_power_supply_unregister,
 	
-#if  defined(CONFIG_S5PC110_KEPLER_BOARD)
-	.rcomp_value = 0xD000,
-#elif defined(CONFIG_S5PC110_HAWK_BOARD)		
+#if defined(CONFIG_S5PC110_HAWK_BOARD)		
 	.rcomp_value = 0xB000,
 #elif defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)	
 	.rcomp_value = 0xD000,
@@ -4397,7 +4239,7 @@ static struct i2c_board_info i2c_devs9[] __initdata = {
 	{
 		I2C_BOARD_INFO("max17040", (0x6D >> 1)),
 		.platform_data = &max17040_pdata,
-#if  defined(CONFIG_S5PC110_KEPLER_BOARD) || defined(CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#if defined(CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 		.irq = IRQ_EINT(27),
 #endif		
 	},
@@ -4745,9 +4587,7 @@ static struct sec_jack_zone sec_jack_zones[] = {
 		/* 0 < adc <= 900, unstable zone, default to 3pole if it stays
 		 * in this range for 800ms (10ms delays, 80 samples)
 		 */
-#if defined(CONFIG_S5PC110_KEPLER_BOARD)
-		.adc_high = 600,
-#elif defined(CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#if defined(CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 		.adc_high = 300,
 #else
 		.adc_high = 900,
@@ -4760,9 +4600,7 @@ static struct sec_jack_zone sec_jack_zones[] = {
 		/* 900 < adc <= 2000, unstable zone, default to 4pole if it
 		 * stays in this range for 800ms (10ms delays, 80 samples)
 		 */
-#if defined(CONFIG_S5PC110_KEPLER_BOARD)
-		.adc_high = 700,
-#elif defined(CONFIG_S5PC110_HAWK_BOARD)
+#if defined(CONFIG_S5PC110_HAWK_BOARD)
 		.adc_high = 350,
 #elif defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)	
 		.adc_high = 300,	
@@ -4777,9 +4615,7 @@ static struct sec_jack_zone sec_jack_zones[] = {
 		/* 2000 < adc <= 3400, 4 pole zone, default to 4pole if it
 		 * stays in this range for 100ms (10ms delays, 10 samples)
 		 */
-#if defined(CONFIG_S5PC110_KEPLER_BOARD)
-		.adc_high = 3000,
-#elif defined(CONFIG_S5PC110_HAWK_BOARD)
+#if defined(CONFIG_S5PC110_HAWK_BOARD)
 		.adc_high = 3300,
 #elif defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 		.adc_high = 3700,
@@ -4810,11 +4646,7 @@ static struct sec_jack_buttons_zone sec_jack_buttons_zones[] = {
 		/* 0 <= adc <=1000, stable zone */
 		.code		= KEY_MEDIA,
 		.adc_low	= 0,
-#if defined(CONFIG_S5PC110_KEPLER_BOARD)
-		.adc_high	= 4000,
-#else	
 		.adc_high	= 1000,
-#endif			
 	},
 };
 
@@ -4851,10 +4683,6 @@ extern int  EN32KhzCP_CTRL(int on);
 extern void touch_led_on(bool bOn);
 #endif
 
-#if defined (CONFIG_S5PC110_KEPLER_BOARD)
-extern bool charging_mode_get(void);
-#endif
-
 static void aries_power_off(void)
 {
 	int err;
@@ -4876,13 +4704,6 @@ static void aries_power_off(void)
 
 	/* prevent phone reset when AP off */
 	gpio_set_value(GPIO_PHONE_ON, 0);
-
-	#if defined (CONFIG_S5PC110_KEPLER_BOARD)
-	if(charging_mode_get())
-	{
-		phone_wait_cnt = 11;
-	}
-	#endif
 
 	/* confirm phone off */
 	#if defined (CONFIG_CP_CHIPSET_STE)
@@ -5353,7 +5174,7 @@ static struct platform_device *aries_devices[] __initdata = {
 	&s3c_device_i2c5,  /* accel sensor */
 	&s3c_device_i2c6,
 	&s3c_device_i2c7,
-#if !(defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD))
+#if !(defined (CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD))
 	&s3c_device_i2c8,  /* FM radio */
 #else
 //&s3c_device_i2c8, 
@@ -5362,7 +5183,7 @@ static struct platform_device *aries_devices[] __initdata = {
 	&s3c_device_i2c11, /* optical sensor */
 	&s3c_device_i2c12, /* magnetic sensor */
 	&s3c_device_i2c13,  // hdlnc_bp_ytkwon : 20100301
-#if !(defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD))
+#if !(defined (CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD))
 	&s3c_device_i2c14, /* nfc sensor */
 #endif	
 
@@ -5536,7 +5357,7 @@ static void __init fsa9480_gpio_init(void)
 	s3c_gpio_setpull(GPIO_JACK_nINT, S3C_GPIO_PULL_NONE);
 }
 
-#if defined (CONFIG_S5PC110_KEPLER_BOARD) || defined (CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 static void __init fuelgauge_gpio_init(void)
 {
 //       s3c_gpio_cfgpin(GPIO_KBR3, S3C_GPIO_SFN(GPIO_KBR3_WAKE_AF));
@@ -5571,10 +5392,7 @@ static void __init sound_init(void)
 	reg |= 0x1;
 	__raw_writel(reg, S5P_CLK_OUT);
 
-#if defined(CONFIG_S5PC110_KEPLER_BOARD)
-	gpio_request(GPIO_MICBIAS_EN, "micbias_enable");
-	gpio_request(GPIO_EARMICBIAS_EN, "sub_micbias_enable");	
-#elif defined(CONFIG_S5PC110_HAWK_BOARD)
+#if defined(CONFIG_S5PC110_HAWK_BOARD)
   	gpio_request(GPIO_MICBIAS_EN,  "micbias_enable");		 // GPJ4(2)
 	gpio_request(GPIO_MICBIAS_EN2, "sub_micbias_enable"); // GPJ2(5)
 #else
@@ -5670,7 +5488,7 @@ static void __init aries_machine_init(void)
 	/* FM Radio */
 	i2c_register_board_info(8, i2c_devs8, ARRAY_SIZE(i2c_devs8));
 
-#if defined (CONFIG_S5PC110_KEPLER_BOARD) || defined (CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 	fuelgauge_gpio_init();
 #endif
 	i2c_register_board_info(9, i2c_devs9, ARRAY_SIZE(i2c_devs9));
@@ -5688,7 +5506,7 @@ static void __init aries_machine_init(void)
 	i2c_register_board_info(13, i2c_devs13, ARRAY_SIZE(i2c_devs13)); /* audience A1026 */
 //hdlnc_ldj_20100823 	
 
-#if !(defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD))
+#if !(defined (CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD))
 	/* nfc sensor */
 	i2c_register_board_info(14, i2c_devs14, ARRAY_SIZE(i2c_devs14));
 #endif

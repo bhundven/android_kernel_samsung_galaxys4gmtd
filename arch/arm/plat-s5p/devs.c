@@ -317,9 +317,7 @@ struct platform_device s3c_device_android_usb = {
 static struct usb_mass_storage_platform_data ums_pdata = {
 	.vendor			= "Android",
 // [[ HDLNC_BP_pyoungkuenoh_20110223
-#if	defined(CONFIG_S5PC110_KEPLER_BOARD)
-	.product		= "SGH-I897",
-#elif	defined(CONFIG_S5PC110_HAWK_BOARD)
+#if	defined(CONFIG_S5PC110_HAWK_BOARD)
 	.product		= "SGH-T759",
 #else
 	.product		= "UMS Composite",

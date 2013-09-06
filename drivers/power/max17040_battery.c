@@ -23,7 +23,7 @@
 #include <linux/time.h>
 #include <linux/fs.h>
 
-#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 #define ATT_TMO_COMMON
 #endif
 
@@ -167,50 +167,7 @@ static void max17040_get_vcell(struct i2c_client *client)
 	chip->vcell = ((msb << 4) + (lsb >> 4)) * 1250;
 }
 
-#if  defined(CONFIG_S5PC110_KEPLER_BOARD) 
-static void max17040_get_soc(struct i2c_client *client)
-{
-	struct max17040_chip *chip = i2c_get_clientdata(client);
-	u8 msb;
-	u8 lsb;
-	int  pure_soc, adj_soc, soc;
-
-	msb = max17040_read_reg(client, MAX17040_SOC_MSB);
-	lsb = max17040_read_reg(client, MAX17040_SOC_LSB);
-
-
-	pure_soc = msb * 100 +  ((lsb*100)/256);
-
-	 if(ce_for_fuelgauge){
-		 adj_soc = ((pure_soc - 130)*10000)/9720; // (FGPureSOC-EMPTY(1.2))/(FULL-EMPTY(?))*100
-	 }
-	 else{
-		 adj_soc = ((pure_soc - 130)*10000)/9430; // (FGPureSOC-EMPTY(1.2))/(FULL-EMPTY(?))*100
-	 }
-       soc=adj_soc/100;
-	   
-	if( (soc==4) && adj_soc%100 >= 80){
-		soc+=1;
-	 	} 
-	
-	 if( (soc== 0) && (adj_soc>0) ){
-	       soc = 1;  
-	 	}
-	 
-	 if(adj_soc <= 0){
-	       soc = 0;  	 	
-	 	}
-	 
-	 if(soc>=100)
-	 {
-		  soc=100;
-	 }
-	 
-//  printk("[ max17043]  max17040_get_soc, pure_soc= %d, adj_soc= %d, soc=%d \n", pure_soc, adj_soc, soc);
- 
-	chip->soc = soc;
-}
-#elif  defined(CONFIG_S5PC110_HAWK_BOARD) 
+#if  defined(CONFIG_S5PC110_HAWK_BOARD) 
 static void max17040_get_soc(struct i2c_client *client)
 {
 	struct max17040_chip *chip = i2c_get_clientdata(client);
@@ -379,40 +336,7 @@ void max17040_reset_soc(void)
 }
 EXPORT_SYMBOL(max17040_reset_soc);
 
-#if  defined(CONFIG_S5PC110_KEPLER_BOARD) 
-static void max17043_set_threshold(struct i2c_client *client, int mode)
-{
-	u16 regValue;
-
-	switch (mode) 
-		{
-			case FUEL_INT_1ST:
-				regValue = 0x10; // 15%
-				rcomp_status = 0;
-				break;	
-				
-			case FUEL_INT_2ND:
- 				regValue = 0x1A; // 5%
-				rcomp_status = 1;
-				
-				break;
-			case FUEL_INT_3RD:
- 				regValue = 0x1E; // 1%
-				rcomp_status = 2;
-				break;
-				
- 			default:
- 				regValue = 0x1E; // 1%
-				rcomp_status = 2;				
-				break;		
- 		}
-
-	regValue = fg_chip->pdata->rcomp_value |regValue;
-    //   printk("[ max17043]  max17043_set_threshold %d, regValue = %x \n",mode,regValue);
-	
-	i2c_smbus_write_word_data(client, MAX17040_RCOMP_MSB,   swab16(regValue));		
- }
-#elif  defined(CONFIG_S5PC110_HAWK_BOARD) 
+#if  defined(CONFIG_S5PC110_HAWK_BOARD) 
 static void max17043_set_threshold(struct i2c_client *client, int mode)
 {
 //	struct i2c_client *client = fg_i2c_client;
@@ -576,14 +500,6 @@ static void max17040_update_values(struct max17040_chip *chip)
 	else{
 			max17043_set_threshold(chip->client, FUEL_INT_3RD);			
 		}
-
-#elif defined (CONFIG_S5PC110_KEPLER_BOARD)
-	 if(chip->soc >= 6){	
-			max17043_set_threshold(chip->client, FUEL_INT_2ND);		
-		}
-	else{
-			max17043_set_threshold(chip->client, FUEL_INT_3RD);			
-		}
 #else
 			max17043_set_threshold(chip->client, FUEL_INT_3RD);	
 #endif	
@@ -737,7 +653,7 @@ static int __devinit max17040_probe(struct i2c_client *client,
 
 	return 0;
 	
-#if defined (CONFIG_S5PC110_KEPLER_BOARD) || defined (CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 err_irq:
 		free_irq(client->irq, NULL);
 #endif

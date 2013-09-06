@@ -360,9 +360,6 @@ void input_event(struct input_dev *dev,
 				first = 0;
 	}
 #elif 1	/*defined (CONFIG_KEYBOARD_GPIO)*/
-#if defined(CONFIG_S5PC110_KEPLER_BOARD)
-// temporary block forced upload mode.
-#else
 	if (strcmp(dev->name, "aries-keypad") == 0) {
 		if (value) {
 			if (code == KEY_VOLUMEUP)
@@ -402,7 +399,6 @@ void input_event(struct input_dev *dev,
 
 		}
 	}
-#endif
 #endif
 
 #endif

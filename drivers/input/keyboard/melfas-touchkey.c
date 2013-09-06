@@ -693,33 +693,6 @@ static int cypress_touchkey_probe(struct i2c_client *client,
 	}
 	printk("%s F/W version: 0x%x, Module version:0x%x\n", __FUNCTION__,
 	       data[1], data[2]);
-
-	
-#if 0 //defined CONFIG_S5PC110_KEPLER_BOARD 
-	
-	   // Firmware check & Update
-	   if((data[1] < 0x18)){
-		   touchkey_update_status=1;
-		   while (retry--) {
-			   if(mcsdl_download_binary_data() == 1)
-				{   printk(KERN_ERR"[TOUCHKEY]Touchkey_update succeeded\n");
-				   touchkey_update_status=0;
-				   break;
-			   }
-			   printk(KERN_ERR"touchkey_update failed... retry...\n");
-		  }
-		   if (retry <= 0) {
-			   // disable ldo11
-			   
-			   touchkey_update_status=-1;
-			   msleep(300);	
-				gpio_direction_output(_3_GPIO_TOUCH_EN, 0);
-		   }
-	
-		   init_hw();  //after update, re initalize.
-	   	}
-#endif
-
 #endif
 
 	return 0;

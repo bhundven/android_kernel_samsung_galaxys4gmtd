@@ -176,13 +176,10 @@ enum audio_path	{
 
 #if defined(CONFIG_S5PC110_HAWK_BOARD)
 enum mic_path			{MAIN, SUB, BT_REC, SPK_MIC, MIC_OFF};
-#elif defined(CONFIG_S5PC110_KEPLER_BOARD)|| defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#elif defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 enum mic_path			{MAIN, SUB, BT_REC, MIC_OFF};
-#if defined(CONFIG_S5PC110_KEPLER_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
- 
 enum call_recording_channel {CH_OFF, CH_UPLINK, CH_DOWNLINK, CH_UDLINK};
 enum voice_record_path     { CALL_RECORDING_OFF, CALL_RECORDING_MAIN, CALL_RECORDING_SUB};
-#endif
 #endif
 enum fmradio_path		{FMR_OFF, FMR_SPK, FMR_HP, FMR_DUAL_MIX};
 enum fmradio_mix_path		{FMR_MIX_OFF, FMR_MIX_DUAL};
@@ -248,7 +245,7 @@ struct wm8994_priv {
 	unsigned int cur_audience;
 	unsigned int mic_mute;
 //]mook_GB : add in audience
-#if defined(CONFIG_S5PC110_KEPLER_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 	enum voice_record_path call_record_path;
 	enum call_recording_channel call_record_ch;
 #endif
@@ -298,17 +295,7 @@ void wm8994_set_voicecall_common(struct snd_soc_codec *codec);
 void wm8994_set_voicecall_receiver(struct snd_soc_codec *codec);
 void wm8994_set_voicecall_headset(struct snd_soc_codec *codec);
 
-#if (defined CONFIG_S5PC110_KEPLER_BOARD)
-void wm8994_set_voicecall_tty(struct snd_soc_codec *codec);
-void wm8994_set_voicecall_receiver_audience(struct snd_soc_codec *codec); //hdlnc_ldj_0417_A1026
-void wm8994_set_voicecall_factory_subMIC(struct snd_soc_codec *codec); //hdlnc_ldj_0417_A1026
-
-void wm8994_set_voicecall_record(struct snd_soc_codec *codec, int path_num);
-void wm8994_call_recording_change_path(struct snd_soc_codec *codec);
-void wm8994_set_voicecall_record_off(struct snd_soc_codec *codec);
-
-
-#elif (defined CONFIG_S5PC110_HAWK_BOARD)
+#if (defined CONFIG_S5PC110_HAWK_BOARD)
 void wm8994_set_voicecall_tty(struct snd_soc_codec *codec);
 void wm8994_set_voicecall_hac(struct snd_soc_codec *codec);
 

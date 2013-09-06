@@ -29,12 +29,9 @@
 #define BATT_MINIMUM		(-28)	/* 3.554V */
 #define BATT_OFF		(-128)	/* 3.4029V */
 
-#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 #define ATT_TMO_COMMON
 #endif
-
-//compile test
-//#define CONFIG_S5PC110_KEPLER_BOARD
 
 #if defined (ATT_TMO_COMMON) 
 
@@ -153,27 +150,7 @@ enum {
 #endif
 
 
-#if defined (CONFIG_S5PC110_KEPLER_BOARD)
-#define EVENT_TEMP_HIGH_BLOCK	       640  //  temper_table[85][0]		// 65 ¢®E¡ËcE
-#define EVENT_TEMP_HIGH_RECOVER	570  //  temper_table[75][0]		// 55 ¢®E¡ËcE
-
-#define TEMP_HIGH_BLOCK	              500  // temper_table[67][0]		// 47 ¢®E¡ËcE
-#define TEMP_HIGH_RECOVER	              430  // temper_table[60][0]		// 40 ¢®E¡ËcE
-#define TEMP_LOW_BLOCK		              10  //  temper_table[19][0]		// -1 temp
-#define TEMP_LOW_RECOVER	              60   //  temper_table[24][0]		// 4 temp
-
-#define FULL_CHARGE_COND_VOLTAGE	 4100
-#define RECHARGE_COND_VOLTAGE        4140
-#define RECHARGE_COND_TIME		 (30*1000)	
-
-#define CURRENT_OF_FULL_CHG		 279		//150mA
-#define CURRENT_OF_TOPOFF_CHG		 100	
-
-
-#define BATT_VF_MAX	800 // 0.55
-#define BATT_VF_MIN	       400 // 0.45
-
-#elif defined (CONFIG_S5PC110_HAWK_BOARD)
+#if defined (CONFIG_S5PC110_HAWK_BOARD)
 
 #define EVENT_TEMP_HIGH_BLOCK	       650  //  temper_table[85][0]		// 65 ¢®E¡ËcE
 #define EVENT_TEMP_HIGH_RECOVER	470  //  temper_table[75][0]		// 55 ¢®E¡ËcE

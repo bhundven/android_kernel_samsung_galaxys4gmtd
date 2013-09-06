@@ -2090,9 +2090,6 @@ static int ce147_set_capture_exif(struct v4l2_subdev *sd)
 
 	unsigned char ce147_gps_processing[130] = { 0x00, };
 	unsigned int ce147_reglen_gps_processing = 130;
-#if defined(CONFIG_S5PC110_KEPLER_BOARD) //NAGSM_HQ_CAMERA_LEESUNGKOO_20110315
-	unsigned char ce147_str_model[9] = "SGH-I897\0";
-#endif //CONFIG_S5PC110_KEPLER_BOARD
 
 #if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 #if defined(CONFIG_VIDEO_VIBRANTPLUSTELUS)

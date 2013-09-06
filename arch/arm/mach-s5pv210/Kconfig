@@ -159,14 +159,6 @@ config MACH_ARIES
 choice
 	prompt "Select NA USA BOARD TYPE "
 
-config S5PC110_KEPLER_BOARD
-	bool "S5PC110_KEPLER"
-	select S3C_DEV_HSMMC
-        select S3C_DEV_HSMMC1 if !S5PV210_SD_CH0_8BIT
-        select S3C_DEV_HSMMC2
-	help
-		select NA USA Board 
-
 config S5PC110_T959_BOARD
 	bool "S5PC110_T959"
 	select S3C_DEV_HSMMC
@@ -199,16 +191,6 @@ config S5PC110_FLEMING_BOARD
 		select NA USA Board 
 
 endchoice 
-
-choice 
-        prompt "Select KEPLER BOARD VERSION "
-config KEPLER_VER_B2
-        bool "add KEPLER VERSION B0"
-        depends on S5PC110_KEPLER_BOARD
-        help
-         add kepler ver B2 option 
-         
-endchoice
 
 choice 
 	prompt "Select T959 BOARD VERSION"

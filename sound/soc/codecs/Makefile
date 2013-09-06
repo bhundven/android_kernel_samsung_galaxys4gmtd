@@ -53,14 +53,10 @@ snd-soc-wm8993-objs := wm8993.o
 ifeq ($(CONFIG_S5PC110_HAWK_BOARD),y)
 snd-soc-wm8994-objs := wm8994_samsung.o wm8994_hawk.o
 else
-ifeq ($(CONFIG_S5PC110_KEPLER_BOARD),y)
-snd-soc-wm8994-objs := wm8994_samsung.o wm8994_kepler.o A1026_i2c_drv.o audience.o
-else
 ifeq ($(CONFIG_S5PC110_VIBRANTPLUS_BOARD),y)
 snd-soc-wm8994-objs := wm8994_samsung.o wm8994_vibrantplus.o 
 else
 snd-soc-wm8994-objs := wm8994_samsung.o wm8994_aries.o
-endif
 endif
 endif
 snd-soc-wm9081-objs := wm9081.o

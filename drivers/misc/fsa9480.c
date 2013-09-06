@@ -32,7 +32,7 @@
 #include <linux/slab.h>
 #include <mach/param.h>
 #include <linux/regulator/consumer.h>
-#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) // mr work 
+#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 #include <linux/delay.h>
 #endif
 #include <linux/gpio.h>
@@ -109,7 +109,7 @@
 /* Interrupt 1 */
 #define INT_DETACH		(1 << 1)
 #define INT_ATTACH		(1 << 0)
-//#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) 	//Build Error
+//#if defined (CONFIG_S5PC110_HAWK_BOARD)
 // add hdlnc_opk
 
 #if defined(CONFIG_VIDEO_MHL_V1)
@@ -335,7 +335,7 @@ void FSA9480_MhlTvOff(void)
 }
 EXPORT_SYMBOL(FSA9480_MhlTvOff);
 #endif  //CONFIG_VIDEO_MHL_V1
-//#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) 	//Build Error
+//#if defined (CONFIG_S5PC110_HAWK_BOARD)
 extern int max8998_check_vdcin();
 
 /* need?
@@ -603,7 +603,7 @@ void fsa9480_manual_switching(int path)
 	ret = i2c_smbus_write_byte_data(client, FSA9480_REG_MANSW1, data);
 	if (ret < 0)
 		dev_err(&client->dev, "%s: err %d\n", __func__, ret);
-#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)// mr work
+#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)// mr work
 	msleep(10);
 #endif
 	ret = i2c_smbus_write_byte_data(client, FSA9480_REG_CTRL, value);
@@ -615,9 +615,7 @@ EXPORT_SYMBOL(fsa9480_manual_switching);
 //HDLNC_OPK_20110307
 void fsa9480_enable_spk()
 {
-	#if defined(CONFIG_S5PC110_KEPLER_BOARD)
-		fsa9480_manual_switching(SWITCH_PORT_AUDIO);
-	#elif defined(CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+	#if defined(CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 		fsa9480_manual_switching(SWITCH_PORT_VAUDIO);
 	#else
 		fsa9480_manual_switching(SWITCH_PORT_AUDIO);
@@ -645,7 +643,7 @@ static void fsa9480_detect_dev(struct fsa9480_usbsw *usbsw)
 	if (val1 || val2) {
 		/* USB */
 		if (val1 & DEV_T1_USB_MASK || val2 & DEV_T2_USB_MASK) {
-#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)// mr work 
+#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 			if ( val2 & DEV_JIG_USB_ON )
 				MicroJigstatus = 1;
 #endif
@@ -660,12 +658,12 @@ static void fsa9480_detect_dev(struct fsa9480_usbsw *usbsw)
 			}
 		/* UART */
 		} else if (val1 & DEV_T1_UART_MASK || val2 & DEV_T2_UART_MASK) {
-#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)// mr work 
+#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 			MicroJigstatus = 1;
 #endif
 			if (pdata->uart_cb)
 				pdata->uart_cb(FSA9480_ATTACHED);
-#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)// mr work
+#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 //parkhj
 			if (pdata->charger_cb)
 				pdata->charger_cb(FSA9480_ATTACHED);
@@ -684,7 +682,7 @@ static void fsa9480_detect_dev(struct fsa9480_usbsw *usbsw)
 				pdata->charger_cb(FSA9480_ATTACHED);
 		/* JIG */
 		} else if (val2 & DEV_T2_JIG_MASK) {
-#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)// mr work 
+#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 			MicroJigstatus = 1; 
 #endif
 			if (pdata->jig_cb)
@@ -701,7 +699,7 @@ static void fsa9480_detect_dev(struct fsa9480_usbsw *usbsw)
 			
 			if (pdata->deskdock_cb)
 				pdata->deskdock_cb(FSA9480_ATTACHED);
-#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)// mr work
+#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 			fsa9480_enable_spk();	//HDLNC_OPK_20110307
 			/* S1
 			ret = i2c_smbus_write_byte_data(client,
@@ -750,9 +748,9 @@ static void fsa9480_detect_dev(struct fsa9480_usbsw *usbsw)
 				pdata->cardock_cb(FSA9480_ATTACHED);
 			
 			MicroJigUARTOnStatus = 1;
-#if defined(CONFIG_S5PC110_KEPLER_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD) // mr work 
+#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 		fsa9480_enable_spk();	 //HDLNC_OPK_20110307
-#elif defined(CONFIG_S5PC110_HAWK_BOARD)// mr work //subhransu revisit
+#elif defined(CONFIG_S5PC110_HAWK_BOARD)
 			if(max8998_check_vdcin())
 			{
 				fsa9480_enable_spk();	 //HDLNC_OPK_20110307
@@ -792,12 +790,12 @@ static void fsa9480_detect_dev(struct fsa9480_usbsw *usbsw)
 		/* UART */
 		} else if (usbsw->dev1 & DEV_T1_UART_MASK ||
 				usbsw->dev2 & DEV_T2_UART_MASK) {
-#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)// mr work
+#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 			MicroJigstatus = 0;
 #endif
 			if (pdata->uart_cb)
 				pdata->uart_cb(FSA9480_DETACHED);
-#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)// mr work
+#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 //parkhj			
 			if (pdata->charger_cb)
 				pdata->charger_cb(FSA9480_DETACHED);
@@ -809,7 +807,7 @@ static void fsa9480_detect_dev(struct fsa9480_usbsw *usbsw)
 				pdata->charger_cb(FSA9480_DETACHED);
 		/* JIG */
 		} else if (usbsw->dev2 & DEV_T2_JIG_MASK) {
-#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)// mr work 
+#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 			MicroJigstatus = 0; 
 #endif
 			if (pdata->jig_cb)
@@ -849,7 +847,7 @@ static void fsa9480_detect_dev(struct fsa9480_usbsw *usbsw)
 #endif		
 
 		} else if (usbsw->dev2 & DEV_JIG_UART_ON) {
-#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)// mr work 
+#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 			MicroJigUARTOnStatus = 0;
 #endif
 			if (pdata->cardock_cb)

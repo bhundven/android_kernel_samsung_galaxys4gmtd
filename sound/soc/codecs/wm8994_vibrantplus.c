@@ -1181,10 +1181,6 @@ void wm8994_disable_path(struct snd_soc_codec *codec)
 		val &= ~(WM8994_DAC1L_TO_SPKMIXL_MASK);
 		wm8994_write(codec, WM8994_SPEAKER_MIXER, val);
 		break;
-#elif defined(CONFIG_S5PC110_KEPLER_BOARD)
-	case MIC_OFF:
-		DEBUG_LOG("Mic is already OFF!\n");
-		break;
 #endif
 	default:
 		DEBUG_LOG_ERR("Path[%d] is not invaild!\n", path);
