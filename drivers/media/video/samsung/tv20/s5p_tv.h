@@ -1089,11 +1089,3 @@ extern void s5p_hdmi_set_audio(bool en);
 extern void s5p_hdmi_mute_en(bool en);
 extern bool __s5p_start_hdcp(void);
 extern bool __s5p_stop_hdcp(void);
-
-#if defined(CONFIG_MACH_P1)
-extern struct i2c_driver SII9234_i2c_driver;
-extern struct i2c_driver SII9234A_i2c_driver;
-extern struct i2c_driver SII9234B_i2c_driver;
-extern struct i2c_driver SII9234C_i2c_driver;
-#endif
-

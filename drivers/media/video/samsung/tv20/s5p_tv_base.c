@@ -1083,16 +1083,6 @@ static int __devinit s5p_tv_probe(struct platform_device *pdev)
 		return PTR_ERR(s5ptv_status.tv_tvout);
 	}
 
-
-#ifdef CONFIG_MACH_P1
-	s5ptv_status.tv_tv = regulator_get(NULL, "tv");
-	if (IS_ERR(s5ptv_status.tv_tv)) {
-		printk(KERN_ERR "%s %d: failed to get resource %s\n",
-				__func__, __LINE__, "s3c-tv20 tv");
-		return PTR_ERR(s5ptv_status.tv_tv);
-	}
-	regulator_enable(s5ptv_status.tv_tv);
-#endif
 	s5ptv_status.dev_fb = &pdev->dev;
 
 	__s5p_sdout_probe(pdev, 0);
@@ -1109,23 +1099,6 @@ static int __devinit s5p_tv_probe(struct platform_device *pdev)
 	s5p_tv_clk_gate(true);
 	__s5p_hdmi_probe(pdev, 3, 4);
 	__s5p_hdcp_init();
-#endif
-#if defined(CONFIG_MACH_P1)
-	retval = i2c_add_driver(&SII9234A_i2c_driver);
-	if (retval != 0)
-		printk(KERN_ERR "[MHL SII9234A] can't add i2c driver");
-
-	retval = i2c_add_driver(&SII9234B_i2c_driver);
-	if (retval != 0)
-		printk(KERN_ERR "[MHL SII9234B] can't add i2c driver");
-
-	retval = i2c_add_driver(&SII9234C_i2c_driver);
-	if (retval != 0)
-		printk(KERN_ERR "[MHL SII9234C] can't add i2c driver");
-
-	retval = i2c_add_driver(&SII9234_i2c_driver);
-	if (retval != 0)
-		printk(KERN_ERR "[MHL SII9234] can't add i2c driver");
 #endif
 
 #ifdef FIX_27M_UNSTABLE_ISSUE /* for smdkc100 pop */
@@ -1292,12 +1265,6 @@ static int s5p_tv_remove(struct platform_device *pdev)
 #ifdef I2C_BASE
 	i2c_del_driver(&hdcp_i2c_driver);
 #endif
-#if defined(CONFIG_MACH_P1)
-	i2c_del_driver(&SII9234A_i2c_driver);
-	i2c_del_driver(&SII9234B_i2c_driver);
-	i2c_del_driver(&SII9234C_i2c_driver);
-	i2c_del_driver(&SII9234_i2c_driver);
-#endif
 	clk_disable(s5ptv_status.tvenc_clk);
 	clk_disable(s5ptv_status.vp_clk);
 	clk_disable(s5ptv_status.mixer_clk);
@@ -1328,10 +1295,6 @@ static int s5p_tv_remove(struct platform_device *pdev)
 
 	regulator_disable(s5ptv_status.tv_tvout);
 	regulator_put(s5ptv_status.tv_tvout);
-#ifdef CONFIG_MACH_P1
-	regulator_disable(s5ptv_status.tv_tv);
-	regulator_put(s5ptv_status.tv_tv);
-#endif
 	mutex_destroy(mutex_for_fo);
 #ifdef I2C_BASE
 	mutex_destroy(mutex_for_i2c);

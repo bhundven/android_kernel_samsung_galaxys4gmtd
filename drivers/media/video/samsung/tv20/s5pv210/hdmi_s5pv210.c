@@ -325,7 +325,7 @@ int hdmi_phy_down(bool on, u8 addr, u8 offset, u8 *read_buffer)
 
 int __s5p_hdmi_phy_power(bool on)
 {
-#if !(defined(CONFIG_MACH_P1) || defined(CONFIG_S5PC110_DEMPSEY_BOARD))
+#if !defined(CONFIG_S5PC110_DEMPSEY_BOARD)
     /* for the case that
       - only analog tv is supported
       - and the power for the hdmi phy is not supported*/
