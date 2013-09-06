@@ -86,7 +86,7 @@ static struct resource mdmctl_res[] = {
 		.end = IRQ_EINT15,
 		.flags = IORESOURCE_IRQ,
 		},
-#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)	|| defined(CONFIG_S5PC110_SIDEKICK_BOARD)
+#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 #if defined (CONFIG_CP_CHIPSET_STE)
 	[1] = {
 		.start = IRQ_EINT12,

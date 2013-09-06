@@ -47,7 +47,7 @@ void s5pv210_setup_sdhci0_cfg_gpio(struct platform_device *dev, int width)
 		for (gpio = S5PV210_GPG1(3); gpio <= S5PV210_GPG1(6); gpio++) {
 			s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(3));
 			s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
-#if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD)
+#if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 			s3c_gpio_set_drvstrength(gpio, S3C_GPIO_DRVSTR_2X);
 #else
 			s3c_gpio_set_drvstrength(gpio, S3C_GPIO_DRVSTR_3X);
@@ -63,13 +63,13 @@ void s5pv210_setup_sdhci0_cfg_gpio(struct platform_device *dev, int width)
 				s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
 				s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
 			}
-#if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD)
+#if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 			s3c_gpio_set_drvstrength(gpio, S3C_GPIO_DRVSTR_2X);
 #else
 			s3c_gpio_set_drvstrength(gpio, S3C_GPIO_DRVSTR_3X);
 #endif
 		}
-#if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD)
+#if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 		/* Chip detect pin Pull up -> none*/
 		s3c_gpio_setpull(S5PV210_GPG0(2), S3C_GPIO_PULL_NONE);
 #endif
@@ -100,13 +100,13 @@ void s5pv210_setup_sdhci1_cfg_gpio(struct platform_device *dev, int width)
 				s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
 				s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
 			}
-#if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD)
+#if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 			s3c_gpio_set_drvstrength(gpio, S3C_GPIO_DRVSTR_2X);
 #else
 			s3c_gpio_set_drvstrength(gpio, S3C_GPIO_DRVSTR_3X);
 #endif
 		}
-#if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD)
+#if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 		/* Chip detect pin Pull up -> none*/
 		s3c_gpio_setpull(S5PV210_GPG1(2), S3C_GPIO_PULL_NONE);
 #endif
@@ -128,7 +128,7 @@ void s5pv210_setup_sdhci2_cfg_gpio(struct platform_device *dev, int width)
 		for (gpio = S5PV210_GPG3(3); gpio <= S5PV210_GPG3(6); gpio++) {
 			s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(3));
 			s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
-#if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD)
+#if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 			s3c_gpio_set_drvstrength(gpio, S3C_GPIO_DRVSTR_2X);
 #else
 			s3c_gpio_set_drvstrength(gpio, S3C_GPIO_DRVSTR_3X);
@@ -144,13 +144,13 @@ void s5pv210_setup_sdhci2_cfg_gpio(struct platform_device *dev, int width)
 				s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
 				s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
 			}
-#if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD)
+#if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 			s3c_gpio_set_drvstrength(gpio, S3C_GPIO_DRVSTR_2X);
 #else
 			s3c_gpio_set_drvstrength(gpio, S3C_GPIO_DRVSTR_3X);
 #endif
 		}
-#if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD)
+#if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 		/* Chip detect pin Pull up -> none*/
 		s3c_gpio_setpull(S5PV210_GPG2(2), S3C_GPIO_PULL_NONE);
 #endif
@@ -175,7 +175,7 @@ void s5pv210_setup_sdhci3_cfg_gpio(struct platform_device *dev, int width)
 				s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
 				s3c_gpio_setpull(gpio, S3C_GPIO_PULL_UP);
 			}
-#if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD)
+#if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 			s3c_gpio_set_drvstrength(gpio, S3C_GPIO_DRVSTR_2X);
 #else
 			s3c_gpio_set_drvstrength(gpio, S3C_GPIO_DRVSTR_3X);
@@ -231,7 +231,7 @@ void s5pv210_setup_sdhci_cfg_card(struct platform_device *dev,
 			ctrl3 = S3C_SDHCI_CTRL3_FCSELTX_BASIC |
 				S3C_SDHCI_CTRL3_FCSELRX_BASIC;
 //[NAGSM_Android_HDLNC_SDcard_Seojw_20101215 :  edit high speed clock timing				
-#if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD)
+#if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 		else {
   		         ctrl3 = S3C_SDHCI_CTRL3_FCSELTX_BASIC;
             	 if(card->type & MMC_TYPE_SD)
@@ -326,7 +326,7 @@ unsigned int universal_sdhci2_detect_ext_cd(void)
 void universal_sdhci2_cfg_ext_cd(void)
 {
 	printk(KERN_DEBUG "Universal :SD Detect configuration\n");
-#if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD)
+#if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 	s3c_gpio_setpull(S5PV210_GPH3(4), S3C_GPIO_PULL_UP);
 #else
 	s3c_gpio_setpull(S5PV210_GPH3(4), S3C_GPIO_PULL_NONE);

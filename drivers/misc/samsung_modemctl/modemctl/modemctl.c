@@ -41,7 +41,7 @@
 #define MODEM_CTL_DEFAULT_WAKLOCK_HZ	(2*HZ)
 #endif
 
-#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined(CONFIG_S5PC110_SIDEKICK_BOARD)
+#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 
 #include <linux/regulator/consumer.h>
 static struct regulator *CP_RTC_regulator; /*LDO 6*/
@@ -292,27 +292,6 @@ static void m5720_on(struct modemctl *mc)
 		}
 	}
 	EN32KhzCP_CTRL(1);	
-#elif defined (CONFIG_S5PC110_SIDEKICK_BOARD)	
-	msleep(18);
-
- 	if (IS_ERR_OR_NULL(CP_RTC_regulator) )
-	{
-		pr_err("[ERROR] CP_RTC_regulator  not initialized\n");
-		return;
-	}
-
-	if (! regulator_is_enabled(CP_RTC_regulator) )
-	{
-		int err = 0;
-
-		err = regulator_enable(CP_RTC_regulator);
-		if (err) 
-		{
-			pr_err("[ERROR] Failed to enable KeyLedBrightness_regulator \n");
-			return;
-		}
-	}
-	EN32KhzCP_CTRL(1);
 #endif
 
 	gpio_set_value(mc->gpio_pda_active, 1);
@@ -1126,7 +1105,7 @@ static int __devinit modemctl_probe(struct platform_device *pdev)
 	}
 	irq_phone_active = res->start;
 
-#if !(defined(CONFIG_S5PC110_CELOX_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD))
+#if !(defined(CONFIG_S5PC110_CELOX_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 
 	res = platform_get_resource(pdev, IORESOURCE_IRQ, 1);
 	if(!res)  {
@@ -1138,7 +1117,7 @@ static int __devinit modemctl_probe(struct platform_device *pdev)
 #endif
 	
 #if defined (CONFIG_CP_CHIPSET_STE) 
-#if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined(CONFIG_S5PC110_SIDEKICK_BOARD)
+#if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 	res = platform_get_resource(pdev, IORESOURCE_IRQ, 1);
 	if(!res)  {
 		dev_err(&pdev->dev, "failed to get irq number\n");
@@ -1270,7 +1249,7 @@ static int __devinit modemctl_probe(struct platform_device *pdev)
 	mc->irq_phone_active = irq_phone_active;
 #endif
 
-#if !(defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD))
+#if !(defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 
 	setup_timer(&mc->sim_irq_debounce_timer, (void*)sim_irq_debounce_timer_func,(unsigned long)mc);
 
@@ -1297,7 +1276,7 @@ static int __devinit modemctl_probe(struct platform_device *pdev)
 
 	platform_set_drvdata(pdev, mc);
 
-#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined(CONFIG_S5PC110_SIDEKICK_BOARD)
+#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 	if (IS_ERR_OR_NULL(CP_RTC_regulator)) 
 	{
 		CP_RTC_regulator = regulator_get(NULL, "cp_rtc");
