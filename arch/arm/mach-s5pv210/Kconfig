@@ -312,12 +312,6 @@ config ARIES_NTT
 	help
 	Select S1 NTT
 
-config ARIES_LATONA
-	bool "select S1 LATONA"
-	depends on MACH_ARIES
-	help
-	Select S1 LATONA
-
 config S5PV210_SETUP_FB
 	bool
 	depends on FB_S3C
