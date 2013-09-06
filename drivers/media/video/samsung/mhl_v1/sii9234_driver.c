@@ -292,14 +292,6 @@ static	void	ReleaseUsbIdSwitchOpen ( void );
 void	MhlTxDrvProcessConnection ( void );
 	void	MhlTxDrvProcessDisconnection ( void );
 static	void	ApplyDdcAbortSafety();
-#if defined(CONFIG_S5PC110_DEMPSEY_BOARD)
-extern void FSA9480_CheckAndHookAudioDock(void);//Rajucm
-extern void FSA9480_MhlSwitchSel(bool);//Rajucm
-extern void FSA9480_MhlTvOff(void);//Rajucm
-extern void EnableFSA9480Interrupts(void);	//NAGSM_Android_SEL_Kernel_Aakash_20101214
-extern void DisableFSA9480Interrupts(void);	//NAGSM_Android_SEL_Kernel_Aakash_20101214
-extern void mhl_hpd_handle(bool); //handle HDMI Cable
-#endif
 //
 // Store global config info here. This is shared by the driver.
 //
@@ -799,9 +791,6 @@ void	Int1RsenIsr( void )
  //mhl_cable_status =MHL_INIT_POWER_OFF;
           
 	mhl_cable_status = MHL_TV_OFF_CABLE_CONNECT;
-#if defined(CONFIG_S5PC110_DEMPSEY_BOARD)
-	FSA9480_MhlSwitchSel(0);
-#endif
          }
          else
         {
@@ -1260,13 +1249,6 @@ void	ProcessRgnd( void )
 	//
 	reg99RGNDRange = I2C_ReadByte(SA_TX_Page0_Primary, 0x99) & 0x03;
 	TX_DEBUG_PRINT(("Drv: RGND Reg 99 = %02X : ", (int)reg99RGNDRange));
-#if defined(CONFIG_S5PC110_DEMPSEY_BOARD)
-	/* Keeping DisableFSAinterrupt affects fast connect/disconnect */
-	/* But disabling fsa interrupts ... and 
-	   removing the power adapter cable from the mhl active while cable is connected
-           gives multiple FSA interrupts .. Need to find a proper solution. */        
-	DisableFSA9480Interrupts(); //Test //SEL_Subhransu_20110219
-#endif
 	//
 	// Reg 0x99
 	// 00 or 11 means USB.
@@ -1287,11 +1269,6 @@ void	ProcessRgnd( void )
 
 			mhl_cable_status =MHL_INIT_POWER_OFF;
 		TX_DEBUG_PRINT((KERN_ERR "MHL_SEL to 0\n")); 
-		
-#if defined(CONFIG_S5PC110_DEMPSEY_BOARD)
-		FSA9480_CheckAndHookAudioDock(); //Rajucm: Audio Dock Detection Algorithm
-#endif
-
 	}
 	else
 	{
@@ -1302,10 +1279,6 @@ void	ProcessRgnd( void )
                         mhl_cable_status =MHL_TV_OFF_CABLE_CONNECT;
 
 			TX_DEBUG_PRINT2(KERN_ERR "MHL Connection Fail Power off ###1\n");
-#if defined(CONFIG_S5PC110_DEMPSEY_BOARD)
-                        FSA9480_MhlTvOff();//Rajucm: Mhl cable handling when TV Off 
-#endif
-
       return ;
 		}
 		else if(0x02==reg99RGNDRange)
@@ -1569,20 +1542,6 @@ static	void	Int4Isr( void )
     {
       mhl_cable_status =MHL_TV_OFF_CABLE_CONNECT;
 		  TX_DEBUG_PRINT2(KERN_ERR "MHL Connection Fail Power off ###2\n");
-      #if defined(CONFIG_S5PC110_DEMPSEY_BOARD)
- //3355
-        if(mhl_vbus == TRUE)
-        {          
-          vbus_mhl_est_fail = TRUE;
-          MhlTxDrvProcessDisconnection();
-return;
-        }
-        else
-        {
-        FSA9480_MhlTvOff();//Rajucm: Mhl cable handling when TV Off 
-	 	
-        }//3355
-      #endif
     }
     else
     {

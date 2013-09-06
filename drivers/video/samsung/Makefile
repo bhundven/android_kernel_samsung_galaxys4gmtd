@@ -14,9 +14,6 @@ obj-$(CONFIG_FB_S3C_TL2796)     += s3cfb_tl2796.o
 obj-$(CONFIG_FB_S3C_AMS701KA)	+= s3cfb_ams701ka.o
 obj-$(CONFIG_FB_S3C_MDNIE)      += s3cfb_mdnie.o s3cfb_ielcd.o
 obj-$(CONFIG_FB_S3C_CMC623)     += tune_cmc623.o
-ifeq ($(CONFIG_S5PC110_DEMPSEY_BOARD),y)
-obj-$(CONFIG_FB_S3C_LDI)	+= ldi_common.o ld9040.o ea8868.o ldi_spi_bitbang.o ld9040_sm2.o
-endif
 endif
 
 ifeq ($(CONFIG_FB_S3C_DEBUG),y)

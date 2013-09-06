@@ -26,12 +26,6 @@
 #include <linux/jiffies.h>
 #include "qt602240.h"
 
-#if defined (CONFIG_S5PC110_DEMPSEY_BOARD)
-#include <linux/mfd/max8998.h>
-#include <linux/regulator/consumer.h>
-#endif
-
-
 #if defined (CONFIG_S5PC110_HAWK_BOARD) /* nat */
 #define KEY_LED_CONTROL
 #endif
@@ -3044,7 +3038,7 @@ void  get_message(void)
     #endif
         {
             /* Call the main application to handle the message. */
-#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined(CONFIG_S5PC110_DEMPSEY_BOARD)
+#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 		if(quantum_msg[0] == 0x1e) 
 		{
 			printk(KERN_DEBUG "[TSP] msg id =  %x %x %x %x %x %x %x %x %x\n", quantum_msg[0], quantum_msg[1], quantum_msg[2],\
@@ -3685,9 +3679,7 @@ int qt602240_probe(struct i2c_client *client,
     printk(KERN_DEBUG"+-----------------------------------------+\n");
     printk(KERN_DEBUG "|  Quantum Touch Driver Probe!            |\n");
     printk(KERN_DEBUG"+-----------------------------------------+\n");
-#if !defined(CONFIG_S5PC110_DEMPSEY_BOARD)
     gpio_set_value(GPIO_TOUCH_EN, 1);
-#endif
     msleep(70);
 
   //  INIT_WORK(&qt602240->ts_event_work, get_message );
@@ -3934,14 +3926,12 @@ static void qt602240_early_suspend(struct early_suspend *h)
     not_yet_count = 0;
 #endif
 //NAGSM_Android_SEL_Kernel_20110421
-#if !defined(CONFIG_S5PC110_DEMPSEY_BOARD)
 #if !(defined (CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_KEPLER_BOARD)) || !defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD) 
     /*reset the gpio's for the sleep configuration*/
     s3c_gpio_cfgpin(GPIO_TOUCH_INT, S3C_GPIO_INPUT);
     s3c_gpio_setpull(GPIO_TOUCH_INT, S3C_GPIO_PULL_DOWN);
 
     gpio_set_value(GPIO_TOUCH_EN, 0);
-#endif
 #endif
 
     LEAVE_FUNC;
@@ -3952,9 +3942,7 @@ static void qt602240_late_resume(struct early_suspend *h)
     int ret,i;
 
     ENTER_FUNC;
-#if !defined(CONFIG_S5PC110_DEMPSEY_BOARD)
     gpio_set_value(GPIO_TOUCH_EN, 1);
-#endif
     msleep(70);
 //NAGSM_Android_SEL_Kernel_20110421
     s3c_gpio_cfgpin(GPIO_TOUCH_INT, S3C_GPIO_SFN(0xf));
@@ -4048,11 +4036,9 @@ static ssize_t i2c_store(
 static ssize_t gpio_show(struct device *dev, struct device_attribute *attr, char *buf)
 {
     dprintk("qt602240 GPIO Status\n");
-#ifndef CONFIG_S5PC110_DEMPSEY_BOARD
     dprintk("TOUCH_EN  : %s\n", gpio_get_value(GPIO_TOUCH_EN)? "High":"Low");
     //dprintk("TOUCH_RST : %s\n", gpio_get_value(GPIO_TOUCH_RST)? "High":"Low");
     dprintk("TOUCH_RST is NC\n");
-#endif
     dprintk("TOUCH_INT : %s\n", gpio_get_value(GPIO_TOUCH_INT)? "High":"Low");
 
     return sprintf(buf, "%s\n", buf);
@@ -4062,7 +4048,6 @@ static ssize_t gpio_store(
         struct device *dev, struct device_attribute *attr,
         const char *buf, size_t size)
 {
-#ifndef CONFIG_S5PC110_DEMPSEY_BOARD 
     if(strncmp(buf, "ENHIGH", 6) == 0 || strncmp(buf, "enhigh", 6) == 0) {
         gpio_set_value(GPIO_TOUCH_EN, 1);
         dprintk("set TOUCH_EN High.\n");
@@ -4088,7 +4073,7 @@ static ssize_t gpio_store(
         dprintk("TOUCH_RST is NC\n");
         msleep(100);
     }
-#endif
+
     return size;
 }
 
@@ -4152,11 +4137,9 @@ uint8_t boot_unlock(void)
 
 void TSP_Restart(void)
 {
-#if !defined(CONFIG_S5PC110_DEMPSEY_BOARD)
     gpio_set_value(GPIO_TOUCH_EN, 0);
     msleep(300);
     gpio_set_value(GPIO_TOUCH_EN, 1);
-#endif
 }
 
 uint8_t QT_Boot(void)
@@ -5609,64 +5592,6 @@ static DEVICE_ATTR(config_mode, 0664, qt602240_config_mode_show, qt602240_config
 #endif
 /*------------------------------ for tunning ATmel - end ----------------------------*/
 
-#if defined (CONFIG_S5PC110_DEMPSEY_BOARD)
-
-static struct regulator *tspvdd = NULL, *tspavdd = NULL;
-void init_hw_setting(void)
-{
-	int tint = GPIO_TOUCH_INT;
-	s3c_gpio_cfgpin(tint, S3C_GPIO_INPUT);
-	s3c_gpio_setpull(tint, S3C_GPIO_PULL_UP);
-
-#if !defined(CONFIG_S5PC110_DEMPSEY_BOARD)
-	if (gpio_is_valid(GPIO_TOUCH_EN)) {
-		if (gpio_request(GPIO_TOUCH_EN, "GPG3"))
-			printk(KERN_DEBUG "Failed to request GPIO_TOUCH_EN!\n");
-		gpio_direction_output(GPIO_TOUCH_EN, 1);
-	}
-
-	s3c_gpio_setpull(GPIO_TOUCH_EN, S3C_GPIO_PULL_NONE); 
-	gpio_free(GPIO_TOUCH_EN);
-#else
-//dempsey
-
-	tspvdd = regulator_get(NULL, "tsp_vdd");
-        if (IS_ERR(tspvdd)) {
-                printk(KERN_ERR "%s: cant get TSP_VDD\n", __func__);
-		return;
-        }
-
-	tspavdd = regulator_get(NULL, "tsp_avdd");
-        if (IS_ERR(tspvdd)) {
-                printk(KERN_ERR "%s: cant get TSP_AVDD\n", __func__);
-		return;
-        }	
-
-	//regulator_disable(tspvdd);
-	//regulator_disable(tspavdd);
-
-
-	msleep(10);
-	regulator_enable(tspvdd);
-	regulator_enable(tspavdd);
-
-
-
-#endif 
-	printk(KERN_DEBUG "qt602240 GPIO Status\n");
-#ifndef CONFIG_S5PC110_DEMPSEY_BOARD
-	printk(KERN_DEBUG "TOUCH_EN  : %s\n", gpio_get_value(GPIO_TOUCH_EN)? "High":"Low");
-	printk(KERN_DEBUG "TOUCH_RST : %s\n", gpio_get_value(GPIO_TOUCH_RST)? "High":"Low");
-#endif
-//	printk("TOUCH_INT : %s\n", gpio_get_value(GPIO_TOUCH_INT_N)? "High":"Low");
-	printk(KERN_DEBUG "TOUCH_INT : %s\n", gpio_get_value(GPIO_TOUCH_INT)? "High":"Low");
-
-	msleep(100);
-}
-
-#endif
-
-
 int __init qt602240_init(void)
 {
     int ret;
@@ -5677,13 +5602,8 @@ int __init qt602240_init(void)
     qt602240_wq = create_singlethread_workqueue("qt602240_wq");
     if (!qt602240_wq)
         return -ENOMEM;
-#if defined (CONFIG_S5PC110_DEMPSEY_BOARD)
-    init_hw_setting();
-#endif
 
-#if !defined (CONFIG_S5PC110_DEMPSEY_BOARD)
     gpio_set_value(GPIO_TOUCH_EN, 1);
-#endif
     msleep(70);
 
     qt602240 = kzalloc(sizeof(struct qt602240_data), GFP_KERNEL);

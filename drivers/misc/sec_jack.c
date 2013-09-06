@@ -63,7 +63,7 @@ struct sec_jack_info {
 	struct platform_device *send_key_dev;
 	unsigned int cur_jack_type;
 };
-#if defined(CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_KEPLER_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined(CONFIG_S5PC110_DEMPSEY_BOARD)
+#if defined(CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_KEPLER_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 //HDLNC_OPK_20110307
 static struct sec_jack_info *local_hi;
 #endif
@@ -91,7 +91,7 @@ static struct gpio_event_direct_entry sec_jack_key_map[] = {
 	{
 		.code	= KEY_UNKNOWN,
 	},
-#if defined(CONFIG_S5PC110_KEPLER_BOARD)|| defined(CONFIG_S5PC110_DEMPSEY_BOARD)
+#if defined(CONFIG_S5PC110_KEPLER_BOARD)
 };
 static struct gpio_event_direct_entry sec_jack_key_map35[] = {
 	{
@@ -108,14 +108,14 @@ static struct gpio_event_input_info sec_jack_key_info = {
 	.info.func = gpio_event_input_func,
 	.info.no_suspend = true,
 	.type = EV_KEY,
-#if defined(CONFIG_S5PC110_KEPLER_BOARD) || defined(CONFIG_S5PC110_DEMPSEY_BOARD)	
+#if defined(CONFIG_S5PC110_KEPLER_BOARD)
 	.flags = 0,
 #endif	
 	.debounce_time.tv.nsec = SEND_KEY_CHECK_TIME_MS * NSEC_PER_MSEC,
 	.keymap = sec_jack_key_map,
 	.keymap_size = ARRAY_SIZE(sec_jack_key_map)
 };
-#if defined(CONFIG_S5PC110_KEPLER_BOARD) || defined(CONFIG_S5PC110_DEMPSEY_BOARD)
+#if defined(CONFIG_S5PC110_KEPLER_BOARD)
 static struct gpio_event_input_info sec_jack_key_info35 = {
 	.info.func = gpio_event_input_func,
 	.info.no_suspend = true,
@@ -402,7 +402,7 @@ void sec_jack_buttons_work(struct work_struct *work)
 
 	pr_warn("%s: key is skipped. ADC value is %d\n", __func__, adc);
 }
-#if defined(CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_KEPLER_BOARD)|| defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined(CONFIG_S5PC110_DEMPSEY_BOARD)
+#if defined(CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_KEPLER_BOARD)|| defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 // HDLNC_OPK_20110307
 static int jack_detect_change(struct work_struct *ignored)
 {
@@ -483,7 +483,7 @@ static int sec_jack_probe(struct platform_device *pdev)
 	}
 
 	sec_jack_key_map[0].gpio = pdata->send_end_gpio;
-#if defined(CONFIG_S5PC110_KEPLER_BOARD)||defined(CONFIG_S5PC110_DEMPSEY_BOARD)
+#if defined(CONFIG_S5PC110_KEPLER_BOARD)
 	sec_jack_key_map35[0].gpio = pdata->send_end_gpio_35;
 #elif defined(CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 	sec_jack_key_map[1].gpio = pdata->send_end_gpio_35;
@@ -578,7 +578,7 @@ static int sec_jack_probe(struct platform_device *pdev)
 	}
 
 	dev_set_drvdata(&pdev->dev, hi);
-#if defined(CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_KEPLER_BOARD) ||defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)||defined(CONFIG_S5PC110_DEMPSEY_BOARD)
+#if defined(CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_KEPLER_BOARD) ||defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 // HDLNC_OPK_20110307
 // Fix when boot on earjack plugged state does not recognize the problem
 	local_hi = hi;	

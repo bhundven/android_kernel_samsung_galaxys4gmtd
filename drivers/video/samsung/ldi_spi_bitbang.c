@@ -36,29 +36,17 @@ static DEFINE_MUTEX(spi_rd);
 
 static inline void lcd_cs_value(int level)
 {
-#ifdef CONFIG_S5PC110_DEMPSEY_BOARD
-	gpio_set_value(S5PV210_MP05(4), level);//GPIO_DISPLAY_CS
-#else
 	gpio_set_value(S5PV210_MP01(1), level);//GPIO_DISPLAY_CS
-#endif 
 }
 
 static inline void lcd_clk_value(int level)
 {
-#ifdef CONFIG_S5PC110_DEMPSEY_BOARD
-	gpio_set_value(S5PV210_GPC1(3), level);//GPIO_DISPLAY_CLK
-#else
 	gpio_set_value(S5PV210_GPC0(1), level);//GPIO_DISPLAY_CLK
-#endif 
 }
 
 static inline void lcd_si_value(int level)
 {
-#ifdef CONFIG_S5PC110_DEMPSEY_BOARD
-	gpio_set_value(S5PV210_GPC1(0), level);//GPIO_DISPLAY_DAT
-#else
 	gpio_set_value(S5PV210_MP01(0), level);//GPIO_DISPLAY_DAT
-#endif 
 }
 
 static inline int get_lcd_si_value()

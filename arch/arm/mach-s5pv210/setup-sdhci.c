@@ -29,21 +29,12 @@
 #include <asm/mach-types.h>
 
 /* clock sources for the mmc bus clock, order as for the ctrl2[5..4] */
-#if !defined (CONFIG_S5PC110_DEMPSEY_BOARD)	
 char *s5pv210_hsmmc_clksrcs[4] = {
 	[0] = "hsmmc",		/* HCLK */
 	[1] = "hsmmc",		/* HCLK */
 	[2] = "sclk_mmc",	/* mmc_bus */
 	[3] = NULL,		/*reserved */
 };
-#else
-char *s5pv210_hsmmc_clksrcs[4] = {
-	[0] = NULL,		/* HCLK */
-	[1] = NULL,		/* HCLK */
-	[2] = "sclk_mmc",	/* mmc_bus */
-	[3] = NULL,		/*reserved */
-};
-#endif
 
 void s5pv210_setup_sdhci0_cfg_gpio(struct platform_device *dev, int width)
 {
@@ -72,13 +63,13 @@ void s5pv210_setup_sdhci0_cfg_gpio(struct platform_device *dev, int width)
 				s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
 				s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
 			}
-#if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) || (CONFIG_S5PC110_DEMPSEY_BOARD) 
+#if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD)
 			s3c_gpio_set_drvstrength(gpio, S3C_GPIO_DRVSTR_2X);
 #else
 			s3c_gpio_set_drvstrength(gpio, S3C_GPIO_DRVSTR_3X);
 #endif
 		}
-#if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) || (CONFIG_S5PC110_DEMPSEY_BOARD) 
+#if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD)
 		/* Chip detect pin Pull up -> none*/
 		s3c_gpio_setpull(S5PV210_GPG0(2), S3C_GPIO_PULL_NONE);
 #endif
@@ -90,18 +81,7 @@ void s5pv210_setup_sdhci0_cfg_gpio(struct platform_device *dev, int width)
 	if (machine_is_herring() || machine_is_aries()) {
 		s3c_gpio_cfgpin(S5PV210_GPJ2(7), S3C_GPIO_OUTPUT);
 		s3c_gpio_setpull(S5PV210_GPJ2(7), S3C_GPIO_PULL_NONE);
-		#ifdef CONFIG_S5PC110_DEMPSEY_BOARD			
-		s3c_gpio_cfgpin(S5PV210_GPJ1(5), S3C_GPIO_OUTPUT);
-		s3c_gpio_setpull(S5PV210_GPJ1(5), S3C_GPIO_PULL_NONE);
-		#endif
-		
 		gpio_set_value(S5PV210_GPJ2(7), 1);			//GPIO_MASSMEMORY_EN
-		#ifdef CONFIG_S5PC110_DEMPSEY_BOARD			
-		gpio_set_value(S5PV210_GPJ1(5), 1);		//GPIO_MASSMEMORY_EN2
-		#endif
-
-
-
 	}
 }
 
@@ -115,22 +95,18 @@ void s5pv210_setup_sdhci1_cfg_gpio(struct platform_device *dev, int width)
 	case 1:
 	case 4:
 		/* Set all the necessary GPIO function and pull up/down */
-#if !defined (CONFIG_S5PC110_DEMPSEY_BOARD)		/* kilsung avoid conflict with GPS GPIO */ 
 		for (gpio = S5PV210_GPG1(0); gpio <= S5PV210_GPG1(6); gpio++) {
-#else
-        for (gpio = S5PV210_GPG1(2); gpio <= S5PV210_GPG1(6); gpio++) {
-#endif
 			if (gpio != S5PV210_GPG1(2)) {
 				s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
 				s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
 			}
-#if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) || (CONFIG_S5PC110_DEMPSEY_BOARD)
+#if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD)
 			s3c_gpio_set_drvstrength(gpio, S3C_GPIO_DRVSTR_2X);
 #else
 			s3c_gpio_set_drvstrength(gpio, S3C_GPIO_DRVSTR_3X);
 #endif
 		}
-#if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) || (CONFIG_S5PC110_DEMPSEY_BOARD)		
+#if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD)
 		/* Chip detect pin Pull up -> none*/
 		s3c_gpio_setpull(S5PV210_GPG1(2), S3C_GPIO_PULL_NONE);
 #endif
@@ -152,7 +128,7 @@ void s5pv210_setup_sdhci2_cfg_gpio(struct platform_device *dev, int width)
 		for (gpio = S5PV210_GPG3(3); gpio <= S5PV210_GPG3(6); gpio++) {
 			s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(3));
 			s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
-#if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) || (CONFIG_S5PC110_DEMPSEY_BOARD)
+#if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD)
 			s3c_gpio_set_drvstrength(gpio, S3C_GPIO_DRVSTR_2X);
 #else
 			s3c_gpio_set_drvstrength(gpio, S3C_GPIO_DRVSTR_3X);
@@ -168,13 +144,13 @@ void s5pv210_setup_sdhci2_cfg_gpio(struct platform_device *dev, int width)
 				s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
 				s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
 			}
-#if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) || (CONFIG_S5PC110_DEMPSEY_BOARD)
+#if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD)
 			s3c_gpio_set_drvstrength(gpio, S3C_GPIO_DRVSTR_2X);
 #else
 			s3c_gpio_set_drvstrength(gpio, S3C_GPIO_DRVSTR_3X);
 #endif
 		}
-#if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) || (CONFIG_S5PC110_DEMPSEY_BOARD)
+#if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD)
 		/* Chip detect pin Pull up -> none*/
 		s3c_gpio_setpull(S5PV210_GPG2(2), S3C_GPIO_PULL_NONE);
 #endif
@@ -199,7 +175,7 @@ void s5pv210_setup_sdhci3_cfg_gpio(struct platform_device *dev, int width)
 				s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
 				s3c_gpio_setpull(gpio, S3C_GPIO_PULL_UP);
 			}
-#if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) || (CONFIG_S5PC110_DEMPSEY_BOARD)
+#if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD)
 			s3c_gpio_set_drvstrength(gpio, S3C_GPIO_DRVSTR_2X);
 #else
 			s3c_gpio_set_drvstrength(gpio, S3C_GPIO_DRVSTR_3X);
@@ -255,7 +231,7 @@ void s5pv210_setup_sdhci_cfg_card(struct platform_device *dev,
 			ctrl3 = S3C_SDHCI_CTRL3_FCSELTX_BASIC |
 				S3C_SDHCI_CTRL3_FCSELRX_BASIC;
 //[NAGSM_Android_HDLNC_SDcard_Seojw_20101215 :  edit high speed clock timing				
-#if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) || (CONFIG_S5PC110_DEMPSEY_BOARD)
+#if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD)
 		else {
   		         ctrl3 = S3C_SDHCI_CTRL3_FCSELTX_BASIC;
             	 if(card->type & MMC_TYPE_SD)
@@ -397,11 +373,9 @@ void s3c_sdhci_set_platdata(void)
 	s3c_sdhci2_set_platdata(&hsmmc2_platdata);
 #endif
 
-#if ! defined (CONFIG_S5PC110_DEMPSEY_BOARD)	
 #if defined(CONFIG_S3C_DEV_HSMMC3)
 	if (machine_is_herring() || machine_is_aries())
 		hsmmc3_platdata.built_in = 1;
 	s3c_sdhci3_set_platdata(&hsmmc3_platdata);
-#endif
 #endif
 };

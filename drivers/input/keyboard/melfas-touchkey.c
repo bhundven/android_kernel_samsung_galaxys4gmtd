@@ -234,19 +234,12 @@ static void cypress_touchkey_early_suspend(struct early_suspend *h)
 	devdata->pdata->touchkey_onoff(TOUCHKEY_OFF);
 
 	all_keys_up(devdata);
-       #if defined(CONFIG_S5PC110_DEMPSEY_BOARD)
-	touchkey_ldo_on(0);
-       #endif
-
 }
 
 static void cypress_touchkey_early_resume(struct early_suspend *h)
 {
 	struct cypress_touchkey_devdata *devdata =
 		container_of(h, struct cypress_touchkey_devdata, early_suspend);
-	#if defined(CONFIG_S5PC110_DEMPSEY_BOARD)
-		touchkey_ldo_on(1);
-        #endif
 
 	devdata->pdata->touchkey_onoff(TOUCHKEY_ON);
 #if 0
@@ -277,11 +270,7 @@ struct workqueue_struct *touchkey_wq;
 
 static void init_hw(void)
 {
-#if !defined (CONFIG_S5PC110_DEMPSEY_BOARD) 
 	gpio_direction_output(_3_GPIO_TOUCH_EN, 1);
-#else		
-	touchkey_ldo_on(1);
-#endif
 	msleep(200);
 	s3c_gpio_setpull(_3_GPIO_TOUCH_INT, S3C_GPIO_PULL_NONE);
 	set_irq_type(IRQ_TOUCH_INT, IRQF_TRIGGER_FALLING);
@@ -770,11 +759,7 @@ static int __devexit i2c_touchkey_remove(struct i2c_client *client)
 	free_irq(client->irq, devdata);
 	all_keys_up(devdata);
 	input_unregister_device(devdata->input_dev);
- 	
-	#if defined(CONFIG_S5PC110_DEMPSEY_BOARD)
-	touchkey_ldo_on(0);
-	#endif
-	
+
 	kfree(devdata);
 	return 0;
 }
@@ -799,9 +784,6 @@ struct i2c_driver touchkey_i2c_driver = {
 static int __init touchkey_init(void)
 {
 	int ret = 0;
-#if defined CONFIG_S5PC110_DEMPSEY_BOARD 
-	touchkey_ldo_on(1);
-#endif
 	ret = i2c_add_driver(&touchkey_i2c_driver);
 	if (ret)
 		pr_err("%s: cypress touch keypad registration failed. (%d)\n",

@@ -107,8 +107,6 @@ void get_usb_serial(char *usb_serial_number)
 	sprintf(temp_serial_number,"T759%08x",serial_number);
 #elif defined(CONFIG_S5PC110_SIDEKICK_BOARD)
 	sprintf(temp_serial_number,"T839%08x",serial_number);
-#elif defined(CONFIG_S5PC110_DEMPSEY_BOARD)
-	sprintf(temp_serial_number,"I997%08x",serial_number);
 #elif defined(CONFIG_S5PC110_KEPLER_BOARD)
 	sprintf(temp_serial_number,"I897%08x",serial_number);
 // celox not defined		

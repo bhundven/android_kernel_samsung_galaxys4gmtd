@@ -27,10 +27,6 @@
 #include <linux/input.h>
 #include <linux/earlysuspend.h>
 #include <linux/input/cypress-touchkey.h>
-#if defined CONFIG_S5PC110_DEMPSEY_BOARD 
-#include <linux/mfd/max8998.h> 
-#include <linux/regulator/consumer.h>
-#endif
 
 #define TOUCH_UPDATE
 #if defined(TOUCH_UPDATE)
@@ -50,33 +46,6 @@
 #define BACKLIGHT_OFF		0x2
 
 #define DEVICE_NAME "melfas_touchkey"
-#if defined CONFIG_S5PC110_DEMPSEY_BOARD 
-
-int touchkey_ldo_on(bool on)
-{
-	struct regulator *regulator;
-
-	if (on) {
-		regulator = regulator_get(NULL, "touch");
-		if (IS_ERR(regulator))
-			return 0;
-		regulator_enable(regulator);
-		regulator_put(regulator);
-	} else {
-		regulator = regulator_get(NULL, "touch");
-		if (IS_ERR(regulator))
-			return 0;
-		if (regulator_is_enabled(regulator))
-			regulator_force_disable(regulator);
-		regulator_put(regulator);
-	}
-
-	return 1;
-}
-
-
-#endif
-
 
 struct cypress_touchkey_devdata {
 	struct i2c_client *client;
@@ -178,14 +147,9 @@ static int recovery_routine(struct cypress_touchkey_devdata *devdata)
 out:
 	return ret;
 }
-#if defined(CONFIG_S5PC110_DEMPSEY_BOARD)
-unsigned int touch_state_val = 0;
-#else
+
 extern unsigned int touch_state_val;
 extern void TSP_forced_release(void);
-
-#endif 
-
 
 static irqreturn_t touchkey_interrupt_thread(int irq, void *touchkey_devdata)
 {
@@ -221,10 +185,8 @@ static irqreturn_t touchkey_interrupt_thread(int irq, void *touchkey_devdata)
 						"range\n", __func__);
 					goto err;
 				}
-				#ifndef CONFIG_S5PC110_DEMPSEY_BOARD
 				if (scancode == 1)
 					TSP_forced_release();
-				#endif
 				input_report_key(devdata->input_dev,
 					devdata->pdata->keycode[scancode], 1);
 				dev_dbg(&devdata->client->dev, "[press] cypress touch key : %d \n",
@@ -270,19 +232,12 @@ static void cypress_touchkey_early_suspend(struct early_suspend *h)
 	devdata->pdata->touchkey_onoff(TOUCHKEY_OFF);
 
 	all_keys_up(devdata);
-       #if defined(CONFIG_S5PC110_DEMPSEY_BOARD)
-	touchkey_ldo_on(0);
-       #endif
-
 }
 
 static void cypress_touchkey_early_resume(struct early_suspend *h)
 {
 	struct cypress_touchkey_devdata *devdata =
 		container_of(h, struct cypress_touchkey_devdata, early_suspend);
-	#if defined(CONFIG_S5PC110_DEMPSEY_BOARD)
-		touchkey_ldo_on(1);
-        #endif
 
 	devdata->pdata->touchkey_onoff(TOUCHKEY_ON);
 
@@ -313,11 +268,7 @@ struct workqueue_struct *touchkey_wq;
 
 static void init_hw(void)
 {
-#if !defined (CONFIG_S5PC110_DEMPSEY_BOARD) 
 	gpio_direction_output(_3_GPIO_TOUCH_EN, 1);
-#else		
-	touchkey_ldo_on(1);
-#endif
 	msleep(200);
 	s3c_gpio_setpull(_3_GPIO_TOUCH_INT, S3C_GPIO_PULL_NONE);
 	set_irq_type(IRQ_TOUCH_INT, IRQF_TRIGGER_FALLING);
@@ -717,33 +668,6 @@ static int cypress_touchkey_probe(struct i2c_client *client,
 	}
 	printk("%s F/W version: 0x%x, Module version:0x%x\n", __FUNCTION__,
 	       data[1], data[2]);
-
-	
-#if defined CONFIG_S5PC110_DEMPSEY_BOARD 
-	
-	   // Firmware check & Update
-	   if((data[1] < 0x21)){
-		   touchkey_update_status=1;
-		   while (retry--) {
-			   if (ISSP_main() == 0) {
-				   printk(KERN_ERR"[TOUCHKEY]Touchkey_update succeeded\n");
-				   touchkey_update_status=0;
-				   break;
-			   }
-			   printk(KERN_ERR"touchkey_update failed... retry...\n");
-		  }
-		   if (retry <= 0) {
-			   // disable ldo11
-			   touchkey_ldo_on(0);
-			   touchkey_update_status=-1;
-			   msleep(300);
-	
-		   }
-	
-		   init_hw();  //after update, re initalize.
-	   	}
-#endif
-
 #endif
 
 	return 0;
@@ -783,11 +707,7 @@ static int __devexit i2c_touchkey_remove(struct i2c_client *client)
 	free_irq(client->irq, devdata);
 	all_keys_up(devdata);
 	input_unregister_device(devdata->input_dev);
- 	
-	#if defined(CONFIG_S5PC110_DEMPSEY_BOARD)
-	touchkey_ldo_on(0);
-	#endif
-	
+
 	kfree(devdata);
 	return 0;
 }
@@ -812,9 +732,6 @@ struct i2c_driver touchkey_i2c_driver = {
 static int __init touchkey_init(void)
 {
 	int ret = 0;
-#if defined CONFIG_S5PC110_DEMPSEY_BOARD 
-	touchkey_ldo_on(1);
-#endif
 	ret = i2c_add_driver(&touchkey_i2c_driver);
 	if (ret)
 		pr_err("%s: cypress touch keypad registration failed. (%d)\n",

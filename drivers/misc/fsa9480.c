@@ -32,7 +32,7 @@
 #include <linux/slab.h>
 #include <mach/param.h>
 #include <linux/regulator/consumer.h>
-#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) || defined(CONFIG_S5PC110_DEMPSEY_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) // mr work 
+#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) // mr work 
 #include <linux/delay.h>
 #endif
 #include <linux/gpio.h>
@@ -394,7 +394,7 @@ u8 FSA9480_Get_USB_Status(void)
 EXPORT_SYMBOL(FSA9480_Get_USB_Status);
 
 //NAGSM_Android_SEL_Kernel_20110421
-#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined(CONFIG_S5PC110_DEMPSEY_BOARD) // mr work
+#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 // for drivers/onedram_svn/onedram.c(Froyo version) 
 u8 FSA9480_Get_JIG_UART_On_Status(void)
 {
@@ -482,10 +482,6 @@ static ssize_t fsa9480_show_manualsw(struct device *dev,
 	if (value < 0)
 		dev_err(&client->dev, "%s: err %d\n", __func__, value);
 
-#ifdef CONFIG_S5PC110_DEMPSEY_BOARD
-	if(usbsw->dev_id == 0)
-		value = value & ~0x03;
-#endif
 	if (value == SW_VAUDIO)
 		return sprintf(buf, "VAUDIO\n");
 	else if (value == SW_UART)
@@ -538,10 +534,6 @@ static ssize_t fsa9480_set_manualsw(struct device *dev,
 		return 0;
 	}
 
-#ifdef CONFIG_S5PC110_DEMPSEY_BOARD
-	if(usbsw->dev_id == 0)
-		path = (path | 0x03);
-#endif
 	usbsw->mansw = path;
 
 	ret = i2c_smbus_write_byte_data(client, FSA9480_REG_MANSW1, path);
@@ -606,20 +598,12 @@ void fsa9480_manual_switching(int path)
 		return;
 	}
 
-#ifdef CONFIG_S5PC110_DEMPSEY_BOARD
-	if(local_usbsw->dev_id == 0)
-	{
-		local_usbsw->mansw = (data | 0x03);
-		data |= 0x03;
-	}
-	else
-#endif
 	local_usbsw->mansw = data;
 
 	ret = i2c_smbus_write_byte_data(client, FSA9480_REG_MANSW1, data);
 	if (ret < 0)
 		dev_err(&client->dev, "%s: err %d\n", __func__, ret);
-#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) || defined(CONFIG_S5PC110_DEMPSEY_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)// mr work
+#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)// mr work
 	msleep(10);
 #endif
 	ret = i2c_smbus_write_byte_data(client, FSA9480_REG_CTRL, value);
@@ -633,7 +617,7 @@ void fsa9480_enable_spk()
 {
 	#if defined(CONFIG_S5PC110_KEPLER_BOARD)
 		fsa9480_manual_switching(SWITCH_PORT_AUDIO);
-	#elif defined(CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_DEMPSEY_BOARD) ||defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+	#elif defined(CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 		fsa9480_manual_switching(SWITCH_PORT_VAUDIO);
 	#else
 		fsa9480_manual_switching(SWITCH_PORT_AUDIO);
@@ -661,17 +645,13 @@ static void fsa9480_detect_dev(struct fsa9480_usbsw *usbsw)
 	if (val1 || val2) {
 		/* USB */
 		if (val1 & DEV_T1_USB_MASK || val2 & DEV_T2_USB_MASK) {
-#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) || defined(CONFIG_S5PC110_DEMPSEY_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)// mr work 
+#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)// mr work 
 			if ( val2 & DEV_JIG_USB_ON )
 				MicroJigstatus = 1;
 #endif
 			if (pdata->usb_cb)
 				pdata->usb_cb(FSA9480_ATTACHED);
 			if (usbsw->mansw) {
-#ifdef CONFIG_S5PC110_DEMPSEY_BOARD
-				if(usbsw->dev_id == 0)
-					usbsw->mansw = usbsw->mansw | 0x03;
-#endif
 				ret = i2c_smbus_write_byte_data(client,
 					FSA9480_REG_MANSW1, usbsw->mansw);
 				if (ret < 0)
@@ -680,46 +660,31 @@ static void fsa9480_detect_dev(struct fsa9480_usbsw *usbsw)
 			}
 		/* UART */
 		} else if (val1 & DEV_T1_UART_MASK || val2 & DEV_T2_UART_MASK) {
-#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) || defined(CONFIG_S5PC110_DEMPSEY_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)// mr work 
+#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)// mr work 
 			MicroJigstatus = 1;
 #endif
 			if (pdata->uart_cb)
 				pdata->uart_cb(FSA9480_ATTACHED);
-#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) || defined(CONFIG_S5PC110_DEMPSEY_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)// mr work
+#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)// mr work
 //parkhj
 			if (pdata->charger_cb)
 				pdata->charger_cb(FSA9480_ATTACHED);
 #endif
 			
 			if (usbsw->mansw) {
-#ifdef CONFIG_S5PC110_DEMPSEY_BOARD
-				if(usbsw->dev_id == 0)
-				{
-					ret = i2c_smbus_write_byte_data(client,	FSA9480_REG_MANSW1, (SW_UART | 0x03));
-					if (ret < 0)
-						dev_err(&client->dev,
-							"%s: err %d\n", __func__, ret);
-
-				}
-				else
-				{
-#endif
 				ret = i2c_smbus_write_byte_data(client,
 					FSA9480_REG_MANSW1, SW_UART);
 				if (ret < 0)
 					dev_err(&client->dev,
 						"%s: err %d\n", __func__, ret);
 			}
-#ifdef CONFIG_S5PC110_DEMPSEY_BOARD
-			}
-#endif
 		/* CHARGER */
 		} else if (val1 & DEV_T1_CHARGER_MASK) {
 			if (pdata->charger_cb)
 				pdata->charger_cb(FSA9480_ATTACHED);
 		/* JIG */
 		} else if (val2 & DEV_T2_JIG_MASK) {
-#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD)	|| defined(CONFIG_S5PC110_DEMPSEY_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)// mr work 
+#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)// mr work 
 			MicroJigstatus = 1; 
 #endif
 			if (pdata->jig_cb)
@@ -731,24 +696,12 @@ static void fsa9480_detect_dev(struct fsa9480_usbsw *usbsw)
 		printk(KERN_ERR "FSA MHL Attach");
 		printk("mhl_cable_status = %d \n", mhl_cable_status);
 
-
-#if defined(CONFIG_S5PC110_DEMPSEY_BOARD)
-//Rajucm: phone Power on with MHL Cable,avoid crash
-	while((!MHL_INIT_COND))		//We have come to this point detected as MHL cable //Aakash
-	{	//4Control enters into while loop only when fsa9480 detects MHL-cable @ phone bootup
-		i2c_smbus_write_byte_data(client, 0x02, (0x01|i2c_smbus_read_byte_data(client, 0x02)));	//DisableFSA9480Interrupts
-		wait_event_interruptible_timeout(fsa9480_MhlWaitEvent, MHL_INIT_COND, msecs_to_jiffies(10*1000)); //10sec:
-		printk(KERN_ERR"[FSA9480]####### %s ######### \n", MHL_INIT_COND? "Ready to start MHL":"Sleep untill MHL condition comes true");
-	}
-#endif
-
-
 		FSA9480_MhlSwitchSel(1);
 #else
 			
 			if (pdata->deskdock_cb)
 				pdata->deskdock_cb(FSA9480_ATTACHED);
-#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD)	|| defined(CONFIG_S5PC110_DEMPSEY_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)// mr work
+#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)// mr work
 			fsa9480_enable_spk();	//HDLNC_OPK_20110307
 			/* S1
 			ret = i2c_smbus_write_byte_data(client,
@@ -797,7 +750,7 @@ static void fsa9480_detect_dev(struct fsa9480_usbsw *usbsw)
 				pdata->cardock_cb(FSA9480_ATTACHED);
 			
 			MicroJigUARTOnStatus = 1;
-#if defined(CONFIG_S5PC110_KEPLER_BOARD) || defined(CONFIG_S5PC110_DEMPSEY_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD) // mr work 
+#if defined(CONFIG_S5PC110_KEPLER_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD) // mr work 
 		fsa9480_enable_spk();	 //HDLNC_OPK_20110307
 #elif defined(CONFIG_S5PC110_HAWK_BOARD)// mr work //subhransu revisit
 			if(max8998_check_vdcin())
@@ -839,12 +792,12 @@ static void fsa9480_detect_dev(struct fsa9480_usbsw *usbsw)
 		/* UART */
 		} else if (usbsw->dev1 & DEV_T1_UART_MASK ||
 				usbsw->dev2 & DEV_T2_UART_MASK) {
-#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) || defined(CONFIG_S5PC110_DEMPSEY_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)// mr work
+#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)// mr work
 			MicroJigstatus = 0;
 #endif
 			if (pdata->uart_cb)
 				pdata->uart_cb(FSA9480_DETACHED);
-#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) || defined(CONFIG_S5PC110_DEMPSEY_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)// mr work
+#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)// mr work
 //parkhj			
 			if (pdata->charger_cb)
 				pdata->charger_cb(FSA9480_DETACHED);
@@ -856,7 +809,7 @@ static void fsa9480_detect_dev(struct fsa9480_usbsw *usbsw)
 				pdata->charger_cb(FSA9480_DETACHED);
 		/* JIG */
 		} else if (usbsw->dev2 & DEV_T2_JIG_MASK) {
-#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) || defined(CONFIG_S5PC110_DEMPSEY_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)// mr work 
+#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)// mr work 
 			MicroJigstatus = 0; 
 #endif
 			if (pdata->jig_cb)
@@ -896,7 +849,7 @@ static void fsa9480_detect_dev(struct fsa9480_usbsw *usbsw)
 #endif		
 
 		} else if (usbsw->dev2 & DEV_JIG_UART_ON) {
-#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) || defined(CONFIG_S5PC110_DEMPSEY_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)// mr work 
+#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)// mr work 
 			MicroJigUARTOnStatus = 0;
 #endif
 			if (pdata->cardock_cb)
@@ -923,14 +876,6 @@ static void fsa9480_reg_init(struct fsa9480_usbsw *usbsw)
 	struct i2c_client *client = usbsw->client;
 	unsigned int ctrl = CON_MASK;
 	int ret;
-
-#ifdef CONFIG_S5PC110_DEMPSEY_BOARD
-		
-	usbsw->dev_id = i2c_smbus_read_byte_data(client, FSA9480_REG_DEVID);
-	if (usbsw->dev_id < 0)
-		dev_err(&client->dev, "%s: err %d\n", __func__, usbsw->dev_id);
-	printk("fsa9480_reg_init = %d\n", usbsw->dev_id);
-#endif
 
 	/* mask interrupts (unmask attach/detach only) */
 	ret = i2c_smbus_write_word_data(client, FSA9480_REG_INT1_MASK, 0x1ffc);
@@ -1053,10 +998,8 @@ static int __devinit fsa9480_probe(struct i2c_client *client,
 	if (usbsw->pdata->reset_cb)
 		usbsw->pdata->reset_cb();
 
-#if !defined (CONFIG_S5PC110_DEMPSEY_BOARD)
 	/* device detection */
 	fsa9480_detect_dev(usbsw);
-#endif
 
 	// set fsa9480 init flag.
 	if (usbsw->pdata->set_init_flag)

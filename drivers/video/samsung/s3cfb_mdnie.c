@@ -501,14 +501,7 @@ void mDNIe_Set_Mode(Lcd_mDNIe_UI mode, u8 mDNIe_Outdoor_OnOff)
 
 	pre_0x0100 = 0;
 #ifdef CONFIG_FB_S3C_MDNIE_TUNINGMODE_FOR_BACKLIGHT
-#if defined(CONFIG_S5PC110_DEMPSEY_BOARD)
-        //extern int capella_pre_val;
-
-        //capella_pre_val = -1;
-
-#else
 	pre_val = -1;		//Subhransu revisit for dempsey
-#endif
 #endif	/* CONFIG_FB_S3C_MDNIE_TUNINGMODE_FOR_BACKLIGHT */
 
 	gprintk("[mDNIe] mDNIe_Set_Mode: current_mDNIe_UI(%d), current_mDNIe_OutDoor_OnOff(%d)  \n",current_mDNIe_UI, current_mDNIe_OutDoor_OnOff);	
@@ -945,7 +938,7 @@ void mDNIe_txtbuf_to_parsing(void)
 EXPORT_SYMBOL(mDNIe_txtbuf_to_parsing);
 #endif
 
-#if defined(CONFIG_FB_S3C_MDNIE_TUNINGMODE_FOR_BACKLIGHT)// && defined (CONFIG_S5PC110_DEMPSEY_BOARD)
+#if defined(CONFIG_FB_S3C_MDNIE_TUNINGMODE_FOR_BACKLIGHT)
 int mdnie_tuning_backlight = 0;
 
 extern int IsLDIEnabled(void);

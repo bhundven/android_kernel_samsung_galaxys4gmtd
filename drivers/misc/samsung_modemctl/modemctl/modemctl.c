@@ -41,7 +41,7 @@
 #define MODEM_CTL_DEFAULT_WAKLOCK_HZ	(2*HZ)
 #endif
 
-#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined(CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_DEMPSEY_BOARD) || defined(CONFIG_S5PC110_SIDEKICK_BOARD)
+#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined(CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_SIDEKICK_BOARD)
 
 #include <linux/regulator/consumer.h>
 static struct regulator *CP_RTC_regulator; /*LDO 6*/
@@ -287,7 +287,7 @@ static void m5720_on(struct modemctl *mc)
 	if(mc->gpio_phone_on)
 	  gpio_set_value(mc->gpio_phone_on, 1);
 
-#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined(CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_DEMPSEY_BOARD)
+#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined(CONFIG_S5PC110_HAWK_BOARD)
 	msleep(18);
 
  	if (IS_ERR_OR_NULL(CP_RTC_regulator) )
@@ -1205,7 +1205,7 @@ static int __devinit modemctl_probe(struct platform_device *pdev)
 	}
 	irq_phone_active = res->start;
 
-#if !(defined(CONFIG_S5PC110_KEPLER_BOARD) || defined(CONFIG_S5PC110_T959_BOARD) || defined(CONFIG_S5PC110_DEMPSEY_BOARD) || defined(CONFIG_S5PC110_CELOX_BOARD) || defined(CONFIG_S5PC110_FLEMING_BOARD)|| defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD))
+#if !(defined(CONFIG_S5PC110_KEPLER_BOARD) || defined(CONFIG_S5PC110_T959_BOARD) || defined(CONFIG_S5PC110_CELOX_BOARD) || defined(CONFIG_S5PC110_FLEMING_BOARD)|| defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD))
 
 	res = platform_get_resource(pdev, IORESOURCE_IRQ, 1);
 	if(!res)  {
@@ -1232,7 +1232,7 @@ static int __devinit modemctl_probe(struct platform_device *pdev)
 		goto err;
 	}
 	irq_int_cp_pwr_rst = res->start;	
-	#elif defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined(CONFIG_S5PC110_SIDEKICK_BOARD) || defined(CONFIG_S5PC110_DEMPSEY_BOARD)
+	#elif defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined(CONFIG_S5PC110_SIDEKICK_BOARD)
 	res = platform_get_resource(pdev, IORESOURCE_IRQ, 1);
 	if(!res)  {
 		dev_err(&pdev->dev, "failed to get irq number\n");
@@ -1377,7 +1377,7 @@ static int __devinit modemctl_probe(struct platform_device *pdev)
 	_wake_lock_init(mc);
 #endif
 
-#if !(defined(CONFIG_S5PC110_KEPLER_BOARD) || defined(CONFIG_S5PC110_T959_BOARD) || defined(CONFIG_S5PC110_FLEMING_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD) || defined(CONFIG_S5PC110_DEMPSEY_BOARD))
+#if !(defined(CONFIG_S5PC110_KEPLER_BOARD) || defined(CONFIG_S5PC110_T959_BOARD) || defined(CONFIG_S5PC110_FLEMING_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined (CONFIG_S5PC110_SIDEKICK_BOARD))
 
 	setup_timer(&mc->sim_irq_debounce_timer, (void*)sim_irq_debounce_timer_func,(unsigned long)mc);
 
@@ -1413,7 +1413,7 @@ static int __devinit modemctl_probe(struct platform_device *pdev)
 
 	platform_set_drvdata(pdev, mc);
 
-#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined(CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_DEMPSEY_BOARD) || defined(CONFIG_S5PC110_SIDEKICK_BOARD)
+#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined(CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_SIDEKICK_BOARD)
 	if (IS_ERR_OR_NULL(CP_RTC_regulator)) 
 	{
 		CP_RTC_regulator = regulator_get(NULL, "cp_rtc");

@@ -319,8 +319,6 @@ static struct usb_mass_storage_platform_data ums_pdata = {
 // [[ HDLNC_BP_pyoungkuenoh_20110223
 #if	defined(CONFIG_S5PC110_KEPLER_BOARD)
 	.product		= "SGH-I897",
-#elif defined(CONFIG_S5PC110_DEMPSEY_BOARD) 
- .product                = "SGH-I997",
 #elif	defined(CONFIG_S5PC110_HAWK_BOARD)
 	.product		= "SGH-T759",
 #else

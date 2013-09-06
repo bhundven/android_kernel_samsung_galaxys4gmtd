@@ -81,9 +81,6 @@ static int dhd_oob_gpio_num = TEGRA_GPIO_PS0;
 #ifdef CONFIG_MACH_C1
 static int dhd_oob_gpio_num = IRQ_EINT(21);
 #endif
-#ifdef CONFIG_S5PC110_DEMPSEY_BOARD
-static int dhd_oob_gpio_num = IRQ_EINT(20);
-#endif
 
 module_param(dhd_oob_gpio_num, int, 0644);
 MODULE_PARM_DESC(dhd_oob_gpio_num, "DHD oob gpio number");

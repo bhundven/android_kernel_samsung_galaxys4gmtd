@@ -464,7 +464,7 @@ void sipc_handler(u32 mailbox, void *data)
 	}
 
 	if (mailbox & MB_COMMAND) {
-	#if (!defined CONFIG_CP_CHIPSET_STE) || (defined(CONFIG_S5PC110_DEMPSEY_BOARD))
+	#if !defined(CONFIG_CP_CHIPSET_STE)
 		_check_buffer(si);  // check buffer for missing interrupt
 	#endif
 		_do_command(si, mailbox);

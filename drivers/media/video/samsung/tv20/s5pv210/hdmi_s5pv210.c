@@ -325,7 +325,7 @@ int hdmi_phy_down(bool on, u8 addr, u8 offset, u8 *read_buffer)
 
 int __s5p_hdmi_phy_power(bool on)
 {
-#if !defined(CONFIG_S5PC110_DEMPSEY_BOARD)
+#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
     /* for the case that
       - only analog tv is supported
       - and the power for the hdmi phy is not supported*/
@@ -1836,10 +1836,8 @@ bool __s5p_hdmi_start(enum s5p_hdmi_audio_type hdmi_audio_type,
 	writel(readl(hdmi_base + S5P_HDMI_CON_0) | temp_reg,
 	       hdmi_base + S5P_HDMI_CON_0);
 
-#ifndef CONFIG_S5PC110_DEMPSEY_BOARD
 #ifdef CONFIG_HDMI_HPD
 	s5p_hpd_set_hdmiint();
-#endif
 #endif
 
 #if 1

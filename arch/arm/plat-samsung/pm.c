@@ -372,13 +372,7 @@ static int s3c_pm_enter(suspend_state_t state)
 #if ! defined (CONFIG_S5PC110_HAWK_BOARD) 	
 	/* 20110125 - control power of moviNAND at PM and add 400ms delay for stabilization of moviNAND. */
 	gpio_set_value(GPIO_MASSMEMORY_EN, 0);
-#ifdef CONFIG_S5PC110_DEMPSEY_BOARD
-	gpio_set_value(GPIO_MASSMEMORY_EN2, 0);
-#else
 	mdelay(400);
-#endif
-
-
 #endif
 	/* 20110210 - check pending interrupt to wakeup device */
 	if(!s3c_pm_check_pending_interrupt())

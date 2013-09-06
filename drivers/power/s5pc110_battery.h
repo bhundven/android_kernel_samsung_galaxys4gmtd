@@ -29,7 +29,7 @@
 #define BATT_MINIMUM		(-28)	/* 3.554V */
 #define BATT_OFF		(-128)	/* 3.4029V */
 
-#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD) || defined(CONFIG_S5PC110_DEMPSEY_BOARD) // mr work 
+#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 #define ATT_TMO_COMMON
 #endif
 
@@ -112,9 +112,6 @@ enum adc_channel_type{
 	S3C_ADC_EAR = 3,
 	S3C_ADC_V_F = 4,
 	S3C_ADC_TEMPERATURE = 6,
-#if (defined CONFIG_S5PC110_DEMPSEY_BOARD)
-	S3C_LCD_ADC_TEMP,
-#endif
 	S3C_ADC_VOLTAGE,
 	ENDOFADC
 };
@@ -126,9 +123,6 @@ enum {
        BATT_VOL_ADC_CAL,
        BATT_TEMP,
        BATT_TEMP_ADC,
-#if (defined CONFIG_S5PC110_DEMPSEY_BOARD)
-        LCD_TEMP_ADC,
-#endif
        BATT_TEMP_ADC_CAL,
 	BATT_VOL_ADC_AVER,
 	BATT_TEST_MODE,
@@ -218,27 +212,4 @@ enum {
 
 #define BATT_VF_MAX	800 // 0.55
 #define BATT_VF_MIN	       400 // 0.45
-
-#elif defined (CONFIG_S5PC110_DEMPSEY_BOARD)				// mr work 
-
-#define EVENT_TEMP_HIGH_BLOCK	       670  //  temper_table[77][0]		// 67 °À¢ÁE
-#define EVENT_TEMP_HIGH_RECOVER			 580  //  temper_table[68][0]		// 58 °À¢ÁE
-
-#define TEMP_HIGH_BLOCK	              490  // temper_table[59][0]		// 49 °À¢ÁE
-#define TEMP_HIGH_RECOVER	              410  // temper_table[51][0]		// 41 °À¢ÁE
-#define TEMP_LOW_BLOCK		               -20  // temper_table[8][0]		// -2  °À¢ÁE
-#define TEMP_LOW_RECOVER	               40   // temper_table[14][0]		// 4 °À¢ÁE
-
-#define FULL_CHARGE_COND_VOLTAGE	       4150							
-#define RECHARGE_COND_VOLTAGE		4140
-#define RECHARGE_COND_TIME		      (30*1000)	/* 30 seconds */
-
-
-#define CURRENT_OF_FULL_CHG		325		//??mA
-#define CURRENT_OF_TOPOFF_CHG		186
-
-
-#define BATT_VF_MAX				800 // 0.55
-#define BATT_VF_MIN	       400 // 0.45
-
 #endif

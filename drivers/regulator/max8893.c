@@ -46,11 +46,6 @@
 #define DBG(fmt...)				//NAGSM_Android_SEL_Kernel_Aakash_20101005
 //#define DBG(fmt...) printk(fmt)
 
-#if defined (CONFIG_S5PC110_DEMPSEY_BOARD)
-int max8893_i2cprobe_status = 0;
-EXPORT_SYMBOL_GPL(max8893_i2cprobe_status);
-#endif
-
 #if 1//CONFIG_ARIES_VER_B1... pfe
 
 /* Registers */
@@ -717,45 +712,6 @@ static int __devinit max8893_pmic_probe(struct i2c_client *client,
 
 	DBG("func =%s :: End!!!\n",__func__);
  
-//temp code 
-	//NAGSM_Android_SEL_Kernel_Aakash_20101005
-//	mass_mem_cfg_gpio();
-
-//	mass_mem_ldo_en(1);
-	//NAGSM_Android_SEL_Kernel_Aakash_20101005
-//
-
-/****
- sii9234 and fsa9480 driver uses this flag 
- 	- to check max8893 status and configure power for sii9234
-	- initialize sii9234 
-****/
-#if defined(CONFIG_S5PC110_DEMPSEY_BOARD)
-	max8893_i2cprobe_status = 1;
-//[NAGSM_Android_HDLNC_SJW_20101228 : LDO1,2 enable control	
-	s3c_gpio_cfgpin(GPIO_MASSMEMORY_EN2, S3C_GPIO_OUTPUT);
-	s3c_gpio_setpull(GPIO_MASSMEMORY_EN2, S3C_GPIO_PULL_NONE);
-	s3c_gpio_cfgpin(GPIO_MASSMEMORY_EN, S3C_GPIO_OUTPUT);
-	s3c_gpio_setpull(GPIO_MASSMEMORY_EN, S3C_GPIO_PULL_NONE);
-	gpio_set_value(GPIO_MASSMEMORY_EN2, GPIO_LEVEL_HIGH);
-	gpio_set_value(GPIO_MASSMEMORY_EN, GPIO_LEVEL_HIGH);
-
-	mass_mem_ldo_en(0);
-	msleep(3);
-	
-	if(!(gpio_get_value(GPIO_MASSMEMORY_EN)) || !(gpio_get_value(GPIO_MASSMEMORY_EN2))){
-		printk("[max8893]S5PV210_GPJ1 0x%x , 0x%x , 0x%x , 0x%x , 0x%x , \n",\
-		readl(S5PV210_GPJ1CON),readl(S5PV210_GPJ1DAT),readl(S5PV210_GPJ1PUD),\
-		readl(S5PV210_GPJ1CONPDN), readl(S5PV210_GPJ1PUDPDN));
-		printk("\n");
-		
-		printk("[max8893]S5PV210_GPJ2 0x%x , 0x%x , 0x%x , 0x%x , 0x%x , \n",\
-		readl(S5PV210_GPJ2CON),readl(S5PV210_GPJ2DAT),readl(S5PV210_GPJ2PUD),\
-		readl(S5PV210_GPJ2CONPDN), readl(S5PV210_GPJ2PUDPDN));
-		printk("\n");
-	}
-	printk("[PMIC]max8893 probe exit\n");
-#endif 
 	return 0;
 }
 

@@ -67,10 +67,6 @@ extern unsigned char firmware_data[];
 // ((((((((((((((((((((((( DEMO ISSP SUBROUTINE SECTION )))))))))))))))))))))))
 // ((((( Demo Routines can be deleted in final ISSP project if not used   )))))
 // ((((((((((((((((((((((((((((((((((((()))))))))))))))))))))))))))))))))))))))
-#if defined CONFIG_S5PC110_DEMPSEY_BOARD 
-/* enable ldo13 */
-extern int touchkey_ldo_on(bool on);
-#endif
 // ============================================================================
 // InitTargetTestData()
 // !!!!!!!!!!!!!!!!!!FOR TEST!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -424,18 +420,9 @@ void ApplyTargetVDD(void)
     gpio_direction_input(_3_TOUCH_SDA_28V);
     gpio_direction_input(_3_TOUCH_SCL_28V);
 
-#ifndef CONFIG_S5PC110_DEMPSEY_BOARD
     gpio_direction_output(_3_GPIO_TOUCH_EN, 1);
-#else
-	/* enable ldo13 */
-	ret=touchkey_ldo_on(1);
-    if(ret==0)
-		printk(KERN_ERR"[Touchkey]regulator get fail!!!\n");
 
-
-#endif
     mdelay(1);
-    
 }
 
 // ********************* LOW-LEVEL ISSP SUBROUTINE SECTION ********************
@@ -449,13 +436,7 @@ void ApplyTargetVDD(void)
 // ****************************************************************************
 void RemoveTargetVDD(void)
 {
- #ifndef CONFIG_S5PC110_DEMPSEY_BOARD
     gpio_direction_output(_3_GPIO_TOUCH_EN, 0);
-#else
-		/* disable ldo13 */
-	touchkey_ldo_on(0);
-
-#endif
 }
 #endif
 

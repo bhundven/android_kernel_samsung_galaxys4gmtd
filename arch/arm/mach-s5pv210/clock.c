@@ -429,11 +429,7 @@ static struct clk init_clocks_disable[] = {
 	}, {
 		.name		= "i2c",
 		.id		= 1,
-#if defined (CONFIG_S5PC110_DEMPSEY_BOARD)
-		.parent		= &clk_pclk_dsys.clk,
-#else
 		.parent		= &clk_pclk_psys.clk,
-#endif
 		.enable		= s5pv210_clk_ip3_ctrl,
 		.ctrlbit	= (1<<10),
 	}, {
@@ -521,11 +517,7 @@ static struct clk init_clocks_disable[] = {
 	}, {
 		.name		= "i2c-hdmiphy",
 		.id		= -1,
-#if defined (CONFIG_S5PC110_DEMPSEY_BOARD)
-		.parent		= &clk_pclk_dsys.clk,
-#else
 		.parent		= &clk_pclk_psys.clk,
-#endif
 		.enable		= s5pv210_clk_ip3_ctrl,
 		.ctrlbit	= (1 << 11),
 	}, {
@@ -690,18 +682,6 @@ static struct clk init_clocks[] = {
                .ctrlbit        = (1 << 31),
 	},
 #endif	
-
-#if defined(CONFIG_S5PC110_DEMPSEY_BOARD)
-	{
-		.name		= "chip_id",
-		.id		= -1,
-		.parent		= &clk_pclk_psys.clk,
-		.enable		= s5pv210_clk_ip4_ctrl,
-		.ctrlbit	= S5P_CLKGATE_IP4_CHIP_ID,
-
-	},
-
-#endif
 };
 
 static struct clk *clkset_uart_list[] = {

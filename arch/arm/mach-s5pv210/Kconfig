@@ -198,17 +198,6 @@ config S5PC110_FLEMING_BOARD
 	help
 		select NA USA Board 
 
-
-config S5PC110_DEMPSEY_BOARD
-	bool "S5PC110_DEMPSEY"
-        select S3C_DEV_HSMMC
-        select S3C_DEV_HSMMC1 if !S5PV210_SD_CH0_8BIT
-        select S3C_DEV_HSMMC2
-        select S3C_DEV_HSMMC3
-	help
-		select NA USA Board 
-
-		
 endchoice 
 
 choice 
@@ -273,25 +262,6 @@ config FLEMING_VER_B0
         help
          add fleming ver B0 option 
          
-endchoice 
-
-
-config S5PC110_DEMPSEYR_BOARD
-	bool "S5PC110_DEMPSEY Rogers"
-	depends on S5PC110_DEMPSEY_BOARD
-	default n
-	help
-	 add dempsey rogers option
-		
-
-choice 
-	prompt "Select DEMPSEY BOARD VERSION"
-         
-config DEMPSEY_VER_B0
-        bool "add DEMPSEY VERSION"
-         depends on S5PC110_DEMPSEY_BOARD
-        help
-         add DEMPSEY ver B0 option 
 endchoice 
 
 config GPS_CHIPSET_STE_GNS7560

@@ -252,32 +252,6 @@ static irqreturn_t __s5p_hpd_irq(int irq, void *dev_id)
 #endif
 
 #ifdef CONFIG_CPU_S5PV210
-#ifdef CONFIG_S5PC110_DEMPSEY_BOARD
-bool tv_power_status = false;
-extern void __s5p_tv_poweroff_test(void);
-extern void __s5p_tv_poweron_test(void);
-
-void __s5p_hdmi_phy_power_offtest()
-{
-
-	if(!tv_power_status)			
-	{
-		printk(KERN_ERR "__s5p_hdmi_phy_power_offtest\n");
-		s5p_tv_clk_gate(true);
-		__s5p_tv_poweron_test();
-		clk_enable(s5ptv_status.i2c_phy_clk);
-		//tv_phy_power(false);	
-		clk_set_parent(s5ptv_status.sclk_mixer,	s5ptv_status.sclk_dac);
-		clk_set_parent(s5ptv_status.sclk_hdmi,	s5ptv_status.sclk_pixel);
-
-		__s5p_hdmi_phy_power(false);
-		clk_disable(s5ptv_status.i2c_phy_clk);
-		 __s5p_tv_poweroff_test();
-		s5p_tv_clk_gate(false);
-	}
-
-}
-#endif
 int tv_phy_power(bool on)
 {
 	if (on) {
@@ -285,18 +259,11 @@ int tv_phy_power(bool on)
 		/* on */
 		clk_enable(s5ptv_status.i2c_phy_clk);
 		__s5p_hdmi_phy_power(true);
-#ifdef CONFIG_S5PC110_DEMPSEY_BOARD
-		tv_power_status = true;
-#endif
-
 	} else {
 		/*
 		 * for preventing hdmi hang up when restart
 		 * switch to internal clk - SCLK_DAC, SCLK_PIXEL
 		 */
-#ifdef CONFIG_S5PC110_DEMPSEY_BOARD
-		tv_power_status = false;
-#endif
 		clk_set_parent(s5ptv_status.sclk_mixer,
 					s5ptv_status.sclk_dac);
 		clk_set_parent(s5ptv_status.sclk_hdmi,
@@ -919,14 +886,10 @@ void s5p_handle_cable(void)
 
 	printk(KERN_INFO "%s....start", __func__);
 
-#if defined (CONFIG_S5PC110_DEMPSEY_BOARD)
-        //Temporary Disable till PDA HDMI is up //NAGSM_Android_SEL_Kernel_Aakash_20110606
-#else
 	if ((s5ptv_status.tvout_param.out_mode != TVOUT_OUTPUT_HDMI) && \
 	(s5ptv_status.tvout_param.out_mode != TVOUT_OUTPUT_HDMI_RGB) && \
 		(s5ptv_status.tvout_param.out_mode != TVOUT_OUTPUT_DVI))
 		return;
-#endif
 
 	bool previous_hpd_status = s5ptv_status.hpd_status;
 #ifdef CONFIG_HDMI_HPD
@@ -944,10 +907,6 @@ void s5p_handle_cable(void)
 
 	if (s5ptv_status.hpd_status) {
 		BASEPRINTK("\n hdmi cable is connected \n");
-
-#if defined (CONFIG_S5PC110_DEMPSEY_BOARD)
-		printk("\n hdmi cable is connected \n"); //Temp Debug
-#endif
 
 		if (s5ptv_status.suspend_status)
 			return;
@@ -984,10 +943,6 @@ void s5p_handle_cable(void)
 		envp[env_offset++] = env_buf;
 		envp[env_offset] = NULL;
 		kobject_uevent_env(&(s5p_tvout[0].dev.kobj), KOBJ_CHANGE, envp);
-#if defined (CONFIG_S5PC110_DEMPSEY_BOARD)
-		printk("HDMI_STATE=online"); //Temp Debug
-#endif
-
 	} else {
 		BASEPRINTK("\n hdmi cable is disconnected \n");
 
@@ -1040,11 +995,6 @@ void s5p_handle_cable(void)
 	}
 }
 
-#if defined (CONFIG_S5PC110_DEMPSEY_BOARD)
-bool S5p_TvProbe_status = false;//Rajucm
-#endif
-
-
 #define S5P_TVMAX_CTRLS		ARRAY_SIZE(s5p_tvout)
 /*
  *  Probe
@@ -1064,17 +1014,6 @@ static int __devinit s5p_tv_probe(struct platform_device *pdev)
 				__func__, __LINE__, "s3c-tv20 pd");
 		return PTR_ERR(s5ptv_status.tv_regulator);
 	}
-
-
-#if defined (CONFIG_S5PC110_DEMPSEY_BOARD)
-	s5ptv_status.tv_tv = regulator_get(NULL, "usb_io");
-	if (IS_ERR(s5ptv_status.tv_tv)) {
-		printk(KERN_ERR "%s %d: failed to get resource %s\n",
-				__func__, __LINE__, "s3c-tv20 tv");
-		return PTR_ERR(s5ptv_status.tv_tv);
-	}
-#endif
-
 
 	s5ptv_status.tv_tvout = regulator_get(NULL, "tvout");
 	if (IS_ERR(s5ptv_status.tv_tvout)) {
@@ -1208,9 +1147,6 @@ static int __devinit s5p_tv_probe(struct platform_device *pdev)
 	mutex_init(mutex_for_fo);
 
 #ifdef CONFIG_CPU_S5PV210
-#if defined (CONFIG_S5PC110_DEMPSEY_BOARD)
-	__s5p_tv_poweron();
-#endif
 	/* added for phy cut off when boot up */
 	clk_enable(s5ptv_status.i2c_phy_clk);
 
@@ -1218,15 +1154,9 @@ static int __devinit s5p_tv_probe(struct platform_device *pdev)
 	clk_disable(s5ptv_status.i2c_phy_clk);
 
 	s5p_tv_clk_gate(false);
-#if defined (CONFIG_S5PC110_DEMPSEY_BOARD)
-	__s5p_tv_poweroff();
-#endif
 #endif
 	printk(KERN_INFO "%s TV Probing is done\n", __func__);
 
-#if defined (CONFIG_S5PC110_DEMPSEY_BOARD)
-	S5p_TvProbe_status = true; //Rajucm
-#endif
 	return 0;
 
 #ifdef CONFIG_TV_FB

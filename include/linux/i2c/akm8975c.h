@@ -90,12 +90,6 @@ struct akm8975_platform_data {
 	int gpio_DRDY;
 };
 
-#ifdef CONFIG_S5PC110_DEMPSEY_BOARD
-extern short cm3663_get_proximity_value(void);
-#else
 extern short gp2a_get_proximity_value(void);
-#endif
-
 
 #endif
-

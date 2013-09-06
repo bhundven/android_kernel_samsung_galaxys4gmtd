@@ -29,8 +29,6 @@ int keypad_keycode[] = {
 	50,0,0,0,42,58,
 #elif defined (CONFIG_S5PC110_HAWK_BOARD) /* nat */
 	50,158,28,107,42,58,
-#elif defined(CONFIG_S5PC110_DEMPSEY_BOARD)
-		0,0,0,0,42,58,		
 #elif defined (CONFIG_FLEMING_VER_B0)
 	158,107,42,58,28,139,34,8,
 #else

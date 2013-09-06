@@ -15,11 +15,7 @@
 #include <linux/gpio.h>
 #include <mach/gpio-aries.h>
 #include "A1026_dev.h"
-#if defined (CONFIG_S5PC110_DEMPSEY_BOARD)
-#include "A1026_regs_dempsey.h"
-#else
 #include "A1026_regs.h"
-#endif
 #include "audience.h"
 
 
@@ -47,17 +43,11 @@ enum A1025STATE A1026_state=A1026SLEEP;
 //]hdlnc_bp_ldj : 20100308
 extern unsigned int HWREV;
 
-#if defined (CONFIG_S5PC110_DEMPSEY_BOARD)
-int prev_num_closetalk_data = 248;
-int prev_num_bypass_data = 48;
-int prev_num_fartalk_data;
-int prev_num_NS0_data = 248;
-#else
 int prev_num_closetalk_data = 248;
 int prev_num_bypass_data = 32;
 int prev_num_fartalk_data;
 int prev_num_NS0_data = 248;
-#endif
+
 enum
 {
     eTRUE,
@@ -243,25 +233,6 @@ int A1026_dev_resume(void)
 int configureIO()
 {
 	//configure GPIOs for A1026
-#if defined(CONFIG_S5PC110_DEMPSEY_BOARD)
-
-	if (gpio_is_valid(GPIO_A1026_RST))
-	{
-		if (gpio_request(GPIO_A1026_RST, "GPIO_A1026_RST"))
-			debug("Failed to request GPIO_A1026_RST! \n");
-//ldj_20100719	
-		gpio_direction_output(GPIO_A1026_RST, 1);
-//ldj_20100719
-	}
-
-
-	if (gpio_is_valid(GPIO_A1026_WAKEUP))
-	{
-		if (gpio_request(GPIO_A1026_WAKEUP, "GPIO_A1026_WAKEUP"))
-			debug("Failed to request GPIO_A1026_WAKEUP! \n");
-		gpio_direction_output(GPIO_A1026_WAKEUP, 0);
-	}
-#else
 	if (gpio_is_valid(GPIO_GPH10))
 	{
 		if (gpio_request(GPIO_GPH10, "GPIO_GPH10"))
@@ -294,7 +265,6 @@ int configureIO()
 		}	
 
 	}
-#endif
 
 	return 0;
 
@@ -363,13 +333,6 @@ static int powerup(void)
 	{
 	//	printk("configure error!! \n");
 	}
-#if defined (CONFIG_S5PC110_DEMPSEY_BOARD)|| defined(CONFIG_S5PC110_CELOX_BOARD)
-	gpio_set_value(GPIO_A1026_WAKEUP, 1);
-	gpio_set_value(GPIO_A1026_RST, 0);
-	msleep(50);
-	gpio_set_value(GPIO_A1026_RST, 1);
-	msleep(50);
-#else
 	//ldj : wakeuppin & HWreset by control GPIOs and then sleep for 3s
 	gpio_set_value(GPIO_GPH11, 1);
 	//ldj : HWreset and sleep for 50ms!!
@@ -390,7 +353,6 @@ static int powerup(void)
 		printk("gpio_set_value(GPIO_GPH12, 1)");
 		gpio_set_value(GPIO_GPH12, 1);
 	}
-#endif
 	//ldj : Download firmware.
 	ret = A1026Loadfirmware();
 
@@ -605,18 +567,10 @@ void A1026Wakeup()
 	msleep(10);
 	do
 	{
-#if !defined(CONFIG_S5PC110_DEMPSEY_BOARD)
 		gpio_set_value(GPIO_GPH11, 1);
 		msleep(90);
 		gpio_set_value(GPIO_GPH11, 0);
 		msleep(20);
-#else
-		gpio_set_value(GPIO_A1026_WAKEUP, 1);
-		msleep(90);
-		gpio_set_value(GPIO_A1026_WAKEUP, 0);
-		msleep(30);
-
-	#endif	
 	i2c_master_send(A1026_i2c_client, wakeup_cmd, 4);
 	msleep(20);
 	i2c_master_recv(A1026_i2c_client, buf, 4);
@@ -630,11 +584,7 @@ void A1026Wakeup()
 
 	printk("A1026Wakeup() ret=%d\n",ret);
 //]hdlnc_bp_ldj : 20100308
-#if !defined(CONFIG_S5PC110_DEMPSEY_BOARD)
 	gpio_set_value(GPIO_GPH11, 1);
-#else
-	gpio_set_value(GPIO_A1026_WAKEUP, 1);
-#endif
 }
 //]hdlnc_bp_ldj : 20100305
 int A1026_Firmware_i2c_write(struct i2c_client *client)
@@ -644,34 +594,6 @@ int A1026_Firmware_i2c_write(struct i2c_client *client)
 
 	u8 buf[4] = {0x80, 0x00, 0x00, 0x00};
 
-	#if defined (CONFIG_S5PC110_DEMPSEY_BOARD)
-	
-	if((HWREV == 0x04)||(HWREV == 0x05) || (HWREV == 0x06))
-		total_num = TOTAL_NUM_OF_FW_A2020;
-	else
-		total_num = TOTAL_NUM_OF_FW;	
-						
-		for(i=0; i<(total_num/NUM_OF_BYTE); i++)
-		{
-			index = i*NUM_OF_BYTE;
-
-			if((HWREV == 0x04)||(HWREV == 0x05) || (HWREV == 0x06))
-				ret = i2c_master_send(A1026_i2c_client, &a2020_firmware_buf[index], NUM_OF_BYTE);
-			else
-				ret = i2c_master_send(A1026_i2c_client, &a1026_firmware_buf[index], NUM_OF_BYTE);
-			if(ret != NUM_OF_BYTE)
-			{	
-				printk("A1026 firmware download error!\n");
-				return -1;
-			}
-		}	
-		
-	if((HWREV == 0x04)||(HWREV == 0x05) || (HWREV == 0x06))
-		ret = i2c_master_send(A1026_i2c_client, &a2020_firmware_buf[index + NUM_OF_BYTE], REMAINED_NUM_A2020);
-	else
-		ret = i2c_master_send(A1026_i2c_client, &a1026_firmware_buf[index + NUM_OF_BYTE], REMAINED_NUM);
-
-	#else
 	
 	if((HWREV == 0x08) || (HWREV == 0x04))
 		total_num = TOTAL_NUM_OF_FW;	
@@ -698,7 +620,7 @@ int A1026_Firmware_i2c_write(struct i2c_client *client)
 //		ret = i2c_master_send(A1026_i2c_client, &a1026_firmware_buf2[index + NUM_OF_BYTE], REMAINED_NUM);
 			ret = i2c_master_send(A1026_i2c_client, &a1026_firmware_buf2[index + NUM_OF_BYTE], 20);  //temp for B3024 firmaware binary 
 			printk("A1026 firmware download  ret = %d, REMAINED_NUM = %d\n", ret, REMAINED_NUM);
-	#endif		
+
 	if(ret != REMAINED_NUM)
 	{
 		printk("A1026 firmware download error2!\n");	

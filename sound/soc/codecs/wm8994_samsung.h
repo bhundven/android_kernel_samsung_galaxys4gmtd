@@ -75,7 +75,7 @@ Codec Output Path BIT
 #define PLAYBACK_VOIP_BT	(0x01 << 14)
 #define PLAYBACK_QIK_SPK	(0x01 << 15)
 #define PLAYBACK_QIK_HP		(0x01 << 16)
-#if defined(CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_DEMPSEY_BOARD)
+#if defined(CONFIG_S5PC110_HAWK_BOARD)
 #define PLAYBACK_GANLITE_RCV	(0x01 << 17)
 #define PLAYBACK_GANLITE_SPK	(0x01 << 18)
 #define PLAYBACK_GANLITE_HP	(0x01 << 19)
@@ -106,7 +106,7 @@ Codec Output Path BIT
 #define RECORDING_VOIP_MAIN	(0x01 << 10)
 #define RECORDING_VOIP_HP	(0x01 << 11)
 #define RECORDING_VOIP_BT	(0x01 << 12)
-#if defined(CONFIG_S5PC110_HAWK_BOARD) ||defined(CONFIG_S5PC110_DEMPSEY_BOARD)
+#if defined(CONFIG_S5PC110_HAWK_BOARD)
 #define RECORDING_QIK_MAIN  (0x01 << 13)
 #define RECORDING_QIK_SPK	(0x01 << 14)
 #define RECORDING_QIK_HP	(0x01 << 15)
@@ -169,23 +169,16 @@ enum MIC_MUTE {MUTE_OFF, MUTE_ON};
 /*
  * Definitions of enum type
  */
-#if defined(CONFIG_S5PC110_DEMPSEY_BOARD)
-enum audio_path	{
-	OFF, RCV, SPK, HP, HP_NO_MIC, BT, SPK_HP,
-	EXTRA_DOCK_SPEAKER, HDMI_TV_OUT, HDMI_SPK, HDMI_DUAL 
-};
-#else 
 enum audio_path	{
 	OFF, RCV, SPK, HP, HP_NO_MIC, BT, SPK_HP,
 	EXTRA_DOCK_SPEAKER
 };
-#endif
 
 #if defined(CONFIG_S5PC110_HAWK_BOARD)
 enum mic_path			{MAIN, SUB, BT_REC, SPK_MIC, MIC_OFF};
-#elif defined(CONFIG_S5PC110_KEPLER_BOARD)|| defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)||defined(CONFIG_S5PC110_DEMPSEY_BOARD)
+#elif defined(CONFIG_S5PC110_KEPLER_BOARD)|| defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 enum mic_path			{MAIN, SUB, BT_REC, MIC_OFF};
-#if defined (CONFIG_S5PC110_KEPLER_BOARD)|| defined(CONFIG_S5PC110_DEMPSEY_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD )
+#if defined(CONFIG_S5PC110_KEPLER_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
  
 enum call_recording_channel {CH_OFF, CH_UPLINK, CH_DOWNLINK, CH_UDLINK};
 enum voice_record_path     { CALL_RECORDING_OFF, CALL_RECORDING_MAIN, CALL_RECORDING_SUB};
@@ -199,9 +192,6 @@ enum output_source_state	{DEFAULT_OUTPUT, RING_TONE, VOIP_OUTPUT};
 enum vtcall_state		{VT_OFF, VT_ON};
 enum factory_test		{SEC_NORMAL, SEC_TEST_HWCODEC , SEC_TEST_15MODE, SEC_TEST_PBA_LOOPBACK};
 enum recognition		{REC_OFF, REC_ON};
-#if defined(CONFIG_S5PC110_DEMPSEY_BOARD)
-enum Ring_state			{RING_OFF, RING_ON};
-#endif
 typedef void (*select_route)(struct snd_soc_codec *);
 typedef void (*select_mic_route)(struct snd_soc_codec *);
 typedef int (*select_clock_control)(struct snd_soc_codec *, int);
@@ -241,9 +231,6 @@ struct wm8994_priv {
 	enum state ganlite_active;
 	enum QIK_state QIK_state;
 	enum recognition recognition_active;		// for control gain to voice recognition.
-	#if defined(CONFIG_S5PC110_DEMPSEY_BOARD) 
-	enum Ring_state Ring_state;
-	#endif
 	select_route *universal_playback_path;
 	select_route *universal_voicecall_path;
 	select_mic_route *universal_mic_path;
@@ -261,7 +248,7 @@ struct wm8994_priv {
 	unsigned int cur_audience;
 	unsigned int mic_mute;
 //]mook_GB : add in audience
-#if defined (CONFIG_S5PC110_KEPLER_BOARD)|| defined(CONFIG_S5PC110_DEMPSEY_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD )
+#if defined(CONFIG_S5PC110_KEPLER_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 	enum voice_record_path call_record_path;
 	enum call_recording_channel call_record_ch;
 #endif
@@ -311,7 +298,7 @@ void wm8994_set_voicecall_common(struct snd_soc_codec *codec);
 void wm8994_set_voicecall_receiver(struct snd_soc_codec *codec);
 void wm8994_set_voicecall_headset(struct snd_soc_codec *codec);
 
-#if (defined CONFIG_S5PC110_KEPLER_BOARD) || (defined CONFIG_S5PC110_DEMPSEY_BOARD)
+#if (defined CONFIG_S5PC110_KEPLER_BOARD)
 void wm8994_set_voicecall_tty(struct snd_soc_codec *codec);
 void wm8994_set_voicecall_receiver_audience(struct snd_soc_codec *codec); //hdlnc_ldj_0417_A1026
 void wm8994_set_voicecall_factory_subMIC(struct snd_soc_codec *codec); //hdlnc_ldj_0417_A1026
@@ -346,14 +333,9 @@ void wm8994_set_fmradio_common(struct snd_soc_codec *codec);
 void wm8994_set_fmradio_headset(struct snd_soc_codec *codec);
 void wm8994_set_fmradio_speaker(struct snd_soc_codec *codec);
 void wm8994_set_fmradio_speaker_headset_mix(struct snd_soc_codec *codec);
-#if  defined (CONFIG_S5PC110_HAWK_BOARD) ||defined (CONFIG_S5PC110_DEMPSEY_BOARD) 
+#if  defined (CONFIG_S5PC110_HAWK_BOARD)
 int wm8994_set_codec_gain(struct snd_soc_codec *codec, u16 mode, u32 device);
 #else
 int wm8994_set_codec_gain(struct snd_soc_codec *codec, u16 mode, u16 device);
-#endif
-#if defined(CONFIG_S5PC110_DEMPSEY_BOARD)		
-void wm8994_set_playback_hdmi_tvout(struct snd_soc_codec *codec);
-void wm8994_set_playback_speaker_hdmitvout(struct snd_soc_codec *codec);
-void wm8994_set_playback_speakerheadset_hdmitvout(struct snd_soc_codec *codec);
 #endif
 #endif

@@ -653,9 +653,7 @@ void bcmsdh_unregister_oob_intr(void)
 	SDLX_MSG(("%s: Enter\n", __FUNCTION__));
 
 	if (sdhcinfo->oob_irq_registered == TRUE) {
-#ifndef CONFIG_S5PC110_DEMPSEY_BOARD
 		set_irq_wake(sdhcinfo->oob_irq, 0);
-#endif
 		disable_irq_nosync(sdhcinfo->oob_irq);	/* just in case.. */
 		free_irq(sdhcinfo->oob_irq, NULL);
 		sdhcinfo->oob_irq_registered = FALSE;

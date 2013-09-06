@@ -45,10 +45,3 @@ obj-$(CONFIG_INPUT_WM831X_ON)		+= wm831x-on.o
 obj-$(CONFIG_INPUT_YEALINK)		+= yealink.o
 obj-$(CONFIG_OPTICAL_GP2A)		+= gp2a.o
 obj-$(CONFIG_OPTICAL_TAOS_TRITON)		+= taos_triton.o
-ifeq ($(CONFIG_S5PC110_DEMPSEY_BOARD),y)
-obj-$(CONFIG_OPTICAL_CAPELLA_TRITON)    += cm3663.o
-obj-$(CONFIG_GYRO_K3G)			+= k3g.o
-obj-$(CONFIG_SENSORS_AK8975)    	+= ak8975.o
-obj-$(CONFIG_SENSORS_K3DH)              += k3dh.o
-
-endif

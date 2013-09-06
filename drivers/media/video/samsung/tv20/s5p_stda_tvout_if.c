@@ -179,11 +179,7 @@ bool _s5p_tv_if_init_param(void)
 	st->hdmi_spd_info_frame.spd_header = NULL;
 	st->hdmi_spd_info_frame.spd_data = NULL;
 
-#if defined (CONFIG_S5PC110_DEMPSEY_BOARD)
-	st->hdcp_en = true;
-#else
 	st->hdcp_en = false;
-#endif
 
 	st->hdmi_audio_type = HDMI_AUDIO_PCM;
 

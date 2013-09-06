@@ -59,12 +59,7 @@ else
 ifeq ($(CONFIG_S5PC110_VIBRANTPLUS_BOARD),y)
 snd-soc-wm8994-objs := wm8994_samsung.o wm8994_vibrantplus.o 
 else
-ifeq ($(CONFIG_S5PC110_DEMPSEY_BOARD),y)
-snd-soc-wm8994-objs := wm8994_samsung.o wm8994_dempsey.o A1026_i2c_drv_dempsey.o audience.o
-
-else
 snd-soc-wm8994-objs := wm8994_samsung.o wm8994_aries.o
-endif
 endif
 endif
 endif

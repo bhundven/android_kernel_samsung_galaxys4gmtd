@@ -180,13 +180,6 @@ static bool auto_cal_flag; /* 1: enabled,0: disabled*/
 static bool ta_status_pre = 0;
 static bool sleep_mode_flag = 0;
 
-#if 0//defined(CONFIG_TARGET_LOCALE_NAATT) || defined(CONFIG_S5PC110_DEMPSEY_BOARD)
-static bool gain_change_flag;
-static int gain_ta;
-static void mxt224_optical_gain(uint16_t dbg_mode);
-#endif
-
-
 #ifdef CONFIG_TARGET_LOCALE_KOR
 static unsigned char is_inputmethod;
 #endif
@@ -651,11 +644,7 @@ void check_chip_calibration(unsigned char one_touch_input_flag)
 	/* get the address of the diagnostic object so we can get the data we need */
 	/* diag_address = get_object_address(DEBUG_DIAGNOSTIC_T37,0); */
 	ret = get_object_info(copy_data, DEBUG_DIAGNOSTIC_T37, &size, &object_address);
-#if defined(CONFIG_S5PC110_DEMPSEY_BOARD)
-	msleep(10); /* Fix for the BGM play breaks while calibration */
-#else
 	mdelay(10);
-#endif
 
 	/* read touch flags from the diagnostic object - clear buffer so the while loop can run first time */
 	memset(data_buffer , 0xFF, sizeof(data_buffer));
@@ -670,11 +659,7 @@ void check_chip_calibration(unsigned char one_touch_input_flag)
 			qt_timer_state = 0;/* 0430 hugh */
 			break;
 		}
-#if defined(CONFIG_S5PC110_DEMPSEY_BOARD)
-		msleep(2); /* Fix for the BGM play breaks while calibration */
-#else
 		mdelay(2); /* 0318 hugh  3-> 2 */
-#endif
 		try_ctr++; /* timeout counter */
 		/* read_mem(diag_address, 2,data_buffer); */
 
@@ -1077,20 +1062,6 @@ static void report_input_data(struct mxt224_data *data)
 
 		if (touch_is_pressed_arr[i]!=0)
 			touch_is_pressed = 1;
-
-#if 0 //defined(CONFIG_TARGET_LOCALE_NAATT) || defined(CONFIG_S5PC110_DEMPSEY_BOARD)
-		if (touch_is_pressed_arr[i]==0)
-			printk(KERN_ERR "[TSP] Up[%d] %4d,%4d\n", i, data->fingers[i].x, data->fingers[i].y);
-		else if (touch_is_pressed_arr[i]==1)
-		{
-			printk(KERN_ERR "[TSP] Dn[%d] %4d,%4d\n", i, data->fingers[i].x, data->fingers[i].y);
-			presscount++;
-		}
-		else if (touch_is_pressed_arr[i]==2)
-			movecount++;
-
-#endif
-
 
 		if (data->fingers[i].z == 0)
 			data->fingers[i].z = -1;
@@ -3192,11 +3163,7 @@ if (device_create_file(sec_touchscreen, &dev_attr_mxt_touchtype) < 0)
 		printk(KERN_ERR "Failed to create device file(%s)!\n", dev_attr_set_firm_version.attr.name);
 
 #ifdef CONFIG_HAS_EARLYSUSPEND
-#if defined(CONFIG_TARGET_LOCALE_NA) || defined(CONFIG_TARGET_LOCALE_NAATT) || defined(CONFIG_S5PC110_DEMPSEY_BOARD)
-	data->early_suspend.level = EARLY_SUSPEND_LEVEL_DISABLE_FB +3;//EARLY_SUSPEND_LEVEL_BLANK_SCREEN + 1;
-#else
 	data->early_suspend.level = EARLY_SUSPEND_LEVEL_BLANK_SCREEN + 1;
-#endif
 	data->early_suspend.suspend = mxt224_early_suspend;
 	data->early_suspend.resume = mxt224_late_resume;
 	register_early_suspend(&data->early_suspend);

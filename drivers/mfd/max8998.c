@@ -41,9 +41,6 @@ static struct mfd_cell max8998_devs[] = {
 		.name = "max8998-charger",
 	},
 };
-#if defined( CONFIG_S5PC110_DEMPSEY_BOARD)
-unsigned int ldo3_status = 0;		/* to share ldo3 between USB and MIPI */
-#endif
 
 //#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined (CONFIG_S5PC110_KEPLER_BOARD) 	//Build Error
 struct i2c_client * max8998_i2cptr;

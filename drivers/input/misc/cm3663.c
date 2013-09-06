@@ -45,10 +45,6 @@
 #define REGS_PS_DATA		0xB1
 #define REGS_PS_THD		0xB2
 
-#ifdef CONFIG_S5PC110_DEMPSEY_BOARD
-#define	MAX_LUX				32768
-#endif
-
 #ifdef CONFIG_TARGET_LOCALE_KOR
 #define PS_THD_COMP1	0x07
 #define PS_THD_COMP2	0x0A
@@ -69,31 +65,6 @@ enum {
 };
 #endif
 
-#ifdef CONFIG_S5PC110_DEMPSEYR_BOARD
-static u8 reg_defaults[8] = {
-	0x00, /* ARA: read only register */
-	0x04, /* ALS_CMD: als cmd */
-	0x00, /* ALS_MSB: read only register */
-	0x20, /* INIT: interrupt disable */
-	0x00, /* ALS_LSB: read only register */
-	0x30, /* PS_CMD: interrupt disable */
-	0x00, /* PS_DATA: read only register */
-	0x0E, /* PS_THD: 14 */
-};
-
-#elif CONFIG_S5PC110_DEMPSEY_BOARD
-static u8 reg_defaults[8] = {
-	0x00, /* ARA: read only register */
-	0x04, /* ALS_CMD: als cmd */
-	0x00, /* ALS_MSB: read only register */
-	0x20, /* INIT: interrupt disable */
-	0x00, /* ALS_LSB: read only register */
-	0x30, /* PS_CMD: interrupt disable */
-	0x00, /* PS_DATA: read only register */
-	0x15, /* PS_THD: 21 */
-};
-
-#else
 static u8 reg_defaults[8] = {
 	0x00, /* ARA: read only register */
 	0x00, /* ALS_CMD: als cmd */
@@ -104,7 +75,7 @@ static u8 reg_defaults[8] = {
 	0x00, /* PS_DATA: read only register */
 	0x0A, /* PS_THD: 10 */
 };
-#endif
+
 static const int adc_table[4] = {
 	15,
 	150,

@@ -1775,9 +1775,6 @@ int sdhci_resume_host(struct sdhci_host *host)
 	/* 20110125 - power on moviNAND in case of 27nm moviNAND */
 	if(mmc->card && (mmc->card->type==MMC_TYPE_MMC)) {
 		gpio_set_value(GPIO_MASSMEMORY_EN, 1);	
-	#ifdef CONFIG_S5PC110_DEMPSEY_BOARD
-		gpio_set_value(GPIO_MASSMEMORY_EN2, 1);	
-	#endif
 	}
 #endif
 

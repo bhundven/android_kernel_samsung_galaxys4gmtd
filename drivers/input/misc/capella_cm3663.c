@@ -44,11 +44,6 @@
 #include <asm/uaccess.h>
 #include "capella_cm3663.h"
 
-#ifdef CONFIG_S5PC110_DEMPSEY_BOARD
-#include <linux/mfd/bh6173.h> //ansari 
-#endif 
-
-
 //#define capella_DEBUG
 
 /*********** for debug **********************************************************/
@@ -622,10 +617,6 @@ static void capella_on(struct capella_data *capella, int type)
 	
 	if(type == PROXIMITY)
 	{
-#ifdef CONFIG_S5PC110_DEMPSEY_BOARD
-					bh6173_ldo_enable_direct(3);
-#endif
-
 		write_buffer[0] = PROX_THD;
 		if(CM3623_i2c_write(ADDR_WRITE_THD_FOR_PS, write_buffer))
 		{
@@ -681,9 +672,6 @@ static void capella_off(struct capella_data *capella, int type)
 	gprintk(KERN_INFO "[OPTICAL] capella_off(%d)\n",type);
 	if(type == PROXIMITY || type == ALL)
 	{
-#ifdef CONFIG_S5PC110_DEMPSEY_BOARD
-					bh6173_ldo_disable_direct(3);
-#endif
 		write_buffer[0] = 0x01;
 		if(CM3623_i2c_write(ADDR_WRITE_CMD_FOR_PS, write_buffer))
 		{
@@ -1390,13 +1378,6 @@ static int capella_opt_resume( struct i2c_client *client )
 	 //   hrtimer_start(&capella->timer,light_polling_time,HRTIMER_MODE_REL);
 	}
 	
-	if(proximity_enable)
-	{
-		
-#ifdef CONFIG_S5PC110_DEMPSEY_BOARD
-		bh6173_ldo_enable_direct(3);
-#endif
-	}
 	gprintk("[%s] : \n",__func__);
 	
 	return 0;

@@ -41,17 +41,10 @@
 #include <mach/regs-clock.h>
 #include "wm8994_samsung.h"
 //[mook_GB : add in audience
-#if defined (CONFIG_S5PC110_DEMPSEY_BOARD)
-#include "A1026_regs_dempsey.h"
-#include "A1026_dev.h"
-#include "A1026_i2c_drv.h"
-
-#else
 #include "A1026_regs.h"
 #include "A1026_dev.h"
 #include "A1026_i2c_drv.h"
 //#include "audience.h"
-#endif
 //]mook_GB : add in audience
 
 #if defined USE_INFINIEON_EC_FOR_VT
@@ -67,7 +60,7 @@
 
 //[mook_GB : add in audience
 static struct wm8994_priv *localwm8994; //hdlnc_bp_ysyim
-#if defined (CONFIG_S5PC110_KEPLER_BOARD)|| defined(CONFIG_S5PC110_DEMPSEY_BOARD)
+#if defined (CONFIG_S5PC110_KEPLER_BOARD)
 
 extern int a1026_mode_status;
 #endif
@@ -147,11 +140,6 @@ select_route universal_wm8994_playback_paths[] = {
 	wm8994_set_playback_headset, wm8994_set_playback_bluetooth,
 	wm8994_set_playback_speaker_headset,
 	wm8994_set_playback_extra_dock_speaker
-	#if defined(CONFIG_S5PC110_DEMPSEY_BOARD)	
-	,wm8994_set_playback_hdmi_tvout	// hdmi_tvout
-	,wm8994_set_playback_speaker_hdmitvout // speaker_hdmi_tvout
-	,wm8994_set_playback_speakerheadset_hdmitvout // speakerheadset_hdmi_tvout
-	#endif
 };
 
 select_route universal_wm8994_voicecall_paths[] = {
@@ -313,31 +301,20 @@ static int wm899x_inpga_put_volsw_vu(struct snd_kcontrol *kcontrol,
 /*
  * Implementation of sound path
  */
-#if defined(CONFIG_S5PC110_DEMPSEY_BOARD)
-#define MAX_PLAYBACK_PATHS 13
-#else
 #define MAX_PLAYBACK_PATHS 8
-#endif
 #define MAX_VOICECALL_PATH 5
 
-#if defined(CONFIG_S5PC110_DEMPSEY_BOARD)
-static const char *playback_path[] = {
-	"OFF", "RCV", "SPK", "HP", "HP_NO_MIC", "BT", "SPK_HP",
-	"EXTRA_DOCK_SPEAKER", "TV_OUT","HDMI_TV_OUT", "HDMI_SPK", "HDMI_DUAL"
-};
-#else
 static const char *playback_path[] = {
 	"OFF", "RCV", "SPK", "HP", "HP_NO_MIC", "BT", "SPK_HP",
 	"EXTRA_DOCK_SPEAKER"
 };
-#endif
 static const char *voicecall_path[] = {
 	"OFF", "RCV", "SPK", "HP", "HP_NO_MIC", "BT"
 };
 static const char *mic_path[] = {
 #if defined(CONFIG_S5PC110_HAWK_BOARD)
 	"Main Mic", "Hands Free Mic", "BT Sco Mic", "SPK Mic" ,"MIC OFF"
-#elif defined(CONFIG_S5PC110_KEPLER_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD )|| defined(CONFIG_S5PC110_DEMPSEY_BOARD)
+#elif defined(CONFIG_S5PC110_KEPLER_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD )
 	"Main Mic", "Hands Free Mic", "BT Sco Mic", "MIC OFF"
 #endif
 };
@@ -357,7 +334,7 @@ static const char *input_source_state[] = {
 static const char *output_source_state[] = {
 	"Default Output", "Ring Tone", "VoIP Output"
 };
-#if defined (CONFIG_S5PC110_KEPLER_BOARD)|| defined(CONFIG_S5PC110_DEMPSEY_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD )
+#if defined (CONFIG_S5PC110_KEPLER_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD )
 static const char * voice_record_path[] = {"CALL_RECORDING_OFF", "CALL_RECORDING_MAIN", "CALL_RECORDING_SUB"};
 static const char * call_recording_channel[] ={"CH_OFF"," CH_UPLINK","CH_DOWNLINK","CH_UDLINK"};
 #endif
@@ -429,8 +406,7 @@ static int wm8994_set_mic_path(struct snd_kcontrol *kcontrol,
 	case 4:	// Old : case 3
 		wm8994_disable_rec_path(codec);
 		return 0;
-#elif defined(CONFIG_S5PC110_KEPLER_BOARD)|| defined(CONFIG_S5PC110_DEMPSEY_BOARD)
-
+#elif defined(CONFIG_S5PC110_KEPLER_BOARD)
 	case 3:
 		wm8994_disable_rec_path(codec);
 		return 0;
@@ -494,15 +470,6 @@ static int wm8994_set_path(struct snd_kcontrol *kcontrol,
 	case EXTRA_DOCK_SPEAKER:
 		DEBUG_LOG("routing to %s\n", mc->texts[path_num]);
 		break;
-	#if defined(CONFIG_S5PC110_DEMPSEY_BOARD)		
-		case HDMI_TV_OUT:
-		case HDMI_SPK:
-		case HDMI_DUAL:
-			DEBUG_LOG("routing to %s \n", mc->texts[path_num] );
-//			wm8994->ringtone_active = OFF;
-			path_num -= 3;
-			break;	
-	#endif
 	default:
 		DEBUG_LOG_ERR("audio path[%d] does not exists!!\n", path_num);
 		return -ENODEV;
@@ -790,7 +757,7 @@ static int wm8994_set_codec_status(struct snd_kcontrol *kcontrol,
 
 	return 0;
 }
-#if defined (CONFIG_S5PC110_KEPLER_BOARD)|| defined(CONFIG_S5PC110_DEMPSEY_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD )
+#if defined (CONFIG_S5PC110_KEPLER_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 static int wm8994_get_voice_recording_ch(struct snd_kcontrol *kcontrol, 
 	struct snd_ctl_elem_value *ucontrol)
 {	
@@ -910,13 +877,13 @@ static int wm8994_set_voice_path(struct snd_kcontrol *kcontrol,
 		break;
 	}
 //[mook_GB : add in audience
-#if defined (CONFIG_S5PC110_KEPLER_BOARD)|| defined(CONFIG_S5PC110_DEMPSEY_BOARD)
+#if defined (CONFIG_S5PC110_KEPLER_BOARD)
 	A1026Wakeup();
 #endif	
 //]mook_GB : add in audience
 	if (wm8994->cur_path != path_num ||
 			!(wm8994->codec_state & CALL_ACTIVE)
-#if defined (CONFIG_S5PC110_KEPLER_BOARD) || defined(CONFIG_S5PC110_DEMPSEY_BOARD)
+#if defined (CONFIG_S5PC110_KEPLER_BOARD)
 			|| (wm8994->cur_audience != wm8994->AUDIENCE_state)
 #endif			
 			) {
@@ -924,13 +891,11 @@ static int wm8994_set_voice_path(struct snd_kcontrol *kcontrol,
 		wm8994->cur_path = path_num;
 		wm8994->cur_audience = wm8994->AUDIENCE_state;
 //[mook_GB : add in audience
-#if defined (CONFIG_S5PC110_KEPLER_BOARD) || defined(CONFIG_S5PC110_DEMPSEY_BOARD)
+#if defined (CONFIG_S5PC110_KEPLER_BOARD)
 	if(wm8994_get_FAC_SUB_MIC_Status())
 	{
 		#if defined (CONFIG_S5PC110_KEPLER_BOARD) 
 		wm8994_set_voicecall_factory_subMIC(codec);
-		#elif defined(CONFIG_S5PC110_DEMPSEY_BOARD)
-		wm8994_set_voicecall_speaker(codec);
 		#endif
 	}
 	else if(wm8994_get_AUDIENCE_Status() && (path_num==RCV)) wm8994_set_voicecall_receiver_audience(codec); //hdlnc_ldj_0417_A1026
@@ -1053,7 +1018,7 @@ static const struct soc_enum path_control_enum[] = {
 	SOC_ENUM_SINGLE_EXT(ARRAY_SIZE(fmradio_path), fmradio_path),
 	SOC_ENUM_SINGLE_EXT(ARRAY_SIZE(codec_tuning_control), codec_tuning_control),
 	SOC_ENUM_SINGLE_EXT(ARRAY_SIZE(codec_status_control), codec_status_control),
-#if defined (CONFIG_S5PC110_KEPLER_BOARD)|| defined(CONFIG_S5PC110_DEMPSEY_BOARD) ||defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD )
+#if defined(CONFIG_S5PC110_KEPLER_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 	SOC_ENUM_SINGLE_EXT(ARRAY_SIZE(voice_record_path), voice_record_path), 
 	SOC_ENUM_SINGLE_EXT(ARRAY_SIZE(call_recording_channel), call_recording_channel),
 #endif
@@ -1103,7 +1068,7 @@ static const struct snd_kcontrol_new wm8994_snd_controls[] = {
 
 	SOC_ENUM_EXT("Codec Status", path_control_enum[7],
 		wm8994_get_codec_status, wm8994_set_codec_status),
-#if defined (CONFIG_S5PC110_KEPLER_BOARD)|| defined(CONFIG_S5PC110_DEMPSEY_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD )
+#if defined(CONFIG_S5PC110_KEPLER_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 	SOC_ENUM_EXT("Voice Call Recording", path_control_enum[8],
                 wm8994_get_voice_call_recording, wm8994_set_voice_call_recording),
 
@@ -1639,7 +1604,7 @@ static int wm8994_startup(struct snd_pcm_substream *substream,
 		wm8994_write(codec, 0x817, 0x0000);
 		wm8994_write(codec, 0x102, 0x0000);
 // HDLNC_OPK_20110513 : To prevent popup noise when hold button on voicecall_bluetooth    		   
-#if defined (CONFIG_S5PC110_KEPLER_BOARD)|| defined(CONFIG_S5PC110_DEMPSEY_BOARD)
+#if defined (CONFIG_S5PC110_KEPLER_BOARD)
 		val = wm8994_read(codec, WM8994_POWER_MANAGEMENT_5);	
 		val &= ~(WM8994_AIF2DACL_ENA_MASK | WM8994_AIF2DACR_ENA_MASK); // |WM8994_DAC1L_ENA_MASK | WM8994_DAC1R_ENA_MASK);
 		val |= WM8994_AIF2DACL_ENA | WM8994_AIF2DACR_ENA;	       // |WM8994_DAC1L_ENA_MASK | WM8994_DAC1R_ENA_MASK;
@@ -1709,7 +1674,7 @@ void wm8994_shutdown(struct snd_pcm_substream *substream,
 			(wm8994->stream_state == PCM_STREAM_DEACTIVE)) {
 		DEBUG_LOG("Turn off Codec!!");
 // HDLNC_OPK_20110513 : To prevent popup noise when hold button on voicecall_bluetooth    			
-#if defined (CONFIG_S5PC110_KEPLER_BOARD)|| defined(CONFIG_S5PC110_DEMPSEY_BOARD)
+#if defined (CONFIG_S5PC110_KEPLER_BOARD)
 		val = wm8994_read(codec, WM8994_POWER_MANAGEMENT_5);	
 		val &= ~(WM8994_AIF2DACL_ENA_MASK | WM8994_AIF2DACR_ENA_MASK);// | WM8994_DAC1L_ENA_MASK | WM8994_DAC1R_ENA_MASK);
 		wm8994_write(codec, WM8994_POWER_MANAGEMENT_5, val);	
@@ -1725,12 +1690,12 @@ void wm8994_shutdown(struct snd_pcm_substream *substream,
 		wm8994->fmradio_path = FMR_OFF;
 		wm8994->cur_path = OFF;
 		wm8994->rec_path = MIC_OFF;
-#if defined (CONFIG_S5PC110_KEPLER_BOARD)|| defined(CONFIG_S5PC110_DEMPSEY_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD )
+#if defined(CONFIG_S5PC110_KEPLER_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 		wm8994 ->call_record_path = CALL_RECORDING_OFF;		
 		wm8994 ->call_record_ch = CH_OFF;	
 #endif
 //[mook_GB : add in audience
-#if defined (CONFIG_S5PC110_KEPLER_BOARD)|| defined(CONFIG_S5PC110_DEMPSEY_BOARD)
+#if defined(CONFIG_S5PC110_KEPLER_BOARD)
 				A1026Sleep();
 				a1026_mode_status=-1;
 #endif
@@ -3516,9 +3481,6 @@ static int wm8994_init(struct wm8994_priv *wm8994_private,
 	wm8994->universal_clock_control(codec, CODEC_ON);
 	wm8994->QIK_state=QIK_OFF;
 	wm8994->mic_mute = MUTE_OFF;
-	#if defined(CONFIG_S5PC110_DEMPSEY_BOARD) 
-	wm8994->Ring_state=RING_OFF;
-	#endif
 	if (IS_ERR(wm8994->codec_clk)) {
 		pr_err("failed to get MCLK clock from AP\n");
 		ret = PTR_ERR(wm8994->codec_clk);
@@ -3739,7 +3701,7 @@ static int wm8994_probe(struct platform_device *pdev)
 	struct snd_soc_device *socdev = platform_get_drvdata(pdev);
 	struct wm8994_setup_data *setup;
 //[mook_GB : add in audience
-#if defined (CONFIG_S5PC110_KEPLER_BOARD)|| defined(CONFIG_S5PC110_DEMPSEY_BOARD)
+#if defined(CONFIG_S5PC110_KEPLER_BOARD)
 	struct a1026_setup_data *setup_a1026;
 #endif
 //]mook_GB : add in audience
@@ -3747,7 +3709,7 @@ static int wm8994_probe(struct platform_device *pdev)
 
 	pr_info("%s: WM8994 Audio Codec %s\n", __func__, WM8994_VERSION);
 //[mook_GB : add in audience
-#if defined (CONFIG_S5PC110_KEPLER_BOARD)|| defined(CONFIG_S5PC110_DEMPSEY_BOARD)
+#if defined (CONFIG_S5PC110_KEPLER_BOARD)
 	A1026_dev_mutex_init();
 //    Add the i2c driver
     if ( (ret = A1026_i2c_drv_init() < 0) ) 
@@ -3852,7 +3814,7 @@ static int wm8994_suspend(struct platform_device *pdev, pm_message_t msg)
 	{
 		
 		DEBUG_LOG_ERR("SEC_TEST_HWCODEC is activated!! Skip suspend sequence!!");
-#if defined CONFIG_S5PC110_KEPLER_BOARD || defined(CONFIG_S5PC110_DEMPSEY_BOARD) || defined(CONFIG_S5PC110_CELOX_BOARD)
+#if defined(CONFIG_S5PC110_KEPLER_BOARD)
 		printk("==========> mook ---------->");
 		unsigned int tmp = __raw_readl(S5P_SLEEP_CFG);
 		tmp |= (S5P_SLEEP_CFG_OSC_EN | S5P_SLEEP_CFG_USBOSC_EN);	
@@ -3870,7 +3832,7 @@ static int wm8994_suspend(struct platform_device *pdev, pm_message_t msg)
 		wm8994->universal_clock_control(codec, CODEC_OFF);
 	}
 	
-#if defined (CONFIG_S5PC110_KEPLER_BOARD) || defined(CONFIG_S5PC110_DEMPSEY_BOARD) || defined(CONFIG_S5PC110_CELOX_BOARD)
+#if defined(CONFIG_S5PC110_KEPLER_BOARD)
 	else 
 	{
 		unsigned int tmp = __raw_readl(S5P_SLEEP_CFG);
@@ -3896,7 +3858,7 @@ static int wm8994_resume(struct platform_device *pdev)
 	if(wm8994->testmode_config_flag == SEC_TEST_HWCODEC)
 	{
 		DEBUG_LOG_ERR("SEC_TEST_HWCODEC is activated!! Skip resume sequence!!");
-#if defined CONFIG_S5PC110_KEPLER_BOARD || defined(CONFIG_S5PC110_DEMPSEY_BOARD) || defined(CONFIG_S5PC110_CELOX_BOARD)
+#if defined(CONFIG_S5PC110_KEPLER_BOARD)
 		unsigned int tmp = __raw_readl(S5P_SLEEP_CFG);
 		tmp &= ~(S5P_SLEEP_CFG_OSC_EN | S5P_SLEEP_CFG_USBOSC_EN);	
 		__raw_writel(tmp , S5P_SLEEP_CFG);
@@ -3910,7 +3872,7 @@ static int wm8994_resume(struct platform_device *pdev)
 		wm8994->universal_clock_control(codec, CODEC_ON);
 	}
 	
-#if defined (CONFIG_S5PC110_KEPLER_BOARD) || defined(CONFIG_S5PC110_DEMPSEY_BOARD) || defined(CONFIG_S5PC110_CELOX_BOARD)
+#if defined(CONFIG_S5PC110_KEPLER_BOARD)
 	else 
 	{
 			unsigned int tmp = __raw_readl(S5P_SLEEP_CFG);

@@ -247,7 +247,7 @@ extern int s3c_gpio_set_slewrate(unsigned int pin, unsigned int config);
 #define S3C_GPIO_SLEWRATE_FAST  (0)
 #define S3C_GPIO_SLEWRATE_SLOW  (1)
 
-#if defined(CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_DEMPSEY_BOARD)
+#if defined(CONFIG_S5PC110_HAWK_BOARD)
 #include "gpio-aries.h"
 #endif 
 

@@ -49,11 +49,6 @@
 #include <linux/usb/gadget.h>
 #include <linux/hrtimer.h>
 
-#if (defined CONFIG_S5PC110_DEMPSEY_BOARD)
-extern unsigned int HWREV;
-#endif
-
-
 struct battery_info {
 	int batt_temp;		/* Battery Temperature (C) from ADC */
 	u32 batt_temp_adc;	/* Battery Temperature ADC value */
@@ -221,9 +216,6 @@ static struct device_attribute s3c_battery_attrs[] = {
 #endif
 	SEC_BATTERY_ATTR(batt_temp),
 	SEC_BATTERY_ATTR(batt_temp_adc),
-#if (defined CONFIG_S5PC110_DEMPSEY_BOARD)
-        SEC_BATTERY_ATTR(LCD_temp_adc),
-#endif
 #if defined (ATT_TMO_COMMON)
        SEC_BATTERY_ATTR(batt_temp_adc_cal),
 	SEC_BATTERY_ATTR(batt_vol_adc_aver),
@@ -261,11 +253,7 @@ static void s3c_set_chg_en(struct chg_data *chg, int enable);
 
 unsigned char maxim_chg_status();
 extern int FSA9480_Get_I2C_USB_Status(void);
-#ifdef CONFIG_S5PC110_DEMPSEY_BOARD
-extern void mxt224_ta_probe(int ta_status);
-#else
 extern int set_tsp_for_ta_detect(int state);
-#endif 
 
 #if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 static int is_camera_charging_on = 0;
@@ -2005,9 +1993,6 @@ static ssize_t s3c_bat_show_attrs(struct device *dev,
 	int i = 0;
 	const ptrdiff_t off = attr - s3c_battery_attrs;
 	union power_supply_propval value;
-#if (defined CONFIG_S5PC110_DEMPSEY_BOARD)
-        s32 GLOBAL_LCD_TEMP_ADC;
-#endif
 	bat_dbg(" [BAT] %s +  \n", __func__);
 
 	switch (off) {
@@ -2036,22 +2021,6 @@ static ssize_t s3c_bat_show_attrs(struct device *dev,
 		chg->bat_info.batt_temp_adc = s3c_bat_get_adc_data(S3C_ADC_TEMPERATURE);
 		i += scnprintf(buf + i, PAGE_SIZE - i, "%d\n", chg->bat_info.batt_temp_adc);
 		break;
-#if (defined CONFIG_S5PC110_DEMPSEY_BOARD)
-	case LCD_TEMP_ADC:
-		if(HWREV >= 10)
-			{
-				GLOBAL_LCD_TEMP_ADC = s3c_bat_get_adc_data(S3C_LCD_ADC_TEMP);
-				i += scnprintf(buf + i, PAGE_SIZE - i, "%d\n", GLOBAL_LCD_TEMP_ADC);
-			}
-		else
-			{
-				GLOBAL_LCD_TEMP_ADC = s3c_bat_get_adc_data(S3C_ADC_TEMPERATURE);
-				i += scnprintf(buf + i, PAGE_SIZE - i, "%d\n", GLOBAL_LCD_TEMP_ADC);
-			}				
-		break;	
-#endif			
-
-		
 	case BATT_CHARGING_SOURCE:
 		i += scnprintf(buf + i, PAGE_SIZE - i, "%d\n", chg->cable_status);
 		break;
@@ -2244,9 +2213,7 @@ static enum hrtimer_restart charger_timer_func(struct hrtimer *timer)
 	
 	return HRTIMER_NORESTART;
 }
-#ifdef CONFIG_S5PC110_DEMPSEY_BOARD
-bool is_cable_attached = 0;
-#endif
+
 void max8998_int_work_func(struct work_struct *work)
 {
 	int ret;
@@ -2264,11 +2231,7 @@ void max8998_int_work_func(struct work_struct *work)
 	if(maxim_chg_status())
 	  {
 			chg->lowbat_warning = false;
-#ifdef CONFIG_S5PC110_DEMPSEY_BOARD
-			is_cable_attached = 1;
-#else
 			set_tsp_for_ta_detect(1);
-#endif			
 		 	if(chg->bat_info.batt_health != POWER_SUPPLY_HEALTH_UNSPEC_FAILURE) 
 			{
 				s3c_temp_control(chg,POWER_SUPPLY_HEALTH_GOOD);
@@ -2279,15 +2242,8 @@ void max8998_int_work_func(struct work_struct *work)
 	  else 
 	  {
 		  del_timer_sync(&chargingstep_timer);
-#ifdef CONFIG_S5PC110_DEMPSEY_BOARD
-		  is_cable_attached = 0;
-#else
 		  set_tsp_for_ta_detect(0);
-#endif 
 	  }
-#ifdef CONFIG_S5PC110_DEMPSEY_BOARD
-	  mxt224_ta_probe(is_cable_attached);
-#endif
 	if(lpm_charging_mode)
 	{
 		usb_gadget_p->ops->vbus_session(usb_gadget_p, 0);

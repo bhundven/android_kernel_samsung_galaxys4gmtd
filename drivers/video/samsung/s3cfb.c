@@ -51,8 +51,6 @@
 #else
 #include "logo_rgb24_wvga_portrait_VibrantPlus.h"
 #endif
-#elif defined(CONFIG_S5PC110_DEMPSEY_BOARD)
-#include "logo_rgb24_wvga_portrait_I997.h"
 #else
 #include "logo_rgb24_wvga_portrait.h"
 #endif
@@ -1039,10 +1037,8 @@ static int __devinit s3cfb_probe(struct platform_device *pdev)
 
 	fbdev->lcd = (struct s3cfb_lcd *)pdata->lcd;
 
-#if ! defined (CONFIG_S5PC110_DEMPSEY_BOARD)
 	if (pdata->cfg_gpio)
 		pdata->cfg_gpio(pdev);
-#endif
 
 	if (pdata->clk_on)
 		pdata->clk_on(pdev, &fbdev->clock);
@@ -1231,15 +1227,6 @@ void s3cfb_early_suspend(struct early_suspend *h)
 		container_of(h, struct s3cfb_global, early_suspend);
 
 	pr_debug("s3cfb_early_suspend is called\n");
-#if defined (CONFIG_S5PC110_DEMPSEY_BOARD)
-#if defined(CONFIG_FB_S3C_LDI) //Ansari
-        ldi_common_disable();
-        //printk("ANSARI[%s]\n",__func__);
-        //s3c_gpio_setpin(GPIO_MLCD_RST, 1);
-        msleep(150);
-//NAGSM_Android_SEL_Kernel_Aakash_20110120
-#endif
-#endif
 
 #ifdef CONFIG_FB_S3C_MDNIE
 	writel(0,fbdev->regs + 0x27c);
@@ -1328,15 +1315,8 @@ void s3cfb_late_resume(struct early_suspend *h)
 
 	if (pdata->reset_lcd)
 		pdata->reset_lcd(pdev);
-#if defined (CONFIG_S5PC110_DEMPSEY_BOARD)
-#if defined(CONFIG_FB_S3C_LDI) //Ansari
-//      if (pdata->reset_lcd)
-//              pdata->reset_lcd(pdev);
-        ldi_power_on();
-//NAGSM_Android_SEL_Kernel_Aakash_20110120
-#endif
-#endif
-  printk("ANSARI[%s]\n",__func__);
+
+	printk("ANSARI[%s]\n",__func__);
 
 	pr_info("s3cfb_late_resume is complete\n");
 	return ;
