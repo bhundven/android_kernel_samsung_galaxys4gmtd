@@ -1105,7 +1105,7 @@ static int __devinit modemctl_probe(struct platform_device *pdev)
 	}
 	irq_phone_active = res->start;
 
-#if !(defined(CONFIG_S5PC110_CELOX_BOARD) || defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#if !defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 
 	res = platform_get_resource(pdev, IORESOURCE_IRQ, 1);
 	if(!res)  {
