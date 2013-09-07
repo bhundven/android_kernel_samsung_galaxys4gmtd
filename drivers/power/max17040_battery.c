@@ -92,10 +92,6 @@ static struct wake_lock low_battery_wake_lock;
 extern  int ce_for_fuelgauge;
 #endif
 
-#if defined(CONFIG_S5PC110_HAWK_BOARD)
-extern unsigned int HWREV_HAWK;
-#endif
-
 static void max17040_update_values(struct max17040_chip *chip);
 static void max17043_set_threshold(struct i2c_client *client, int mode);
 
@@ -167,49 +163,7 @@ static void max17040_get_vcell(struct i2c_client *client)
 	chip->vcell = ((msb << 4) + (lsb >> 4)) * 1250;
 }
 
-#if  defined(CONFIG_S5PC110_HAWK_BOARD) 
-static void max17040_get_soc(struct i2c_client *client)
-{
-	struct max17040_chip *chip = i2c_get_clientdata(client);
-	u8 msb;
-	u8 lsb;
-	int  pure_soc, adj_soc, soc;
-
-	msb = max17040_read_reg(client, MAX17040_SOC_MSB);
-	lsb = max17040_read_reg(client, MAX17040_SOC_LSB);
-
-	pure_soc = msb * 100 +  ((lsb*100)/256);
-	
-	if((HWREV_HAWK > 0x6) && (HWREV_HAWK < 0xD))
-	{
-		adj_soc = ((pure_soc - 60)*10000)/9640; // (FGPureSOC-EMPTY(0.6))/(FULL-EMPTY(?))*100
-	}
-	else
-	{
-		adj_soc = ((pure_soc - 80)*10000)/9820; // (FGPureSOC-EMPTY(0.8))/(FULL-EMPTY(?))*100
-	}
-	
-       soc=adj_soc/100;
-	
-	if((soc== 0)&&(adj_soc>=10))
-		{
-		   soc = 1;  
-		}
-	if(adj_soc <= 0)
-		{
-		   soc = 0;		
-		}
-	if(soc>=100)
-		{
-	       soc=100;
-		}
-
-//  printk("[ max17043] hawk max17040_get_soc, pure_soc= %d, adj_soc= %d, soc=%d \n", pure_soc, adj_soc, soc);
-		 
-	chip->soc = soc;
-}
-
-#elif  defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD) 
+#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD) 
 static void max17040_get_soc(struct i2c_client *client)
 {
 	struct max17040_chip *chip = i2c_get_clientdata(client);
@@ -336,49 +290,7 @@ void max17040_reset_soc(void)
 }
 EXPORT_SYMBOL(max17040_reset_soc);
 
-#if  defined(CONFIG_S5PC110_HAWK_BOARD) 
-static void max17043_set_threshold(struct i2c_client *client, int mode)
-{
-//	struct i2c_client *client = fg_i2c_client;
-	u16 regValue;
-
-	switch (mode) 
-		{
-			case FUEL_INT_1ST:
-				regValue = 0x10; // 15%
-				rcomp_status = 0;
-				break;	
-				
-			case FUEL_INT_2ND:
- 				regValue = 0x1A; // 5%
-				rcomp_status = 1;
-				
-				break;
-			case FUEL_INT_3RD:
- 				regValue = 0x1F; // 1%
-				rcomp_status = 2;
-				break;
-				
- 			default:
- 				regValue = 0x1F; // 1%
-				rcomp_status = 2;				
-				break;		
- 		}
- 
-	if((HWREV_HAWK > 0x6) && (HWREV_HAWK < 0xD))
-	{
-		regValue = 0xC000 | regValue;
-	}
-	else
-	{
-		regValue = fg_chip->pdata->rcomp_value |regValue;
-	}
-	 //printk("[ max17043]  max17043_set_threshold %d, regValue = %x \n",mode,regValue);
-	i2c_smbus_write_word_data(client, MAX17040_RCOMP_MSB,   swab16(regValue));		
-	
- }
-
-#elif  defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD) 
+#if  defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD) 
 static void max17043_set_threshold(struct i2c_client *client, int mode)
 {
 //	struct i2c_client *client = fg_i2c_client;
@@ -489,20 +401,7 @@ static void max17040_update_values(struct max17040_chip *chip)
 	max17040_get_online(chip->client);
 	max17040_get_status(chip->client);
 
-#if defined (CONFIG_S5PC110_HAWK_BOARD )	 || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
-   	if(chip->soc >= 16)
-		{
-			max17043_set_threshold(chip->client, FUEL_INT_1ST);
-		}
-	else if(chip->soc >= 6){		
-			max17043_set_threshold(chip->client, FUEL_INT_2ND);		
-		}
-	else{
-			max17043_set_threshold(chip->client, FUEL_INT_3RD);			
-		}
-#else
-			max17043_set_threshold(chip->client, FUEL_INT_3RD);	
-#endif	
+	max17043_set_threshold(chip->client, FUEL_INT_3RD);	
 
 #ifdef fg_debug
 	printk("[ max17043] DUMP : ");	
@@ -586,18 +485,7 @@ static int __devinit max17040_probe(struct i2c_client *client,
 
 	if (chip->pdata)
 	{
-#if defined(CONFIG_S5PC110_HAWK_BOARD) 
-		if((HWREV_HAWK > 0x6) && (HWREV_HAWK < 0xD))
-		{
-    		i2c_smbus_write_word_data(client, MAX17040_RCOMP_MSB,   swab16(0xC000));	
-    	}
-    	else
-    	{
-    		i2c_smbus_write_word_data(client, MAX17040_RCOMP_MSB,   swab16(chip->pdata->rcomp_value));	
-    	}
-#else
 		i2c_smbus_write_word_data(client, MAX17040_RCOMP_MSB,   swab16(chip->pdata->rcomp_value));	
-#endif
 	}
    
    
@@ -653,7 +541,7 @@ static int __devinit max17040_probe(struct i2c_client *client,
 
 	return 0;
 	
-#if defined (CONFIG_S5PC110_HAWK_BOARD) || defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 err_irq:
 		free_irq(client->irq, NULL);
 #endif
