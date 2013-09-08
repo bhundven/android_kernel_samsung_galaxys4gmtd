@@ -1102,7 +1102,7 @@ static int __devinit s3cfb_probe(struct platform_device *pdev)
 	}
 
 #ifdef CONFIG_FB_S3C_LCD_INIT
-#if defined CONFIG_FB_S3C_TL2796 || defined (CONFIG_FB_S3C_uPD161224)
+#if defined(CONFIG_FB_S3C_TL2796)
 	if (pdata->backlight_on)
 		pdata->backlight_on(pdev);
 #endif
@@ -1236,7 +1236,7 @@ void s3cfb_early_suspend(struct early_suspend *h)
 	s3c_mdnie_off();
 #endif 
 	clk_disable(fbdev->clock);
-#if defined CONFIG_FB_S3C_TL2796 || defined (CONFIG_FB_S3C_uPD161224) || defined (CONFIG_FB_S3C_LDI)
+#if defined(CONFIG_FB_S3C_TL2796) || defined (CONFIG_FB_S3C_LDI)
 	lcd_cfg_gpio_early_suspend();
 #endif
 	regulator_disable(fbdev->vlcd);
@@ -1270,7 +1270,7 @@ void s3cfb_late_resume(struct early_suspend *h)
 	if (ret < 0)
 		dev_err(fbdev->dev, "failed to enable vlcd\n");
 
-#if defined CONFIG_FB_S3C_TL2796 || defined (CONFIG_FB_S3C_uPD161224) || defined (CONFIG_FB_S3C_LDI)	
+#if defined(CONFIG_FB_S3C_TL2796) || defined (CONFIG_FB_S3C_LDI)	
 	lcd_cfg_gpio_late_resume();
 #endif
 	dev_dbg(fbdev->dev, "wake up from suspend\n");

@@ -1098,7 +1098,7 @@ struct platform_device sec_device_dpram = {
 	.id	= -1,
 };
 
-#if defined(CONFIG_FB_S3C_TL2796) || defined (CONFIG_FB_S3C_uPD161224) 
+#if defined(CONFIG_FB_S3C_TL2796)
 static void tl2796_cfg_gpio(struct platform_device *pdev)
 {
 	int i;
@@ -3980,7 +3980,7 @@ static struct platform_device *aries_devices[] __initdata = {
 	&s3c_device_g3d,
 	&s3c_device_lcd,
 
-#if defined CONFIG_FB_S3C_TL2796 || defined (CONFIG_FB_S3C_uPD161224)
+#if defined CONFIG_FB_S3C_TL2796
 	&s3c_device_spi_gpio,
 #endif
 
@@ -4330,7 +4330,7 @@ static void __init aries_machine_init(void)
 #endif
 
 
-#if defined (CONFIG_FB_S3C_TL2796)|| defined (CONFIG_FB_S3C_uPD161224) 
+#if defined (CONFIG_FB_S3C_TL2796)
 	spi_register_board_info(spi_board_info, ARRAY_SIZE(spi_board_info));
 	s3cfb_set_platdata(&tl2796_data);
 #endif

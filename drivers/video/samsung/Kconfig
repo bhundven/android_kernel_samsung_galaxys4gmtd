@@ -100,15 +100,6 @@ config VIDEO_SAMSUNG_MEMSIZE_FIMD
 	depends on FB_S3C
 	default "3072"
 
-config FB_S3C_uPD161224
-        bool "uPD161224"
-        depends on FB_S3C
-        select SPI
-        select SPI_GPIO
-        select SPI_BITBANG
-        ---help---
-          This enables support for TMD NEC uPD161224 WVGA LCD panel
-
 config FB_S3C_MDNIE_TUNINGMODE_FOR_BACKLIGHT
 	depends on FB_S3C_MDNIE && S5PC110_DEMPSEY_BOARD
 	bool "mDNIe tuning mode for backlights"
