@@ -1249,7 +1249,7 @@ static int __devinit modemctl_probe(struct platform_device *pdev)
 	mc->irq_phone_active = irq_phone_active;
 #endif
 
-#if !(defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+#if !defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 
 	setup_timer(&mc->sim_irq_debounce_timer, (void*)sim_irq_debounce_timer_func,(unsigned long)mc);
 
