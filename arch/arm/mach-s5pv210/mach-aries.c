@@ -6,7 +6,7 @@
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
  * published by the Free Software Foundation.
-*/
+ */
 
 #include <linux/kernel.h>
 #include <linux/types.h>
@@ -224,8 +224,8 @@ static void gps_gpio_init(void)
 	}
 	if (device_create_file(gps_dev, &dev_attr_hwrev) < 0)
 		pr_err("Failed to create device file(%s)!\n",
-		       dev_attr_hwrev.attr.name);
-	
+			dev_attr_hwrev.attr.name);
+
 	gpio_request(GPIO_GPS_nRST, "GPS_nRST");	/* XMMC3CLK */
 	s3c_gpio_setpull(GPIO_GPS_nRST, S3C_GPIO_PULL_NONE);
 	s3c_gpio_cfgpin(GPIO_GPS_nRST, S3C_GPIO_OUTPUT);
@@ -243,7 +243,7 @@ static void gps_gpio_init(void)
 	gpio_export_link(gps_dev, "GPS_nRST", GPIO_GPS_nRST);
 	gpio_export_link(gps_dev, "GPS_PWR_EN", GPIO_GPS_PWR_EN);
 
- err:
+err:
 	return;
 }
 
@@ -441,21 +441,21 @@ static struct s5p_media_device aries_media_devs[] = {
 		.bank = 0,
 		.memsize = S5PV210_VIDEO_SAMSUNG_MEMSIZE_GPU1,
 		.paddr = 0,
-	},	
+	},
 	[9] = {
 		.id = S5P_MDEV_PMEM_ADSP,
 		.name = "pmem_adsp",
 		.bank = 0,
 		.memsize = S5PV210_VIDEO_SAMSUNG_MEMSIZE_ADSP,
 		.paddr = 0,
-	},		
+	},
 	[10] = {
 		.id = S5P_MDEV_TEXSTREAM,
 		.name = "s3c_bc",
 		.bank = 1,
 		.memsize = S5PV210_VIDEO_SAMSUNG_MEMSIZE_TEXTSTREAM,
 		.paddr = 0,
-	},		
+	},
 };
 
 static struct regulator_consumer_supply ldo3_consumer[] = {
@@ -881,17 +881,15 @@ static struct max8998_regulator_data aries_regulators[] = {
 	{ MAX8998_BUCK4, &aries_buck4_data },
 };
 
-
-#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 static struct max8998_adc_table_data temper_table[] =  {
 	/* ADC, Temperature (C)  // froyo */
 	{ 206,		700	},
 	{ 220,		690	},
-	{ 240,		680	}, 
+	{ 240,		680	},
 	{ 254,		670	},
 	{ 265,		660	},
 	{ 279,		650	},
-	{ 290,		640	}, // [[junghyunseok edit temperature table 20100531
+	{ 290,		640	},
 	{ 296,		630	},
 	{ 303,		620	},
 	{ 311,		610	},
@@ -899,20 +897,20 @@ static struct max8998_adc_table_data temper_table[] =  {
 	{ 334,		590	},
 	{ 347,		580	},
 	{ 360,		570	},
-    { 375,		560	},
+	{ 375,		560	},
 	{ 396,		550	},
 	{ 405,		540	},
 	{ 416,		530	},
 	{ 431,		520	},
-	{ 440,		510	}, // [[junghyunseok edit temperature table 20100531	
-	{ 461,		500	},	
-	{ 478,		490	},	
+	{ 440,		510	},
+	{ 461,		500	},
+	{ 478,		490	},
 	{ 495,		480	},
 	{ 512,		470	},
 	{ 529,		460	},
 	{ 548,		450	},
 	{ 565,		440	},
-	{ 580,		430	}, // [[junghyunseok edit temperature table 20100531
+	{ 580,		430	},
 	{ 599,		420	},
 	{ 616,		410	},
 	{ 636,		400	},
@@ -941,21 +939,21 @@ static struct max8998_adc_table_data temper_table[] =  {
 	{ 1158,		170	},
 	{ 1182,		160	},
 	{ 1206,		150	},
-    { 1230,		140	},
+	{ 1230,		140	},
 	{ 1254,		130	},
 	{ 1278,		120	},
 	{ 1302,		110	},
-	{ 1326,		100	},	
-	{ 1346,		90	},	
-	{ 1366,		80	},	
+	{ 1326,		100	},
+	{ 1346,		90	},
+	{ 1366,		80	},
 	{ 1386,		70	},
 	{ 1406,		60	},
-	{ 1420,		50	}, 
-	{ 1430,		40	}, 
-	{ 1450,		30	}, 
+	{ 1420,		50	},
+	{ 1430,		40	},
+	{ 1450,		30	},
 	{ 1460,		20	},
-    { 1470,		10	},
-    { 1480,		0	}, // 20
+	{ 1470,		10	},
+	{ 1480,		0	},
 	{ 1490,		-10	},
 	{ 1500,		-20	},
 	{ 1510,		-30	},
@@ -963,97 +961,21 @@ static struct max8998_adc_table_data temper_table[] =  {
 	{ 1635,		-50	},
 	{ 1649,		-60	},
 	{ 1663,		-70	},
-	{ 1677,		-80 }, 	
-	{ 1691,		-90 }, 
-	{ 1705,		-100}, // 10
-	{ 1722,		-110}, 
-	{ 1739,		-120},
-	{ 1756,		-130},
-	{ 1773,		-140},
-	{ 1790,		-150},
-	{ 1804,		-160},
-	{ 1818,		-170},
-	{ 1832,		-180},
-	{ 1846,		-190},
-    { 1859,		-200},
+	{ 1677,		-80	},
+	{ 1691,		-90	},
+	{ 1705,		-100	},
+	{ 1722,		-110	},
+	{ 1739,		-120	},
+	{ 1756,		-130	},
+	{ 1773,		-140	},
+	{ 1790,		-150	},
+	{ 1804,		-160	},
+	{ 1818,		-170	},
+	{ 1832,		-180	},
+	{ 1846,		-190	},
+	{ 1859,		-200	},
 };
-#else
-static struct max8998_adc_table_data temper_table[] =  {
-	{  264,  650 },
-	{  275,  640 },
-	{  286,  630 },
-	{  293,  620 },
-	{  299,  610 },
-	{  306,  600 },
-	{  324,  590 },
-	{  341,  580 },
-	{  354,  570 },
-	{  368,  560 },
-	{  381,  550 },
-	{  396,  540 },
-	{  411,  530 },
-	{  427,  520 },
-	{  442,  510 },
-	{  457,  500 },
-	{  472,  490 },
-	{  487,  480 },
-	{  503,  470 },
-	{  518,  460 },
-	{  533,  450 },
-	{  554,  440 },
-	{  574,  430 },
-	{  595,  420 },
-	{  615,  410 },
-	{  636,  400 },
-	{  656,  390 },
-	{  677,  380 },
-	{  697,  370 },
-	{  718,  360 },
-	{  738,  350 },
-	{  761,  340 },
-	{  784,  330 },
-	{  806,  320 },
-	{  829,  310 },
-	{  852,  300 },
-	{  875,  290 },
-	{  898,  280 },
-	{  920,  270 },
-	{  943,  260 },
-	{  966,  250 },
-	{  990,  240 },
-	{ 1013,  230 },
-	{ 1037,  220 },
-	{ 1060,  210 },
-	{ 1084,  200 },
-	{ 1108,  190 },
-	{ 1131,  180 },
-	{ 1155,  170 },
-	{ 1178,  160 },
-	{ 1202,  150 },
-	{ 1226,  140 },
-	{ 1251,  130 },
-	{ 1275,  120 },
-	{ 1299,  110 },
-	{ 1324,  100 },
-	{ 1348,   90 },
-	{ 1372,   80 },
-	{ 1396,   70 },
-	{ 1421,   60 },
-	{ 1445,   50 },
-	{ 1468,   40 },
-	{ 1491,   30 },
-	{ 1513,   20 },
-	{ 1536,   10 },
-	{ 1559,    0 },
-	{ 1577,  -10 },
-	{ 1596,  -20 },
-	{ 1614,  -30 },
-	{ 1619,  -40 },
-	{ 1632,  -50 },
-	{ 1658,  -60 },
-	{ 1667,  -70 }, 
-};
-#endif
+
 struct max8998_charger_callbacks *charger_callbacks;
 static enum cable_type_t set_cable_status;
 
@@ -1403,7 +1325,7 @@ static struct platform_device s3c_device_i2c12 = {
 static	struct	i2c_gpio_platform_data	i2c13_platdata = {
 	.sda_pin		= -1,
 	.scl_pin		= -1,
-	.udelay			= 1,	/* 250KHz */		
+	.udelay			= 1,	/* 250KHz */
 	.sda_is_open_drain	= 0,
 	.scl_is_open_drain	= 0,
 	.scl_is_output_only	= 0,
@@ -1447,32 +1369,18 @@ static void touch_keypad_onoff(int onoff)
 		msleep(25);
 }
 
-#if defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
-static const int touch_keypad_code[] = {
-        KEY_MENU,
-        KEY_BACK,
-        KEY_HOME,
-        KEY_SEARCH,
-};
-
-#else
 static const int touch_keypad_code[] = {
 	KEY_MENU,
 	KEY_BACK,
-	KEY_LEFT,
-	KEY_RIGHT,
-	KEY_UP,
-	KEY_DOWN,
-	KEY_CAMERA,
-	KEY_SEND,	
+	KEY_HOME,
+	KEY_SEARCH,
 };
-#endif
 
 #if defined (CONFIG_VIDEO_MHL_V1)
 static	struct	i2c_gpio_platform_data	i2c18_platdata = {
-	.sda_pin		= GPIO_AP_SDA, 
-	.scl_pin		= GPIO_AP_SCL, 
-	.udelay			= 5,	/* 250KHz */		
+	.sda_pin		= GPIO_AP_SDA,
+	.scl_pin		= GPIO_AP_SCL,
+	.udelay			= 5,	/* 250KHz */
 	.sda_is_open_drain	= 0,
 	.scl_is_open_drain	= 0,
 	.scl_is_output_only	= 0,
@@ -1629,7 +1537,7 @@ static struct wm8994_platform_data wm8994_pdata = {
 /*
  * Guide for Camera Configuration for Jupiter board
  * ITU CAM CH A: CE147
-*/
+ */
 
 static struct regulator *cam_isp_core_regulator;/*buck4*/
 static struct regulator *cam_isp_host_regulator;/*15*/
@@ -1795,7 +1703,7 @@ static int ce147_ldo_en(bool en)
 		goto off;
 	}
 	udelay(50);
-	
+
 	/* Turn CAM_SENSOR_A_2.8V(VDDA) on */
 	gpio_set_value(GPIO_GPB7, 1);
 	mdelay(1);
@@ -1854,7 +1762,7 @@ off:
 }
 
 static int ce147_power_on(void)
-{	
+{
 	int err;
 	bool TRUE = true;
 
@@ -1862,7 +1770,7 @@ static int ce147_power_on(void)
 			pr_err("Failed to initialize camera regulators\n");
 			return -EINVAL;
 	}
-	
+
 	ce147_init();
 
 	/* CAM_VGA_nSTBY - GPB(0)  */
@@ -1882,12 +1790,12 @@ static int ce147_power_on(void)
 
 		return err;
 	}
-	
+
 	ce147_ldo_en(TRUE);
 
 	mdelay(1);
 
-	// CAM_VGA_nSTBY  HIGH		
+	// CAM_VGA_nSTBY  HIGH
 	gpio_direction_output(GPIO_CAM_VGA_nSTBY, 0);
 
 	gpio_set_value(GPIO_CAM_VGA_nSTBY, 1);
@@ -1899,14 +1807,14 @@ static int ce147_power_on(void)
 
 	mdelay(1);
 
-	// CAM_VGA_nRST  HIGH		
+	// CAM_VGA_nRST  HIGH
 	gpio_direction_output(GPIO_CAM_VGA_nRST, 0);
 
-	gpio_set_value(GPIO_CAM_VGA_nRST, 1);	
+	gpio_set_value(GPIO_CAM_VGA_nRST, 1);
 
 	mdelay(1);
 
-	// CAM_VGA_nSTBY  LOW	
+	// CAM_VGA_nSTBY  LOW
 	gpio_direction_output(GPIO_CAM_VGA_nSTBY, 1);
 
 	gpio_set_value(GPIO_CAM_VGA_nSTBY, 0);
@@ -1944,10 +1852,10 @@ static int ce147_power_off(void)
 
 	/* CAM_IO_EN - GPB(7) */
 	err = gpio_request(GPIO_GPB7, "GPB7");
-	
+
 	if(err) {
 		printk(KERN_ERR "failed to request GPB7 for camera control\n");
-	
+
 		return err;
 	}
 
@@ -1956,16 +1864,16 @@ static int ce147_power_off(void)
 
 	if(err) {
 		printk(KERN_ERR "failed to request GPJ0 for camera control\n");
-	
+
 		return err;
 	}
 
 	/* CAM_MEGA_nRST - GPJ1(5) */
 	err = gpio_request(GPIO_CAM_MEGA_nRST, "GPJ1");
-	
+
 	if(err) {
 		printk(KERN_ERR "failed to request GPJ1 for camera control\n");
-	
+
 		return err;
 	}
 
@@ -1986,35 +1894,35 @@ static int ce147_power_off(void)
 		return err;
 	}
 
-	// CAM_VGA_nSTBY  LOW	
+	// CAM_VGA_nSTBY  LOW
 	gpio_direction_output(GPIO_CAM_VGA_nSTBY, 1);
 
 	gpio_set_value(GPIO_CAM_VGA_nSTBY, 0);
 
 	mdelay(1);
 
-	// CAM_VGA_nRST  LOW		
+	// CAM_VGA_nRST  LOW
 	gpio_direction_output(GPIO_CAM_VGA_nRST, 1);
-	
+
 	gpio_set_value(GPIO_CAM_VGA_nRST, 0);
 
 	mdelay(1);
 
 	// CAM_MEGA_nRST - GPJ1(5) LOW
 	gpio_direction_output(GPIO_CAM_MEGA_nRST, 1);
-	
+
 	gpio_set_value(GPIO_CAM_MEGA_nRST, 0);
-	
+
 	mdelay(1);
 
 	// Mclk disable
 	s3c_gpio_cfgpin(GPIO_CAM_MCLK, 0);
-	
+
 	mdelay(1);
 
 	// CAM_MEGA_EN - GPJ0(6) LOW
 	gpio_direction_output(GPIO_CAM_MEGA_EN, 1);
-	
+
 	gpio_set_value(GPIO_CAM_MEGA_EN, 0);
 
 	mdelay(1);
@@ -2022,7 +1930,7 @@ static int ce147_power_off(void)
 	ce147_ldo_en(FALSE);
 
 	mdelay(1);
-	
+
 	gpio_free(GPIO_CAM_MEGA_EN);
 	gpio_free(GPIO_CAM_MEGA_nRST);
 	gpio_free(GPIO_CAM_VGA_nRST);
@@ -2081,7 +1989,7 @@ static int smdkc110_cam1_power(int onoff)
 	}
 
 	gpio_direction_output(S5PV210_GPB(0), 0);
-	
+
 	mdelay(1);
 
 	gpio_direction_output(S5PV210_GPB(0), 1);
@@ -2093,7 +2001,7 @@ static int smdkc110_cam1_power(int onoff)
 	mdelay(1);
 
 	gpio_free(S5PV210_GPB(0));
-	
+
 	mdelay(1);
 
 	/* CAM_VGA_nRST - GPB(2) */
@@ -2124,7 +2032,7 @@ static int smdkc110_cam1_power(int onoff)
 /*
  * Guide for Camera Configuration for Jupiter board
  * ITU CAM CH A: CE147
-*/
+ */
 
 /* External camera module setting */
 static struct ce147_platform_data ce147_plat = {
@@ -2162,7 +2070,7 @@ static struct s3c_platform_camera ce147 = {
 		.height	= 480,
 	},
 
-	// Polarity 
+	// Polarity
 	.inv_pclk	= 0,
 	.inv_vsync	= 1,
 	.inv_href	= 0,
@@ -2516,9 +2424,9 @@ static struct i2c_board_info i2c_devs4[] __initdata = {
 
 /* I2C1 */
 static struct i2c_board_info i2c_devs1[] __initdata = {
-        {
-                I2C_BOARD_INFO("s5p_ddc",(0x74>>1)),    
-        },
+	{
+		I2C_BOARD_INFO("s5p_ddc",(0x74>>1)),
+	},
 };
 
 #ifdef CONFIG_TOUCHSCREEN_QT602240
@@ -3045,7 +2953,7 @@ static struct i2c_board_info i2c_devs12[] __initdata = {
 
 #if defined (CONFIG_VIDEO_MHL_V1)
 static struct i2c_board_info i2c_devs18[] __initdata = {
-        {
+	{
 		I2C_BOARD_INFO("SII9234", 0x72>>1),
 	},
 	{
@@ -3361,13 +3269,13 @@ static void aries_power_off(void)
 		printk(KERN_EMERG "%s: PHONE OFF Success\n", __func__);
 	}
 	#else
-	while(1) 
+	while(1)
 	{
 		if (gpio_get_value(GPIO_CP_PWR_RST)) // GPIO_CP_PWR_RST is HIGH
 		{
 			printk(KERN_EMERG "%s: Try to Turn Phone Off by CP_PWR_RST\n", __func__);
 
-			if (phone_wait_cnt > 10) 
+			if (phone_wait_cnt > 10)
 			{
 				printk(KERN_EMERG "%s: PHONE OFF Failed\n", __func__);
 
@@ -3675,13 +3583,13 @@ int __init aries_init_wifi_mem(void)
 		if (!wlan_static_skb[i])
 			goto err_skb_alloc;
 	}
-	
+
 	for (; i < 16; i++) {
 		wlan_static_skb[i] = dev_alloc_skb(DHD_SKB_2PAGE_BUFSIZE);
 		if (!wlan_static_skb[i])
 			goto err_skb_alloc;
 	}
-	
+
 	wlan_static_skb[i] = dev_alloc_skb(DHD_SKB_4PAGE_BUFSIZE);
 	if (!wlan_static_skb[i])
 		goto err_skb_alloc;
@@ -3696,14 +3604,14 @@ int __init aries_init_wifi_mem(void)
 	printk("%s: WIFI MEM Allocated\n", __FUNCTION__);
 	return 0;
 
- err_mem_alloc:
+err_mem_alloc:
 	pr_err("Failed to mem_alloc for WLAN\n");
 	for (j = 0 ; j < i ; j++)
 		kfree(wifi_mem_array[j].mem_ptr);
 
 	i = WLAN_SKB_BUF_NUM;
 
- err_skb_alloc:
+err_skb_alloc:
 	pr_err("Failed to skb_alloc for WLAN\n");
 	for (j = 0 ; j < i ; j++)
 		dev_kfree_skb(wlan_static_skb[j]);
@@ -3746,7 +3654,7 @@ static struct platform_device *aries_devices[] __initdata = {
 
 #ifdef	CONFIG_S5P_ADC
 	&s3c_device_adc,
-#endif	
+#endif
 
 	&s5pv210_device_iis0,
 
@@ -3807,7 +3715,7 @@ static struct platform_device *aries_devices[] __initdata = {
 #endif	
 
 #if defined (CONFIG_VIDEO_MHL_V1)
-	&s3c_device_i2c18,	
+	&s3c_device_i2c18,
 #endif
 #ifdef CONFIG_USB_GADGET
 	&s3c_device_usbgadget,
@@ -3839,7 +3747,7 @@ static struct platform_device *aries_devices[] __initdata = {
 #endif
 #endif
 #ifdef CONFIG_VIDEO_TV20
-        &s5p_device_tvout,
+	&s5p_device_tvout,
 #endif
 	&sec_device_battery,
 	&s3c_device_i2c10,
@@ -4048,7 +3956,7 @@ static void __init aries_machine_init(void)
 
 #if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 	s3c_gpio_cfgpin(S5PV210_GPH3(5), S3C_GPIO_INPUT);
-	s3c_gpio_setpull( S5PV210_GPH3(5), S3C_GPIO_PULL_NONE); 
+	s3c_gpio_setpull( S5PV210_GPH3(5), S3C_GPIO_PULL_NONE);
 	VPLUSVER = gpio_get_value(S5PV210_GPH3(5));
 	printk("VPLUSVER is 0x%x\n", VPLUSVER);
 #endif
@@ -4121,7 +4029,7 @@ static void __init aries_machine_init(void)
 #endif
 
 #if defined (CONFIG_VIDEO_MHL_V1)
-	i2c_register_board_info(18, i2c_devs18, ARRAY_SIZE(i2c_devs18)); 
+	i2c_register_board_info(18, i2c_devs18, ARRAY_SIZE(i2c_devs18));
 #endif
 
 
@@ -4179,7 +4087,7 @@ static void __init aries_machine_init(void)
 	register_reboot_notifier(&aries_reboot_notifier);
 
 	aries_switch_init();
-	
+
 	gps_gpio_init();
 
 	aries_init_wifi_mem();
@@ -4223,10 +4131,10 @@ void otg_phy_init(void)
 	/* set DC level as 6 (6%) */
 /*	writel((readl(S3C_USBOTG_PHYTUNE) & ~(0xf)) | (0x1<<2) | (0x1<<1),
 			S3C_USBOTG_PHYTUNE);         eye-diagram tuning      */
-	
+
 	writel((readl(S3C_USBOTG_PHYTUNE) & ~(0xf)) | (0xf),
 			S3C_USBOTG_PHYTUNE);
-	
+
 }
 EXPORT_SYMBOL(otg_phy_init);
 
