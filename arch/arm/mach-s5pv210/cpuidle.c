@@ -33,7 +33,9 @@
  * For saving & restoring VIC register before entering
  * didle mode
  */
+#ifdef CONFIG_CPU_DIDLE
 static unsigned long vic_regs[4];
+#endif /* CONFIG_CPU_DIDLE */
 static unsigned long *regs_save;
 static dma_addr_t phy_regs_save;
 
@@ -72,6 +74,7 @@ static struct check_device_op chk_dev_op[] = {
 #define S3C_HSMMC_CLOCK_CARD_EN	0x0004
 
 static int sdmmc_dev_num;
+#ifdef CONFIG_CPU_DIDLE
 /* If SD/MMC interface is working: return = 1 or not 0 */
 static int check_sdmmc_op(unsigned int ch)
 {
@@ -162,6 +165,7 @@ static int check_power_clock_gating(void)
 
 	return 0;
 }
+#endif /* CONFIG_CPU_DIDLE */
 
 /*
  * Skipping enter the didle mode when RTC & I2S interrupts be issued
@@ -179,7 +183,8 @@ static int check_idmapos(void)
 	return src < 0x150;
 }
 #endif
-
+ 
+#ifdef CONFIG_CPU_DIDLE
 static int check_rtcint(void)
 {
 	unsigned int current_cnt = get_rtc_cnt();
@@ -214,6 +219,7 @@ static void s5p_gpio_pdn_conf(void)
 
 	} while (gpio_base <= S5PV210_MP28_BASE);
 }
+#endif /* CONFIG_CPU_DIDLE */
 
 static void s5p_enter_idle(void)
 {
@@ -250,6 +256,7 @@ static int s5p_enter_idle_state(struct cpuidle_device *dev,
 	return idle_time;
 }
 
+#ifdef CONFIG_CPU_DIDLE
 static void s5p_enter_didle(void)
 {
 	unsigned long tmp;
@@ -358,11 +365,13 @@ skipped_didle:
 	__raw_writel(vic_regs[2], S5P_VIC2REG(VIC_INT_ENABLE));
 	__raw_writel(vic_regs[3], S5P_VIC3REG(VIC_INT_ENABLE));
 }
+#endif /* CONFIG_CPU_DIDLE */
 
 #ifdef CONFIG_RFKILL
 extern volatile int bt_is_running;
 #endif
 
+#ifdef CONFIG_CPU_DIDLE
 static int s5p_idle_bm_check(void)
 {
 	if (check_power_clock_gating()	|| loop_sdmmc_check() ||
@@ -409,6 +418,7 @@ static int s5p_enter_didle_state(struct cpuidle_device *dev,
 
 	return idle_time;
 }
+#endif /* CONFIG_CPU_DIDLE */
 
 static int s5p_enter_idle_bm(struct cpuidle_device *dev,
 				struct cpuidle_state *state)

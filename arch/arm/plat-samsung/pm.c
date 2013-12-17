@@ -267,8 +267,12 @@ void s3c_pm_do_save(struct sleep_save *ptr, int count)
 
 void s3c_pm_do_restore(struct sleep_save *ptr, int count)
 {
-	for (; count > 0; count--, ptr++)
+	for (; count > 0; count--, ptr++) {
+		printk(KERN_DEBUG "restore %p (restore %08lx, was %08x)\n",
+		       ptr->reg, ptr->val, __raw_readl(ptr->reg));
+
 		__raw_writel(ptr->val, ptr->reg);
+	}
 }
 
 /**
@@ -292,6 +296,7 @@ void s3c_pm_do_restore_core(struct sleep_save *ptr, int count)
  *
  * print any IRQs asserted at resume time (ie, we woke from)
 */
+/*
 static void s3c_pm_show_resume_irqs(int start, unsigned long which,
 				    unsigned long mask)
 {
@@ -305,6 +310,7 @@ static void s3c_pm_show_resume_irqs(int start, unsigned long which,
 		}
 	}
 }
+*/
 
 bool s3c_pm_check_pending_interrupt(void)
 {
@@ -354,7 +360,7 @@ static int s3c_pm_enter(suspend_state_t state)
 	/* 20110210 - check pending interrupt to wakeup device */
 	if(!s3c_pm_check_pending_interrupt())
 	{
-		printk(KERN_ERR "interrupt pending. wakeup!!(1)\n", __func__);	
+		printk(KERN_ERR "%s: interrupt pending. wakeup!!(1)\n", __func__);	
 		return -EINVAL;
 	}
 
@@ -365,7 +371,7 @@ static int s3c_pm_enter(suspend_state_t state)
 	/* 20110210 - check pending interrupt to wakeup device */
 	if(!s3c_pm_check_pending_interrupt())
 	{
-		printk(KERN_ERR "interrupt pending. wakeup!!(2)\n", __func__);	
+		printk(KERN_ERR "%s: interrupt pending. wakeup!!(2)\n", __func__);	
 		return -EINVAL;
 	}
 

@@ -69,8 +69,7 @@ static inline struct s3c_i2sv2_info *to_info(struct snd_soc_dai *cpu_dai)
 #if S3C2412_I2S_DEBUG_CON
 static void dbg_showcon(const char *fn, u32 con)
 {
-	printk(KERN_DEBUG "%s: LRI=%d, TXFEMPT=%d, RXFEMPT=%d, TXFFULL=%d,\
-		RXFFULL=%d\n", fn,
+	printk(KERN_DEBUG "%s: LRI=%d, TXFEMPT=%d, RXFEMPT=%d, TXFFULL=%d, RXFFULL=%d\n", fn,
 	       bit_set(con, S3C2412_IISCON_LRINDEX),
 	       bit_set(con, S3C2412_IISCON_TXFIFO_EMPTY),
 	       bit_set(con, S3C2412_IISCON_RXFIFO_EMPTY),
@@ -140,6 +139,7 @@ static void s3c2412_snd_txctrl(struct s3c_i2sv2_info *i2s, int on)
 		 */
 
 		con |=  S3C2412_IISCON_TXDMA_PAUSE;
+		con |=  S3C2412_IISCON_TXCH_PAUSE;
 		con &= ~S3C2412_IISCON_TXDMA_ACTIVE;
 		if (con & S5P_IISCON_TXSDMACTIVE) { /* If sec is active */
 			writel(con, regs + S3C2412_IISCON);

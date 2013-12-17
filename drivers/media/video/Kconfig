@@ -49,6 +49,10 @@ config VIDEO_TUNER
 	tristate
 	depends on MEDIA_TUNER
 
+config V4L2_MEM2MEM_DEV
+	tristate
+	depends on VIDEOBUF_GEN
+
 #
 # Multimedia Video device configuration
 #

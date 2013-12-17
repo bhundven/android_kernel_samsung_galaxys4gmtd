@@ -40,6 +40,7 @@ static int s5pv210_cfg_i2s(struct platform_device *pdev)
 		break;
 
 	case 0:
+	case -1:
 		s3c_gpio_cfgpin(S5PV210_GPI(0), S3C_GPIO_SFN(2));
 		s3c_gpio_cfgpin(S5PV210_GPI(1), S3C_GPIO_SFN(2));
 		s3c_gpio_cfgpin(S5PV210_GPI(2), S3C_GPIO_SFN(2));

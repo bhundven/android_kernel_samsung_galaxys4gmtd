@@ -160,7 +160,6 @@ static int s3c_rtc_gettime(struct device *dev, struct rtc_time *rtc_tm)
 
 	s3c_rtc_enable(dev, 1);
  retry_get_time:
-	rtc_tm->tm_sec  = readb(base + S3C2410_RTCSEC);
 	rtc_tm->tm_min  = readb(base + S3C2410_RTCMIN);
 	rtc_tm->tm_hour = readb(base + S3C2410_RTCHOUR);
 	rtc_tm->tm_mday = readb(base + S3C2410_RTCDATE);
@@ -171,7 +170,7 @@ static int s3c_rtc_gettime(struct device *dev, struct rtc_time *rtc_tm)
 #else
 	rtc_tm->tm_year = readb(base + S3C2410_RTCYEAR);
 #endif
-
+	rtc_tm->tm_sec  = readb(base + S3C2410_RTCSEC);
 
 	/* the only way to work out wether the system was mid-update
 	 * when we read it is to check the second counter, and if it
@@ -198,9 +197,9 @@ static int s3c_rtc_gettime(struct device *dev, struct rtc_time *rtc_tm)
 			  bcd2bin(rtc_tm->tm_year >> 8) * 100;
 #else
 	rtc_tm->tm_year = bcd2bin(rtc_tm->tm_year);
+
 	rtc_tm->tm_year += 100;
 #endif
-
 	rtc_tm->tm_mon -= 1;
 
 	return 0;
@@ -234,13 +233,11 @@ static int s3c_rtc_settime(struct device *dev, struct rtc_time *tm)
 	}
 
 	s3c_rtc_enable(dev, 1);
-
 	writeb(bin2bcd(tm->tm_sec),  base + S3C2410_RTCSEC);
 	writeb(bin2bcd(tm->tm_min),  base + S3C2410_RTCMIN);
 	writeb(bin2bcd(tm->tm_hour), base + S3C2410_RTCHOUR);
 	writeb(bin2bcd(tm->tm_mday), base + S3C2410_RTCDATE);
 	writeb(bin2bcd(tm->tm_mon + 1), base + S3C2410_RTCMON);
-
 #if defined(CONFIG_CPU_S5PV210)
 	year100 = year/100;
 	year = year%100;
@@ -252,7 +249,6 @@ static int s3c_rtc_settime(struct device *dev, struct rtc_time *tm)
 	writeb(bin2bcd(year), base + S3C2410_RTCYEAR);
 #endif
 	s3c_rtc_enable(dev, 0);
-
 	max8998_rtc_set_time(tm);
 
 	return 0;
@@ -277,7 +273,6 @@ static int s3c_rtc_getalarm(struct device *dev, struct rtc_wkalrm *alrm)
 #else
 	alm_tm->tm_year = readb(base + S3C2410_ALMYEAR);
 #endif
-
 	s3c_rtc_enable(dev, 0);
 
 	alm_en = readb(base + S3C2410_RTCALM);
@@ -646,8 +641,8 @@ static int __devinit s3c_rtc_probe(struct platform_device *pdev)
 	/* check to see if everything is setup correctly */
 
 
-	pr_debug("s3c2410_rtc: RTCCON=%02x\n",
-		readw(s3c_rtc_base + S3C2410_RTCCON));
+ 	pr_debug("s3c2410_rtc: RTCCON=%02x\n",
+		 readw(s3c_rtc_base + S3C2410_RTCCON));
 #ifdef CONFIG_PM
 	s3c_rtc_setfreq(&pdev->dev, 0);
 #else
@@ -725,6 +720,8 @@ static int __devinit s3c_rtc_probe(struct platform_device *pdev)
 		ret = PTR_ERR(rtc);
 		goto err_nortc;
 	}
+
+	s3c_rtc_cpu_type = platform_get_device_id(pdev)->driver_data;
 
 	if (s3c_rtc_cpu_type == TYPE_S3C64XX)
 		rtc->max_user_freq = 32768;
@@ -810,8 +807,7 @@ static struct platform_driver s3c_rtc_driver = {
 	},
 };
 
-static char __initdata banner[] = "S3C24XX RTC, (c) 2004,2006 "
-				  "Simtec Electronics\n";
+static char __initdata banner[] = "S3C24XX RTC, (c) 2004,2006 Simtec Electronics\n";
 
 static int __init s3c_rtc_init(void)
 {

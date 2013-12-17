@@ -443,6 +443,7 @@ static int mmc_sd_init_card(struct mmc_host *host, u32 ocr,
 		err = mmc_decode_scr(card);
 		if (err < 0)
 			goto free_card;
+
 		/*
 		 * Fetch switch information from card.
 		 */
@@ -566,7 +567,7 @@ static void mmc_sd_detect(struct mmc_host *host)
 
 	BUG_ON(!host);
 	BUG_ON(!host->card);
-       
+
 	mmc_claim_host(host);
 
 	/*

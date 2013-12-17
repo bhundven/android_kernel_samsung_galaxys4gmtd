@@ -33,7 +33,7 @@ char *s5pv210_hsmmc_clksrcs[4] = {
 	[0] = "hsmmc",		/* HCLK */
 	[1] = "hsmmc",		/* HCLK */
 	[2] = "sclk_mmc",	/* mmc_bus */
-	[3] = NULL,		/*reserved */
+	/*[4] = reserved */
 };
 
 void s5pv210_setup_sdhci0_cfg_gpio(struct platform_device *dev, int width)
@@ -334,6 +334,7 @@ void universal_sdhci2_cfg_ext_cd(void)
 	set_irq_type(IRQ_EINT(28), IRQ_TYPE_EDGE_BOTH);
 }
 
+#if defined(CONFIG_S3C_DEV_HSMMC0)
 static struct s3c_sdhci_platdata hsmmc0_platdata = {
 #if defined(CONFIG_S5PV210_SD_CH0_8BIT)
 	.max_width	= 8,
@@ -344,6 +345,7 @@ static struct s3c_sdhci_platdata hsmmc0_platdata = {
 	.get_ro         = sdhci0_get_ro,
 #endif
 };
+#endif
 
 #if defined(CONFIG_S3C_DEV_HSMMC2)
 static struct s3c_sdhci_platdata hsmmc2_platdata = {

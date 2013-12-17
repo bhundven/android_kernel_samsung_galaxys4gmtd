@@ -1122,12 +1122,12 @@ static inline int _loop_ring(unsigned dry_run, u8 buf[],
 		unsigned long *bursts, const struct _xfer_spec *pxs, int ev)
 {
 	int cyc, off;
-	unsigned lcnt0, lcnt1, ljmp0, ljmp1, ljmpfe;
+	int i;
+	unsigned lcnt1, ljmp0, ljmp1, ljmpfe;
 	struct _arg_LPEND lpend;
 
 	off = 0;
 	ljmpfe = off;
-	int i, j;
 	lcnt1 = 256;
 	cyc = 1;
 
@@ -1895,7 +1895,6 @@ static int dmac_alloc_resources(struct pl330_dmac *pl330)
 	 * Alloc MicroCode buffer for 'chans' Channel threads.
 	 * A channel's buffer offset is (Channel_Id * MCODE_BUFF_PERCHAN)
 	 */
-
 	pl330->mcode_cpu = dma_alloc_coherent(pi->dev,
 				chans * pi->mcbufsz,
 				&pl330->mcode_bus, GFP_KERNEL);

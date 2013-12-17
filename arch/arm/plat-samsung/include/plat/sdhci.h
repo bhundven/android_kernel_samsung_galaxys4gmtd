@@ -249,9 +249,9 @@ static inline void s5pc100_default_sdhci2(void) { }
 extern char *s5pv210_hsmmc_clksrcs[4];
 
 extern void s5pv210_setup_sdhci_cfg_card(struct platform_device *dev,
-					 void __iomem *r,
-					 struct mmc_ios *ios,
-					 struct mmc_card *card);
+					   void __iomem *r,
+					   struct mmc_ios *ios,
+					   struct mmc_card *card);
 extern void s5pv210_adjust_sdhci_cfg_card(struct s3c_sdhci_platdata *pdata, void __iomem *r, int rw);
 
 #ifdef CONFIG_S3C_DEV_HSMMC
@@ -307,7 +307,7 @@ static inline void s5pv210_default_sdhci0(void) { }
 static inline void s5pv210_default_sdhci1(void) { }
 static inline void s5pv210_default_sdhci2(void) { }
 static inline void s5pv210_default_sdhci3(void) { }
-#endif /* CONFIG_S5PV210_SETUP_SDHCI */
+#endif /* CONFIG_S5PC100_SETUP_SDHCI */
 
 extern void sdhci_s3c_force_presence_change(struct platform_device *pdev);
 

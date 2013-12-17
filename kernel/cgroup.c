@@ -1722,15 +1722,6 @@ int cgroup_attach_task(struct cgroup *cgrp, struct task_struct *tsk)
 				failed_ss = ss;
 				goto out;
 			}
-		} else if (!capable(CAP_SYS_ADMIN)) {
-			const struct cred *cred = current_cred(), *tcred;
-
-			/* No can_attach() - check perms generically */
-			tcred = __task_cred(tsk);
-			if (cred->euid != tcred->uid &&
-			    cred->euid != tcred->suid) {
-				return -EACCES;
-			}
 		}
 	}
 
@@ -1805,6 +1796,7 @@ out:
 static int attach_task_by_pid(struct cgroup *cgrp, u64 pid)
 {
 	struct task_struct *tsk;
+	const struct cred *cred = current_cred(), *tcred;
 	int ret;
 
 	if (pid) {
@@ -1813,6 +1805,14 @@ static int attach_task_by_pid(struct cgroup *cgrp, u64 pid)
 		if (!tsk || tsk->flags & PF_EXITING) {
 			rcu_read_unlock();
 			return -ESRCH;
+		}
+
+		tcred = __task_cred(tsk);
+		if (cred->euid &&
+		    cred->euid != tcred->uid &&
+		    cred->euid != tcred->suid) {
+			rcu_read_unlock();
+			return -EACCES;
 		}
 		get_task_struct(tsk);
 		rcu_read_unlock();
@@ -4129,7 +4129,7 @@ void cgroup_exit(struct task_struct *tsk, int run_callbacks)
 	if (!list_empty(&tsk->cg_list)) {
 		write_lock(&css_set_lock);
 		if (!list_empty(&tsk->cg_list))
-			list_del_init(&tsk->cg_list);
+			list_del(&tsk->cg_list);
 		write_unlock(&css_set_lock);
 	}
 

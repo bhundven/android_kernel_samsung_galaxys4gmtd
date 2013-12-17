@@ -104,12 +104,12 @@ void mmc_request_done(struct mmc_host *host, struct mmc_request *mrq)
 	struct mmc_command *cmd;
 	int err;
 
-	if(mrq == NULL)
+	if (mrq == NULL)
 		return;
 
 	cmd = mrq->cmd;
 
-	if(cmd == NULL)
+	if (cmd == NULL)
 		return;
 
 	err = cmd->error;
@@ -120,7 +120,7 @@ void mmc_request_done(struct mmc_host *host, struct mmc_request *mrq)
 	}
 
 	if (err && cmd->retries) {
-		printk("%s: req failed (CMD%u): %d, retrying...\n",
+		pr_debug("%s: req failed (CMD%u): %d, retrying...\n",
 			mmc_hostname(host), cmd->opcode, err);
 
 		cmd->retries--;
@@ -1239,12 +1239,6 @@ void mmc_rescan(struct work_struct *work)
 	mmc_power_off(host);
 
 out:
-#if 0
-	//if (extend_wakelock)
-	//	wake_lock_timeout(&mmc_delayed_work_wake_lock, HZ / 2);
-	//else
-	//	wake_unlock(&mmc_delayed_work_wake_lock);
-#else
 	if (atomic_dec_return(&wakelock_refs) > 0) {
 		printk(KERN_DEBUG "Another host want the wakelock : %d\n", atomic_read(&wakelock_refs));
 	}
@@ -1252,14 +1246,10 @@ out:
 		printk(KERN_DEBUG "unlock case2 : mmc%d: wake_lock_timeout 0.5 sec %d\n", host->index, atomic_read(&wakelock_refs));
 		wake_lock_timeout(&mmc_delayed_work_wake_lock, msecs_to_jiffies(500));
 	}
-#endif
 
 	if (host->caps & MMC_CAP_NEEDS_POLL)
 		mmc_schedule_delayed_work(&host->detect, HZ);
-//[NAGSM_Android_HDLNC_SDcard_shinjonghyun_20100504 : mutual exclusion when MoviNand and SD cardusing using this funtion
-	mutex_unlock(&host->carddetect_lock); 
-//]NAGSM_Android_HDLNC_SDcard_shinjonghyun_20100504 : mutual exclusion when MoviNand and SD cardusing using this funtion
-
+	mutex_unlock(&host->carddetect_lock);
 }
 
 void mmc_start_host(struct mmc_host *host)
@@ -1279,7 +1269,7 @@ void mmc_stop_host(struct mmc_host *host)
 
 	if (host->caps & MMC_CAP_DISABLE)
 		cancel_delayed_work(&host->disable);
-	if (unlikely(cancel_delayed_work(&host->detect)))	{
+	if (unlikely(cancel_delayed_work(&host->detect))) {
 		atomic_dec(&wakelock_refs);
 	}
 	mmc_flush_scheduled_work();
@@ -1401,7 +1391,7 @@ int mmc_suspend_host(struct mmc_host *host)
 
 	if (host->caps & MMC_CAP_DISABLE)
 		cancel_delayed_work(&host->disable);
-	if (unlikely(cancel_delayed_work(&host->detect)))	{
+	if (unlikely(cancel_delayed_work(&host->detect))) {
 		atomic_dec(&wakelock_refs);
 	}
 	mmc_flush_scheduled_work();
@@ -1517,7 +1507,7 @@ int mmc_pm_notify(struct notifier_block *notify_block,
 		host->rescan_disable = 0;
 		spin_unlock_irqrestore(&host->lock, flags);
 		if (!host->card || host->card->type != MMC_TYPE_SDIO)
-		mmc_detect_change(host, 1);
+			mmc_detect_change(host, 1);
 
 	}
 

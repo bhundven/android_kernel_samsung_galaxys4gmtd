@@ -161,6 +161,8 @@ EXPORT_SYMBOL(sec_get_param_value);
 
 #define WLAN_SKB_BUF_NUM	17
 
+static void __init onenand_init(void);
+
 #if defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 unsigned int VPLUSVER=0;
 EXPORT_SYMBOL(VPLUSVER);
@@ -1337,6 +1339,7 @@ static struct platform_device s3c_device_i2c13 = {
 };
 //] hdlnc_bp_ytkwon : 20100301
 
+#if !defined(CONFIG_S5PC110_VIBRANTPLUS_BOARD)
 static struct i2c_gpio_platform_data i2c14_platdata = {
 	.sda_pin		= NFC_SDA_18V,
 	.scl_pin		= NFC_SCL_18V,
@@ -1351,6 +1354,7 @@ static struct platform_device s3c_device_i2c14 = {
 	.id			= 14,
 	.dev.platform_data	= &i2c14_platdata,
 };
+#endif
 
 static void touch_keypad_gpio_init(void)
 {
@@ -1943,7 +1947,6 @@ static int ce147_power_off(void)
 
 static int ce147_power_en(int onoff)
 {
-	int bd_level;
 	int err = 0;
 #if 0
 	if(onoff){
@@ -1971,60 +1974,6 @@ static int ce147_power_en(int onoff)
 		if (!err)
 			ce147_powered_on = onoff;
 	}
-
-	return 0;
-}
-
-static int smdkc110_cam1_power(int onoff)
-{
-	int err;
-	/* Implement on/off operations */
-
-	/* CAM_VGA_nSTBY - GPB(0) */
-	err = gpio_request(S5PV210_GPB(0), "GPB");
-
-	if (err) {
-		printk(KERN_ERR "failed to request GPB for camera control\n");
-		return err;
-	}
-
-	gpio_direction_output(S5PV210_GPB(0), 0);
-
-	mdelay(1);
-
-	gpio_direction_output(S5PV210_GPB(0), 1);
-
-	mdelay(1);
-
-	gpio_set_value(S5PV210_GPB(0), 1);
-
-	mdelay(1);
-
-	gpio_free(S5PV210_GPB(0));
-
-	mdelay(1);
-
-	/* CAM_VGA_nRST - GPB(2) */
-	err = gpio_request(S5PV210_GPB(2), "GPB");
-
-	if (err) {
-		printk(KERN_ERR "failed to request GPB for camera control\n");
-		return err;
-	}
-
-	gpio_direction_output(S5PV210_GPB(2), 0);
-
-	mdelay(1);
-
-	gpio_direction_output(S5PV210_GPB(2), 1);
-
-	mdelay(1);
-
-	gpio_set_value(S5PV210_GPB(2), 1);
-
-	mdelay(1);
-
-	gpio_free(S5PV210_GPB(2));
 
 	return 0;
 }
@@ -2084,7 +2033,7 @@ static struct s3c_platform_camera ce147 = {
 #ifdef CONFIG_VIDEO_S5KA3DFX
 /* External camera module setting */
 static DEFINE_MUTEX(s5ka3dfx_lock);
-static struct regulator *s5ka3dfx_vga_avdd;
+/* static struct regulator *s5ka3dfx_vga_avdd; */
 static struct regulator *s5ka3dfx_vga_vddio;
 static struct regulator *s5ka3dfx_cam_isp_host;
 static struct regulator *s5ka3dfx_vga_dvdd;
@@ -2572,7 +2521,7 @@ static struct i2c_board_info i2c_devs8[] __initdata = {
 
 static int fsa9480_init_flag = 0;
 static bool mtp_off_status;
-extern int max8998_check_vdcin();
+extern int max8998_check_vdcin(void);
 #ifdef CONFIG_USB_ANDROID_SAMSUNG_COMPOSITE
 extern u16 askonstatus;
 void fsa9480_usb_cb(bool attached)
@@ -2627,8 +2576,9 @@ static struct switch_dev switch_dock = {
 
 static void fsa9480_deskdock_cb(bool attached)
 {
-
-struct usb_gadget *gadget = platform_get_drvdata(&s3c_device_usbgadget);	//Build Error
+#if !defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+	struct usb_gadget *gadget = platform_get_drvdata(&s3c_device_usbgadget);	//Build Error
+#endif
 
 	if (attached)
 		switch_set_state(&switch_dock, 1);
@@ -2660,8 +2610,9 @@ struct usb_gadget *gadget = platform_get_drvdata(&s3c_device_usbgadget);	//Build
 
 static void fsa9480_cardock_cb(bool attached)
 {
- 
-struct usb_gadget *gadget = platform_get_drvdata(&s3c_device_usbgadget);
+#if !defined (CONFIG_S5PC110_VIBRANTPLUS_BOARD)
+	struct usb_gadget *gadget = platform_get_drvdata(&s3c_device_usbgadget);
+#endif
 	if (attached)
 		switch_set_state(&switch_dock, 2);
 	else
@@ -3217,7 +3168,6 @@ static void aries_power_off(void)
 {
 	int err;
 	int mode = REBOOT_MODE_NONE;
-	char reset_mode = 'r';
 	int phone_wait_cnt = 0;
 
 	/* Change this API call just before power-off to take the dump. */
@@ -3922,7 +3872,7 @@ static void __init sound_init(void)
 	gpio_request(GPIO_MICBIAS_EN, "micbias_enable");
 }
 
-static void __init onenand_init()
+static void __init onenand_init(void)
 {
 	struct clk *clk = clk_get(NULL, "onenand");
 	BUG_ON(!clk);

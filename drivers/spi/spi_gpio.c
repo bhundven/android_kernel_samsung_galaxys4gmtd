@@ -88,7 +88,7 @@ struct spi_gpio {
 
 /*----------------------------------------------------------------------*/
 
-static inline const struct spi_gpio_platform_data *__pure
+static inline const struct spi_gpio_platform_data * __pure
 spi_to_pdata(const struct spi_device *spi)
 {
 	const struct spi_bitbang	*bang;
