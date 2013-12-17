@@ -26,6 +26,7 @@ struct s3c_dma_params {
 
 /* platform data */
 extern struct snd_soc_platform s3c24xx_soc_platform;
+extern struct snd_soc_platform s3c24xx_pcm_soc_platform;
 extern struct snd_ac97_bus_ops s3c24xx_ac97_ops;
 
 #endif

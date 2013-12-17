@@ -58,6 +58,7 @@
 #include <linux/vmalloc.h> /* TODO: replace with more sophisticated array */
 #include <linux/eventfd.h>
 #include <linux/poll.h>
+#include <linux/capability.h>
 
 #include <asm/atomic.h>
 

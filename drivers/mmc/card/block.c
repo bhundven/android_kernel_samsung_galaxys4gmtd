@@ -249,6 +249,13 @@ static int mmc_blk_issue_rq(struct mmc_queue *mq, struct request *req)
 	struct mmc_blk_request brq;
 	int ret = 1, disable_multi = 0;
 
+#ifdef CONFIG_MMC_BLOCK_DEFERRED_RESUME
+	if (mmc_bus_needs_resume(card->host)) {
+		mmc_resume_bus(card->host);
+		mmc_blk_set_blksize(md, card);
+	}
+#endif
+
 	mmc_claim_host(card->host);
 
 	do {
@@ -348,14 +355,27 @@ static int mmc_blk_issue_rq(struct mmc_queue *mq, struct request *req)
 				/* Redo read one sector at a time */
 				printk(KERN_WARNING "%s: retrying using single "
 				       "block read\n", req->rq_disk->disk_name);
-				disable_multi = 1;
-				continue;
+				if(brq.data.error == -EILSEQ) {
+					mq->rx_retries++;
+					if(mq->rx_retries == 3) {
+						mq->rx_retries = 0;
+						disable_multi = 1;
+					}
+					mmc_card_adjust_cfg(card->host, READ);
+					continue;
+				}
+				else {
+					disable_multi = 1;
+					continue;
+				}
 			}
 			status = get_card_status(card, req);
+		} else if (disable_multi == 1) {
+			disable_multi = 0;
 		}
 
 		if (brq.cmd.error) {
-			printk(KERN_ERR "%s: error %d sending read/write "
+			printk(KERN_DEBUG "%s: error %d sending read/write "
 			       "command, response %#x, card status %#x\n",
 			       req->rq_disk->disk_name, brq.cmd.error,
 			       brq.cmd.resp[0], status);
@@ -420,6 +440,16 @@ static int mmc_blk_issue_rq(struct mmc_queue *mq, struct request *req)
 				ret = __blk_end_request(req, -EIO, brq.data.blksz);
 				spin_unlock_irq(&md->lock);
 				continue;
+			}
+			else {
+				if(brq.data.error == -EILSEQ) {
+					mq->tx_retries++;
+					mmc_card_adjust_cfg(card->host, WRITE);
+					if(mq->tx_retries < 3)
+						continue;
+					else
+						mq->tx_retries = 0;
+				}
 			}
 			goto cmd_err;
 		}
@@ -522,6 +552,7 @@ static struct mmc_blk_data *mmc_blk_alloc(struct mmc_card *card)
 	md->disk->private_data = md;
 	md->disk->queue = md->queue.queue;
 	md->disk->driverfs_dev = &card->dev;
+	md->disk->flags = GENHD_FL_EXT_DEVT;
 
 	/*
 	 * As discussed on lkml, GENHD_FL_REMOVABLE should:
@@ -617,6 +648,9 @@ static int mmc_blk_probe(struct mmc_card *card)
 		cap_str, md->read_only ? "(ro)" : "");
 
 	mmc_set_drvdata(card, md);
+#ifdef CONFIG_MMC_BLOCK_DEFERRED_RESUME
+	mmc_set_bus_resume_policy(card->host, 1);
+#endif
 	add_disk(md->disk);
 	return 0;
 
@@ -641,6 +675,9 @@ static void mmc_blk_remove(struct mmc_card *card)
 		mmc_blk_put(md);
 	}
 	mmc_set_drvdata(card, NULL);
+#ifdef CONFIG_MMC_BLOCK_DEFERRED_RESUME
+	mmc_set_bus_resume_policy(card->host, 0);
+#endif
 }
 
 #ifdef CONFIG_PM
@@ -659,7 +696,9 @@ static int mmc_blk_resume(struct mmc_card *card)
 	struct mmc_blk_data *md = mmc_get_drvdata(card);
 
 	if (md) {
+#ifndef CONFIG_MMC_BLOCK_DEFERRED_RESUME
 		mmc_blk_set_blksize(md, card);
+#endif
 		mmc_queue_resume(&md->queue);
 	}
 	return 0;

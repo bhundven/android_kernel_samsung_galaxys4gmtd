@@ -32,6 +32,7 @@
 #include <linux/mtd/mtd.h>
 #include <linux/mtd/onenand.h>
 #include <linux/mtd/partitions.h>
+#include <linux/clk.h>
 
 #include <asm/io.h>
 
@@ -958,7 +959,8 @@ static int onenand_get_device(struct mtd_info *mtd, int new_state)
 		schedule();
 		remove_wait_queue(&this->wq, &wait);
 	}
-
+	if (this->clk && new_state != FL_PM_SUSPENDED)
+		clk_enable(this->clk);
 	return 0;
 }
 
@@ -971,6 +973,9 @@ static int onenand_get_device(struct mtd_info *mtd, int new_state)
 static void onenand_release_device(struct mtd_info *mtd)
 {
 	struct onenand_chip *this = mtd->priv;
+
+	if (this->clk && this->state != FL_PM_SUSPENDED)
+		clk_disable(this->clk);
 
 	/* Release the chip */
 	spin_lock(&this->chip_lock);
@@ -3908,6 +3913,9 @@ int onenand_scan(struct mtd_info *mtd, int maxchips)
 		this->bbt_wait = onenand_bbt_wait;
 	if (!this->unlock_all)
 		this->unlock_all = onenand_unlock_all;
+
+	if (!this->chip_probe)
+		this->chip_probe = onenand_chip_probe;
 
 	if (!this->read_bufferram)
 		this->read_bufferram = onenand_read_bufferram;

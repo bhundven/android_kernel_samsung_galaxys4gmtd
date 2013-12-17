@@ -83,6 +83,9 @@ struct mmc_host *mmc_alloc_host(int extra, struct device *dev)
 	device_initialize(&host->class_dev);
 
 	spin_lock_init(&host->lock);
+//[NAGSM_Android_HDLNC_SDcard_shinjonghyun_20100504 : mutual exclusion when MoviNand and SD cardusing using this funtion
+	mutex_init(&host->carddetect_lock);
+//]NAGSM_Android_HDLNC_SDcard_shinjonghyun_20100504 : mutual exclusion when MoviNand and SD cardusing using this funtion
 	init_waitqueue_head(&host->wq);
 	INIT_DELAYED_WORK(&host->detect, mmc_rescan);
 	INIT_DELAYED_WORK_DEFERRABLE(&host->disable, mmc_host_deeper_disable);
@@ -137,7 +140,8 @@ int mmc_add_host(struct mmc_host *host)
 #endif
 
 	mmc_start_host(host);
-	register_pm_notifier(&host->pm_notify);
+	if (!(host->pm_flags & MMC_PM_IGNORE_PM_NOTIFY))
+		register_pm_notifier(&host->pm_notify);
 
 	return 0;
 }
@@ -154,7 +158,9 @@ EXPORT_SYMBOL(mmc_add_host);
  */
 void mmc_remove_host(struct mmc_host *host)
 {
-	unregister_pm_notifier(&host->pm_notify);
+	if (!(host->pm_flags & MMC_PM_IGNORE_PM_NOTIFY))
+		unregister_pm_notifier(&host->pm_notify);
+
 	mmc_stop_host(host);
 
 #ifdef CONFIG_DEBUG_FS
